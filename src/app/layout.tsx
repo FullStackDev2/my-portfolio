@@ -1,14 +1,10 @@
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
+import { Geist } from 'next/font/google';
+import PageTransition from '@/components/layout/PageTransition';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
-  subsets: ['latin'],
-});
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
   subsets: ['latin'],
 });
 
@@ -16,27 +12,18 @@ export const metadata: Metadata = {
   title: 'Metin | Full Stack Developer',
   description:
     'Full Stack Developer specializing in React, Next.js, Node.js and MongoDB.',
-  keywords: [
-    'React',
-    'Next.js',
-    'Node.js',
-    'MongoDB',
-    'Full Stack Developer',
-    'Portfolio',
-  ],
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html
-      lang="tr"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang="tr" className={`${geistSans.variable} h-full`}>
+      <body className="min-h-full flex flex-col">
+        <PageTransition>{children}</PageTransition>
+      </body>
     </html>
   );
 }
