@@ -74,15 +74,42 @@ export default function Hero() {
           <div className="flex flex-wrap gap-10 border-t border-white/5 pt-8 mt-12">
             <div className="min-w-[80px]">
               <h3 className="text-2xl font-bold tracking-tight font-mono">
-                3+
+                4+
               </h3>
               <p className="text-[10px] text-white/40 uppercase tracking-widest mt-1 font-mono">
-                Projects
+                Team Projects
               </p>
             </div>
 
             <div className="min-w-[80px]">
               <h3 className="text-2xl font-bold tracking-tight text-blue-400 font-mono">
+                HTML5
+              </h3>
+              <p className="text-[10px] text-white/40 uppercase tracking-widest mt-1 font-mono">
+                Frontend
+              </p>
+            </div>
+
+            <div className="min-w-[80px]">
+              <h3 className="text-2xl font-bold tracking-tight text-purple-400 font-mono">
+                CSS3
+              </h3>
+              <p className="text-[10px] text-white/40 uppercase tracking-widest mt-1 font-mono">
+                Frontend
+              </p>
+            </div>
+
+            <div className="min-w-[80px]">
+              <h3 className="text-2xl font-bold tracking-tight text-purple-400 font-mono">
+                Javascript
+              </h3>
+              <p className="text-[10px] text-white/40 uppercase tracking-widest mt-1 font-mono">
+                Frontend
+              </p>
+            </div>
+
+            <div className="min-w-[80px]">
+              <h3 className="text-2xl font-bold tracking-tight text-purple-400 font-mono">
                 React
               </h3>
               <p className="text-[10px] text-white/40 uppercase tracking-widest mt-1 font-mono">
@@ -141,32 +168,42 @@ export default function Hero() {
             {/* Üst Kısımdaki Kalın Lazer Tarama Çizgisi */}
             <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-blue-500/50 to-transparent z-10 shadow-[0_1px_10px_rgba(59,130,246,0.5)]" />
 
-            {/* Donanım ve Sistem Yazıları (Görseldeki Gibi Köşelere Sabitlenmiş) */}
-            <div className="absolute top-4 left-5 z-10 flex items-center gap-2 font-mono text-[9px] text-blue-400/80 tracking-[0.2em] uppercase select-none">
-              <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-ping" />
-              {'SYS_LINK_01 // SECURE'}
-            </div>
-
-            <div className="absolute bottom-4 right-5 z-10 font-mono text-[9px] text-blue-400/50 tracking-widest select-none animate-pulse">
-              {'BIOMETRIC_SCANNING...'}
+            {/* Yanıp sönen nokta ve BIOMETRIC_SCANNING */}
+            <div className="absolute bottom-4 right-5 z-10 flex items-center gap-2 font-mono text-[9px] text-blue-400/50 tracking-widest select-none animate-pulse">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-blue-500" />
+              </span>
+              <span>{'BIOMETRIC_SCANNING...'}</span>
             </div>
 
             {/* Güvenli ve Hatasız Siyah-Beyaz Fotoğraf Alanı */}
-            <div className="relative w-full h-full overflow-hidden bg-zinc-900 opacity-75 group-hover:opacity-100 transition-all duration-700 grayscale contrast-135 brightness-95 group-hover:grayscale-0 group-hover:contrast-100 group-hover:brightness-100">
+            <div className="relative w-full h-full overflow-hidden bg-zinc-950 opacity-80 group-hover:opacity-100 transition-all duration-750 grayscale contrast-115 brightness-90 group-hover:grayscale-0 group-hover:contrast-100 group-hover:brightness-100">
               <Image
                 src="/for_cv.jpg"
                 alt="Nurettin Dincer Hero Portrait"
                 fill
-                priority
-                className="object-cover object-center scale-102 group-hover:scale-100 transition-transform duration-1000 ease-out"
+                loading="eager"
+                className="absolute inset-0 w-full h-full object-cover object-center scale-102 group-hover:scale-100 transition-transform duration-1000 ease-out"
+              />
+              {/* YENİ: Çizgiler yerine Hover durumunda beliren fütüristik dijital grid (matris) katmanı */}
+              <div
+                className="absolute inset-0 opacity-0 group-hover:opacity-15 transition-opacity duration-700 pointer-events-none"
+                style={{
+                  backgroundImage: `
+        linear-gradient(to right, rgba(255,255,255,0.15) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,0.15) 1px, transparent 1px)
+      `,
+                  backgroundSize: '24px 24px',
+                }}
               />
 
-              {/* İnce Dijital CRT Ekran Tarama Çizgileri Filtresi */}
-              <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.3)_50%)] bg-[size:100%_4px] pointer-events-none opacity-30" />
+              {/* YENİ: Kartın üzerinden geçen sinematik bir ışık süzmesi (Işık parlaması efekti) */}
+              <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/0 via-white/[0.03] to-blue-500/0 transform -translate-x-full group-hover:translate-x-full transition-transform duration-1500 ease-out pointer-events-none" />
 
-              {/* Sinematik Derinlik Katan İç Gölge (Vignette) */}
-              <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-black/40" />
-              <div className="absolute inset-0 bg-gradient-to-b from-zinc-950/20 via-transparent to-transparent" />
+              {/* Sinematik Derinlik Katan İç Gölgeler (Vignette) */}
+              <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-black/40 pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-b from-zinc-950/30 via-transparent to-transparent pointer-events-none" />
             </div>
 
             {/* Kartın İç Çevresindeki Siber Neon Parıltı Çerçevesi */}

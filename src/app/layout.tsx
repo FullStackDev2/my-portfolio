@@ -9,9 +9,9 @@ const geistSans = Geist({
 });
 
 export const metadata: Metadata = {
-  title: 'Metin | Full Stack Developer',
+  title: 'Nurettin | Full Stack Developer',
   description:
-    'Full Stack Developer specializing in React, Next.js, Node.js and MongoDB.',
+    'Full Stack Developer specializing in Javascript, React, Next.js, Node.js and MongoDB.',
 };
 
 export default function RootLayout({

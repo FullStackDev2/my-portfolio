@@ -5,7 +5,7 @@ import { useState } from 'react';
 
 export default function Contact() {
   const [copied, setCopied] = useState(false);
-  const email = 'yourmail@gmail.com'; // 👈 Kendi mail adresini buraya yaz
+  const email = 'nurettin.dincerfsd@gmail.com';
 
   const handleCopy = () => {
     navigator.clipboard.writeText(email);
