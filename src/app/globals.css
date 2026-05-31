@@ -1,16 +1,5 @@
 @import 'tailwindcss';
 
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  background: black;
-  color: white;
-  overflow-x: hidden;
-  font-family: var(--font-geist-sans);
-}
-
 * {
   box-sizing: border-box;
 }
@@ -22,4 +11,43 @@ body {
 
 .card-3d {
   transform-style: preserve-3d;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden;
+  /* Apple tarzı manyetik kaydırma tipi */
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  background:
+    radial-gradient(circle at top, rgba(99, 102, 241, 0.18), transparent 40%),
+    radial-gradient(
+      circle at bottom right,
+      rgba(168, 85, 247, 0.12),
+      transparent 35%
+    ),
+    linear-gradient(180deg, #09090b 0%, #111827 50%, #1e1b4b 100%);
+  color: #fafafa;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Animasyonlu Progress Bar için parıltı efekti */
+@keyframes pulseBar {
+  0%,
+  100% {
+    opacity: 0.7;
+    filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.4));
+  }
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.8));
+  }
+}
+
+.premium-progress-glow {
+  animation: pulseBar 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }

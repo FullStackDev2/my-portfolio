@@ -9,7 +9,7 @@ export default function ProjectPage({ params }: { params: { slug: string } }) {
   if (!project) return notFound();
 
   return (
-    <main className="min-h-screen bg-black text-white">
+    <main className="min-h-screen text-white">
       <div className="max-w-6xl mx-auto px-6 py-24 grid md:grid-cols-2 gap-16">
         {/* LEFT - STICKY IMAGE */}
         <div className="md:sticky md:top-24 h-fit">

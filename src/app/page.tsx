@@ -6,12 +6,16 @@ import Contact from '@/components/sections/Contact';
 import Footer from '@/components/layout/Footer';
 import Skills from '@/components/sections/Skills';
 import ScrollProgress from '@/components/ui/ScrollProgress';
+import GlowBackground from '@/components/ui/GlowBackground';
 
 export default function Home() {
   return (
-    <main className="bg-black text-white overflow-hidden">
+    <main className="text-white min-h-screen relative w-full selection:bg-white selection:text-black">
       <ScrollProgress />
+      <GlowBackground />
       <Navbar />
+
+      {/* Section Akışı */}
       <Hero />
       <About />
       <Skills />

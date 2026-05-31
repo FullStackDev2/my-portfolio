@@ -4,7 +4,11 @@ import Reveal from '../ui/Reveal';
 
 export default function About() {
   return (
-    <section id="about" className="min-h-screen flex items-center px-6 py-32">
+    <section
+      id="about"
+      className="min-h-screen flex items-center px-6 py-32"
+      style={{ scrollSnapAlign: 'start', scrollSnapStop: 'always' }}
+    >
       <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-20">
         <Reveal>
           <div>
