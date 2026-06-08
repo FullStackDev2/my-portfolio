@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import NavIndicator from '@/components/ui/NavIndicator';
+import Image from 'next/image';
 
 const navItems = [
   { id: 'hero', label: 'Home' },
@@ -16,55 +17,67 @@ export default function Navbar() {
   const navRef = useRef<HTMLDivElement | null>(null);
   const itemRefs = useRef<Record<string, HTMLAnchorElement | null>>({});
 
+  // Tıklama ile kaydırma yapılırken observer'ı susturmak için bir kilit ref'i
+  const isScrollingRef = useRef(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   const [active, setActive] = useState('hero');
   const [activeRect, setActiveRect] = useState({ left: 0, width: 0 });
 
   const { scrollY } = useScroll();
 
-  const y = useTransform(scrollY, [0, 100], [0, -6]);
   const blurValue = useTransform(
     scrollY,
     [0, 100],
-    ['blur(0px)', 'blur(16px)'],
-  );
-  const backgroundColor = useTransform(
-    scrollY,
-    [0, 100],
-    ['rgba(255, 255, 255, 0.03)', 'rgba(9, 9, 11, 0.65)'],
-  );
-  const borderOpacity = useTransform(
-    scrollY,
-    [0, 100],
-    ['rgba(255, 255, 255, 0.08)', 'rgba(255, 255, 255, 0.05)'],
+    ['blur(0px)', 'blur(12px)'],
   );
 
-  // 2. ADIM: Bağımlılık dizisi artık boş [] kalabilir, ESLint hata vermez.
   useEffect(() => {
-    const observerOptions = {
-      root: null,
-      rootMargin: '-40% 0px -40% 0px',
-      threshold: 0.15,
-    };
-
-    const handleIntersection = (entries: IntersectionObserverEntry[]) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          setActive(entry.target.id);
-        }
-      });
-    };
-
     const observer = new IntersectionObserver(
-      handleIntersection,
-      observerOptions,
+      (entries) => {
+        // Eğer kullanıcı bir linke tıkladıysa ve sayfa kayıyorsa observer'ı yok say
+        if (isScrollingRef.current) return;
+
+        let bestEntry: IntersectionObserverEntry | null = null;
+
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            if (
+              !bestEntry ||
+              entry.intersectionRatio > bestEntry.intersectionRatio
+            ) {
+              bestEntry = entry;
+            }
+          }
+        }
+
+        if (bestEntry) {
+          setActive(bestEntry.target.id);
+        }
+      },
+      {
+        root: null,
+        // rootMargin'i biraz daha esnettik, threshold'u basitleştirdik
+        rootMargin: '-30% 0px -30% 0px',
+        threshold: 0.2,
+      },
     );
+
+    const els: Element[] = [];
 
     navItems.forEach((item) => {
       const el = document.getElementById(item.id);
-      if (el) observer.observe(el);
+      if (el) {
+        observer.observe(el);
+        els.push(el);
+      }
     });
 
-    return () => observer.disconnect();
+    return () => {
+      els.forEach((el) => observer.unobserve(el));
+      observer.disconnect();
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
   }, []);
 
   useEffect(() => {
@@ -82,60 +95,117 @@ export default function Navbar() {
     });
   }, [active]);
 
+  // Ortak kaydırma fonksiyonu
+  const handleNavClick = (id: string) => {
+    setActive(id);
+
+    // Kilit mekanizmasını devreye sok
+    isScrollingRef.current = true;
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+
+    document.getElementById(id)?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
+
+    // Kaydırma bitene kadar observer'ı engelle (yaklaşık 800ms)
+    timeoutRef.current = setTimeout(() => {
+      isScrollingRef.current = false;
+    }, 800);
+  };
+
   return (
-    <motion.header
-      style={{ y }}
-      className="fixed top-6 left-1/2 -translate-x-1/2 z-50 will-change-transform"
-    >
+    <header className="fixed top-0 left-0 w-full z-50">
       <motion.div
         style={{
           backdropFilter: blurValue,
-          backgroundColor,
-          borderColor: borderOpacity,
         }}
-        className="flex items-center gap-12 px-8 py-4 rounded-full border transition-shadow duration-500 shadow-none hover:shadow-2xl hover:shadow-black/40"
+        className="h-16 bg-white/30 backdrop-blur-md border-b border-white/20"
       >
-        <h1
-          onClick={() => {
-            document
-              .getElementById('hero')
-              ?.scrollIntoView({ behavior: 'smooth' });
-          }}
-          className="flex-shrink-0 font-bold tracking-widest text-white text-sm cursor-pointer select-none bg-clip-text bg-gradient-to-b from-white to-zinc-400"
-        >
-          NURETTIN
-        </h1>
+        <div className="max-w-7xl mx-auto h-full px-6 flex items-center justify-between">
+          {/* Circular Profile Icon (Mockup Style) */}
+          {/* Circular Profile Icon (Next.js Image Sürümü) */}
+          <div
+            onClick={() => handleNavClick('hero')}
+            className="flex items-center gap-3 cursor-pointer group"
+          >
+            {/* Animasyonlu Dış Kapsayıcı */}
+            <div className="relative w-11 h-11 flex items-center justify-center overflow-visible">
+              {/* Arkadaki Dönen Renkli Canlı Halkalar */}
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ repeat: Infinity, duration: 4, ease: 'linear' }}
+                className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#08d565] via-[#ff3d6e] to-[#ff5b8a] opacity-70 blur-[2px] group-hover:opacity-100 group-hover:blur-[4px] transition-all duration-300"
+              />
 
-        <nav
-          ref={navRef}
-          className="relative flex items-center gap-8 text-sm whitespace-nowrap"
-        >
-          {navItems.map((item) => (
-            <a
-              key={item.id}
-              ref={(el) => {
-                itemRefs.current[item.id] = el;
-              }}
-              onClick={() => {
-                setActive(item.id);
-                document.getElementById(item.id)?.scrollIntoView({
-                  behavior: 'smooth',
-                  block: 'start',
-                });
-              }}
-              className={`cursor-pointer transition-colors duration-300 font-medium text-xs uppercase tracking-wider ${
-                active === item.id
-                  ? 'text-white'
-                  : 'text-white/40 hover:text-white/70'
-              }`}
-            >
-              {item.label}
-            </a>
-          ))}
+              {/* Profil Resminin Olduğu Maskelenmiş İç Kısım */}
+              <div
+                onClick={() => handleNavClick('hero')}
+                className="flex items-center gap-3 cursor-pointer group"
+              >
+                {/* Animasyonlu Dış Kapsayıcı */}
+                <div className="relative w-11 h-11 flex items-center justify-center overflow-visible">
+                  {/* Arkadaki Dönen Renkli Canlı Halkalar */}
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{
+                      repeat: Infinity,
+                      duration: 4,
+                      ease: 'linear',
+                    }}
+                    className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#08d565] via-[#ff3d6e] to-[#ff5b8a] opacity-70 blur-[2px] group-hover:opacity-100 group-hover:blur-[4px] transition-all duration-300"
+                  />
 
-          <NavIndicator activeRect={activeRect} />
-        </nav>
+                  {/* Profil Resminin Olduğu Maskelenmiş İç Kısım */}
+                  <div className="relative w-10 h-10 rounded-full border-2 border-white overflow-hidden shadow-md bg-zinc-100 z-10">
+                    <Image
+                      src="/for_cv.jpg"
+                      alt="Profile Icon"
+                      fill
+                      sizes="(max-width: 768px) 44px, 44px"
+                      priority
+                      className="object-cover object-top"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <span className="font-black tracking-[0.25em] text-[#282829]">
+              NURETTIN D.
+            </span>
+          </div>
+
+          {/* Navigation */}
+          <nav ref={navRef} className="relative flex items-center gap-8">
+            {navItems.map((item) => (
+              <a
+                key={item.id}
+                ref={(el) => {
+                  itemRefs.current[item.id] = el;
+                }}
+                onClick={() => handleNavClick(item.id)}
+                className={`
+                  cursor-pointer
+                  text-sm
+                  font-medium
+                  transition-all
+                  duration-300
+                  ${
+                    active === item.id
+                      ? 'bg-gradient-to-r from-[#ff3d6e] to-[#ff5b8a] bg-clip-text text-transparent drop-shadow-[0_0_8px_rgba(255,61,110,0.5)] scale-105'
+                      : 'text-zinc-900'
+                  }
+                `}
+              >
+                {item.label}
+              </a>
+            ))}
+
+            <NavIndicator activeRect={activeRect} />
+          </nav>
+        </div>
       </motion.div>
-    </motion.header>
+    </header>
   );
 }
