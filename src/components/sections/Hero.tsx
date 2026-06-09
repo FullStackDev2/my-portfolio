@@ -43,6 +43,7 @@ const lineVariants: Variants = {
 export default function Hero() {
   const ref = useRef<HTMLElement>(null);
   const [showModal, setShowModal] = useState(false);
+  const [showStatus, setShowStatus] = useState(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -129,7 +130,7 @@ export default function Hero() {
       <section
         ref={ref}
         id="hero"
-        className="relative min-h-screen w-full flex items-center justify-center overflow-hidden px-6 bg-[#f5f7ff]"
+        className="relative min-h-[100vh] w-full flex items-center justify-center pt-40 pb-16 px-6 bg-[#f5f7ff]"
         style={{
           scrollSnapAlign: 'start',
           scrollSnapStop: 'always',
@@ -140,7 +141,7 @@ export default function Hero() {
           className="absolute inset-0"
           style={{
             background: `
-              radial-gradient(circle at top right, rgba(124,58,237,.25), transparent 30%),
+              radial-gradient(circle at top right, rgba(124,58,237,.12), transparent 45%),
               radial-gradient(circle at right center, rgba(56,189,248,.18), transparent 35%),
               radial-gradient(circle at bottom center, rgba(255,220,220,.25), transparent 35%)
             `,
@@ -164,7 +165,7 @@ export default function Hero() {
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] aspect-square bg-indigo-300/10 blur-[100px] rounded-full pointer-events-none z-0" />
 
         {/* ORTA ALT: SCROLL TO EXPLORE */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 font-mono text-[10px] tracking-[0.25em] text-cyan-600 z-20 select-none">
+        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 translate-y-4 flex flex-col items-center gap-2 font-mono text-[10px] tracking-[0.25em] text-cyan-600 z-20 select-none">
           <span>SCROLL TO EXPLORE</span>
           <motion.div
             animate={{ y: [0, 6, 0] }}
@@ -173,18 +174,41 @@ export default function Hero() {
           />
         </div>
 
-        {/* ANA İÇERİK GRID YAPISI */}
-        <div className="relative z-10 max-w-6xl w-full mx-auto grid md:grid-cols-2 gap-12 md:gap-16 items-center">
+        {/* ANA İÇERİK GRID YAPISI (items-start yapıldı: Sol taraf yukarı tırmandı, sağ taraf h-fit ile korundu) */}
+        <div className="relative z-10 max-w-6xl w-full mx-auto pt-8 grid md:grid-cols-2 gap-12 md:gap-16 items-start">
           {/* SOL TARAF */}
-          <div className="flex flex-col justify-center space-y-6 max-w-xl text-left">
+          <div className="flex flex-col space-y-6 max-w-none text-left">
             <div className="flex flex-col space-y-3">
-              <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 w-fit font-mono text-sm text-emerald-700 font-bold tracking-wider">
+              {/* ANİMASYONLU WORK_STATUS BAŞLANGICI */}
+              <motion.div
+                initial={{
+                  opacity: 0,
+                  y: -15,
+                  scale: 0.95,
+                  filter: 'blur(8px)',
+                }}
+                animate={
+                  showStatus
+                    ? { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }
+                    : { opacity: 0, y: -15, scale: 0.95, filter: 'blur(8px)' }
+                }
+                transition={{
+                  type: 'spring',
+                  stiffness: 160, // Hız/Sertlik dengesi
+                  damping: 14, // Esneme miktarı
+                }}
+                className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 w-fit font-mono text-sm text-emerald-700 font-bold tracking-wider ${
+                  !showStatus ? 'pointer-events-none' : ''
+                }`}
+              >
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                 WORK_STATUS : AVAILABLE FOR WORK!
-              </div>
+              </motion.div>
+              {/* ANİMASYONLU WORK_STATUS BİTİŞİ */}
+
               <p
                 style={{ fontFamily: 'GeneralSans_bold' }}
-                className="text-sm md:text-lg font-black tracking-tighter text-zinc-700 uppercase pt-8"
+                className="text-sm md:text-lg font-black tracking-tighter text-zinc-700 uppercase pt-4"
               >
                 HELLO, I&#39;M
               </p>
@@ -216,86 +240,95 @@ export default function Hero() {
                 className="w-full flex justify-between items-end border-b border-zinc-200 pb-3 mt-4 origin-left"
               >
                 <p
-                  style={{ fontFamily: 'GeneralSans_normal' }}
-                  className="text-5xl md:text-2xl font-mono tracking-[0.12em] font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-cyan-400"
+                  style={{ fontFamily: 'GeneralSans_bold' }}
+                  className="text-5xl md:text-2xl font-mono tracking-[0.12em] font-black text-transparent bg-clip-text text-zinc-700"
                 >
-                  FULL STACK DEVELOPER
+                  Frontend Developer
                 </p>
               </motion.div>
             </motion.div>
 
             <p
               style={{ fontFamily: 'GeneralSans_paragh' }}
-              className="text-zinc-600 text-sm md:text-base leading-relaxed border-l-3 border-l-orange-400 pl-4 font-sans pt-2"
+              className="w-[115%] text-zinc-600 text-sm md:text-base leading-relaxed border-l-3 border-l-orange-400 pl-4 font-sans pt-2"
             >
-              I bridge the gap between complex backend architecture and
-              pixel-perfect interactive user interfaces, crafting
-              high-performance digital experiences.
+              I transform ideas into exceptional digital experiences by
+              combining modern frontend technologies with efficient backend
+              solutions. Focused on performance, scalability, and clean design,
+              I create web applications that are both visually engaging and
+              technically reliable.
             </p>
 
             <div className="flex items-center gap-4 pt-4">
-              <button className="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm tracking-wide transition-all duration-300 shadow-[0_4px_14px_rgba(37,99,235,0.3)] active:scale-95">
-                View Projects
-              </button>
               <button className="px-6 py-3 rounded-xl border border-zinc-200 bg-white hover:bg-zinc-100 font-medium text-sm tracking-wide text-zinc-700 transition-all duration-300 shadow-sm active:scale-95">
-                Contact Me
+                Start a Project
               </button>
             </div>
 
-            {/* İstatistikler */}
-            <div className="grid grid-cols-3 sm:grid-cols-6 gap-6 border-t border-zinc-200/80 pt-6 mt-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 border-t border-zinc-200/80 pt-6 mt-8">
               <div className="text-left">
-                <h3 className="text-xl font-bold tracking-tight font-mono text-zinc-800">
-                  4+
+                <h3
+                  style={{ fontFamily: 'BespokeSerif_number' }}
+                  className="text-3xl font-bold tracking-tight text-blue-600 font-mono"
+                >
+                  10+
                 </h3>
-                <p className="text-[9px] text-zinc-400 uppercase tracking-widest mt-0.5 font-mono">
+                <p
+                  style={{ fontFamily: 'GeneralSans_bold' }}
+                  className="text-[10px] text-zinc-500 uppercase tracking-widest mt-1 font-mono"
+                >
                   Projects
                 </p>
               </div>
+
               <div className="text-left">
-                <h3 className="text-xl font-bold tracking-tight text-blue-600 font-mono">
-                  HTML5
+                <h3
+                  style={{ fontFamily: 'BespokeSerif_number' }}
+                  className="text-3xl font-bold tracking-tight text-zinc-800 font-mono"
+                >
+                  1+
                 </h3>
-                <p className="text-[9px] text-zinc-400 uppercase tracking-widest mt-0.5 font-mono">
-                  Frontend
+                <p
+                  style={{ fontFamily: 'GeneralSans_bold' }}
+                  className="text-[10px] text-zinc-500 uppercase tracking-widest mt-1 font-mono"
+                >
+                  Years Learning
                 </p>
               </div>
+
               <div className="text-left">
-                <h3 className="text-xl font-bold tracking-tight text-zinc-600 font-mono">
-                  CSS3
+                <h3
+                  style={{ fontFamily: 'BespokeSerif_number' }}
+                  className="text-3xl font-bold tracking-tight text-zinc-800 font-mono"
+                >
+                  5+
                 </h3>
-                <p className="text-[9px] text-zinc-400 uppercase tracking-widest mt-0.5 font-mono">
-                  Frontend
+                <p
+                  style={{ fontFamily: 'GeneralSans_bold' }}
+                  className="text-[10px] text-zinc-500 uppercase tracking-widest mt-1 font-mono"
+                >
+                  Technologies
                 </p>
               </div>
+
               <div className="text-left">
-                <h3 className="text-xl font-bold tracking-tight text-zinc-600 font-mono">
-                  JS
+                <h3
+                  style={{ fontFamily: 'BespokeSerif_number' }}
+                  className="text-3xl font-bold tracking-tight text-emerald-600 font-mono"
+                >
+                  100%
                 </h3>
-                <p className="text-[9px] text-zinc-400 uppercase tracking-widest mt-0.5 font-mono">
-                  Frontend
-                </p>
-              </div>
-              <div className="text-left">
-                <h3 className="text-xl font-bold tracking-tight text-zinc-600 font-mono">
-                  React
-                </h3>
-                <p className="text-[9px] text-zinc-400 uppercase tracking-widest mt-0.5 font-mono">
-                  Frontend
-                </p>
-              </div>
-              <div className="text-left">
-                <h3 className="text-xl font-bold tracking-tight text-zinc-600 font-mono">
-                  Node
-                </h3>
-                <p className="text-[9px] text-zinc-400 uppercase tracking-widest mt-0.5 font-mono">
-                  Backend
+                <p
+                  style={{ fontFamily: 'GeneralSans_bold' }}
+                  className="text-[10px] text-zinc-500 uppercase tracking-widest mt-1 font-mono"
+                >
+                  Responsive
                 </p>
               </div>
             </div>
 
-            {/* SOSYAL MEDYA ALANI (Artık Sol Taraftaki İçeriğin EN ALTINDA ve Tamamen Hizalı) */}
-            <div className="pt-8 border-t border-zinc-200/80 w-full">
+            {/* translate-y-8 ekleyerek tüm blogu ekstra 32px daha aşağıya kaydırdık */}
+            <div className="w-full mt-auto pt-12 transform translate-y-8">
               <p className="text-sm md:text-base tracking-[0.3em] font-mono text-zinc-900 uppercase mb-6 font-bold">
                 WHERE TO FIND ME
               </p>
@@ -327,8 +360,9 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* SAĞ TARAF (Profil Fotoğrafı Alanı) */}
-          <div className="relative flex justify-center items-center w-full max-w-md lg:max-w-lg mx-auto aspect-[4/5] p-4">
+          {/* SAĞ TARAF (h-fit eklendi: items-start'ın resmi bozmasını veya uzatmasını tamamen engeller) */}
+          {/* SAĞ TARAF (h-fit eklendi...) */}
+          <div className="relative flex justify-center items-center w-full max-w-md lg:max-w-lg mx-auto translate-x-8 aspect-[4/5] p-4 h-fit">
             <div className="absolute inset-0 bg-gradient-to-tr from-blue-200/30 to-indigo-100/20 blur-[100px] rounded-full scale-90 pointer-events-none" />
 
             <div className="absolute -inset-1 border border-zinc-300/50 rounded-3xl pointer-events-none">
@@ -336,9 +370,12 @@ export default function Hero() {
               <div className="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-blue-600/30" />
             </div>
 
-            <div className="relative w-full h-full bg-white border border-zinc-200 rounded-2xl overflow-hidden group shadow-[0_20px_50px_rgba(0,0,0,0.05)]">
-              <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-blue-600/50 to-transparent z-10" />
-
+            {/* Hover event'lerini bu div'e bağladık */}
+            <div
+              onMouseEnter={() => setShowStatus(true)}
+              onMouseLeave={() => setShowStatus(false)}
+              className="relative w-full h-full bg-white border border-zinc-200 rounded-2xl overflow-hidden group shadow-[0_20px_50px_rgba(0,0,0,0.05)]"
+            >
               <div className="absolute bottom-4 right-5 z-10 flex items-center gap-2 font-mono text-[9px] text-blue-600/60 tracking-widest select-none">
                 <span className="relative flex h-1.5 w-1.5">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
@@ -355,7 +392,7 @@ export default function Hero() {
                   sizes="(max-width: 768px) 100vw, 50vw"
                   loading="eager"
                   priority
-                  className="absolute inset-0 w-full h-full object-cover object-center scale-102 group-hover:scale-100 transition-transform duration-1000 ease-out"
+                  className="absolute inset-0 w-full h-full object-cover object-center scale-102 brightness-85 group-hover:brightness-90 group-hover:scale-100 transition-all duration-700 ease-out"
                 />
 
                 <div

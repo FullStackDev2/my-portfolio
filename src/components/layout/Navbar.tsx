@@ -120,10 +120,9 @@ export default function Navbar() {
         style={{
           backdropFilter: blurValue,
         }}
-        className="h-16 bg-white/30 backdrop-blur-md border-b border-white/20"
+        className="h-16 bg-white/30 backdrop-blur-md border-b-2 border-zinc-400/60"
       >
         <div className="max-w-7xl mx-auto h-full px-6 flex items-center justify-between">
-          {/* Circular Profile Icon (Mockup Style) */}
           {/* Circular Profile Icon (Next.js Image Sürümü) */}
           <div
             onClick={() => handleNavClick('hero')}
