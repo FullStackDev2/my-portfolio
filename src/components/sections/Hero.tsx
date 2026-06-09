@@ -62,7 +62,7 @@ export default function Hero() {
 
   return (
     <>
-      {/* SİBER UYARI MODALİ (SYSTEM WARNING) */}
+      {/* SİBER UYARI MODALİ */}
       <AnimatePresence>
         {showModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -130,7 +130,7 @@ export default function Hero() {
       <section
         ref={ref}
         id="hero"
-        className="relative min-h-[100vh] w-full flex items-center justify-center pt-40 pb-16 px-6 bg-[#f5f7ff]"
+        className="relative min-h-[112vh] w-full flex items-center justify-center pt-32 pb-24 px-6 bg-[#f5f7ff]"
         style={{
           scrollSnapAlign: 'start',
           scrollSnapStop: 'always',
@@ -164,22 +164,21 @@ export default function Hero() {
         <div className="absolute bottom-[-20%] right-[-15%] w-[600px] h-[600px] bg-violet-400/12 blur-[180px] rounded-full pointer-events-none z-0" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] aspect-square bg-indigo-300/10 blur-[100px] rounded-full pointer-events-none z-0" />
 
-        {/* ORTA ALT: SCROLL TO EXPLORE */}
-        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 translate-y-4 flex flex-col items-center gap-2 font-mono text-[10px] tracking-[0.25em] text-cyan-600 z-20 select-none">
+        {/* DEĞİŞİKLİK 1: bottom-14 yerine bottom-6 yaparak yazıyı en alta indirdik */}
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 font-mono text-[11px] font-black tracking-[0.3em] text-zinc-800 z-20 select-none">
           <span>SCROLL TO EXPLORE</span>
           <motion.div
-            animate={{ y: [0, 6, 0] }}
+            animate={{ y: [0, 20, 0] }}
             transition={{ repeat: Infinity, duration: 1.5 }}
-            className="w-1 h-3 bg-cyan-500 rounded-full"
+            className="w-1 h-5 bg-cyan-500 rounded-full"
           />
         </div>
 
-        {/* ANA İÇERİK GRID YAPISI (items-start yapıldı: Sol taraf yukarı tırmandı, sağ taraf h-fit ile korundu) */}
-        <div className="relative z-10 max-w-6xl w-full mx-auto pt-8 grid md:grid-cols-2 gap-12 md:gap-16 items-start">
+        {/* ANA İÇERİK GRID YAPISI */}
+        <div className="relative z-10 max-w-6xl w-full mx-auto pt-4 grid md:grid-cols-2 gap-12 md:gap-16 items-start">
           {/* SOL TARAF */}
           <div className="flex flex-col space-y-6 max-w-none text-left">
             <div className="flex flex-col space-y-3">
-              {/* ANİMASYONLU WORK_STATUS BAŞLANGICI */}
               <motion.div
                 initial={{
                   opacity: 0,
@@ -194,8 +193,8 @@ export default function Hero() {
                 }
                 transition={{
                   type: 'spring',
-                  stiffness: 160, // Hız/Sertlik dengesi
-                  damping: 14, // Esneme miktarı
+                  stiffness: 160,
+                  damping: 14,
                 }}
                 className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 w-fit font-mono text-sm text-emerald-700 font-bold tracking-wider ${
                   !showStatus ? 'pointer-events-none' : ''
@@ -204,7 +203,6 @@ export default function Hero() {
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                 WORK_STATUS : AVAILABLE FOR WORK!
               </motion.div>
-              {/* ANİMASYONLU WORK_STATUS BİTİŞİ */}
 
               <p
                 style={{ fontFamily: 'GeneralSans_bold' }}
@@ -327,8 +325,7 @@ export default function Hero() {
               </div>
             </div>
 
-            {/* translate-y-8 ekleyerek tüm blogu ekstra 32px daha aşağıya kaydırdık */}
-            <div className="w-full mt-auto pt-12 transform translate-y-8">
+            <div className="w-full mt-auto pt-10">
               <p className="text-sm md:text-base tracking-[0.3em] font-mono text-zinc-900 uppercase mb-6 font-bold">
                 WHERE TO FIND ME
               </p>
@@ -360,8 +357,7 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* SAĞ TARAF (h-fit eklendi: items-start'ın resmi bozmasını veya uzatmasını tamamen engeller) */}
-          {/* SAĞ TARAF (h-fit eklendi...) */}
+          {/* SAĞ TARAF */}
           <div className="relative flex justify-center items-center w-full max-w-md lg:max-w-lg mx-auto translate-x-8 aspect-[4/5] p-4 h-fit">
             <div className="absolute inset-0 bg-gradient-to-tr from-blue-200/30 to-indigo-100/20 blur-[100px] rounded-full scale-90 pointer-events-none" />
 
@@ -370,7 +366,6 @@ export default function Hero() {
               <div className="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-blue-600/30" />
             </div>
 
-            {/* Hover event'lerini bu div'e bağladık */}
             <div
               onMouseEnter={() => setShowStatus(true)}
               onMouseLeave={() => setShowStatus(false)}
@@ -392,7 +387,7 @@ export default function Hero() {
                   sizes="(max-width: 768px) 100vw, 50vw"
                   loading="eager"
                   priority
-                  className="absolute inset-0 w-full h-full object-cover object-center scale-102 brightness-85 group-hover:brightness-90 group-hover:scale-100 transition-all duration-700 ease-out"
+                  className="absolute inset-0 w-full h-full object-cover object-center scale-102 brightness-75 group-hover:brightness-95 group-hover:scale-100 transition-all duration-700 ease-out"
                 />
 
                 <div
