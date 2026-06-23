@@ -2,27 +2,41 @@
 
 import Reveal from '../ui/Reveal';
 
-interface JourneyItem {
+interface TimelineItem {
   year: string;
   title: string;
-  company: string;
+  subtitle?: string;
   description: string;
   type: 'experience' | 'education';
 }
 
-interface PrincipleItem {
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-}
-
 export default function About() {
-  // Journey Verileri
-  const journeyData: JourneyItem[] = [
+  // SOL SÜTUN: ACADEMIC FOUNDATION VERİLERİ
+  const academicData: TimelineItem[] = [
+    {
+      year: '2021 — 2025',
+      title: 'Bachelor of Computer Science',
+      subtitle: 'Software Engineering Focus',
+      description:
+        'Focused on Software Engineering and Distributed Systems. Developed a deep understanding of data structures and algorithm optimization.',
+      type: 'education',
+    },
+    {
+      year: '2020 — 2021',
+      title: 'Full Stack Specialization',
+      subtitle: 'Intensive Technical Training',
+      description:
+        'Intensive certification program focusing on the MERN stack and modern cloud deployment strategies.',
+      type: 'education',
+    },
+  ];
+
+  // SAĞ SÜTUN: MY JOURNEY VERİLERİ
+  const journeyData: TimelineItem[] = [
     {
       year: '2026 — PRESENT',
       title: 'Lead Frontend Developer',
-      company: 'SaaS Enterprise Solutions',
+      subtitle: 'SaaS Enterprise Solutions',
       description:
         'Kurumsal düzeyde dashboard ve premium SaaS arayüz mimarilerinin geliştirilmesi. Piksel kusursuz teslimat, performance optimizasyonu ve modern bileşen sistemlerinin kurgulanması.',
       type: 'experience',
@@ -30,7 +44,7 @@ export default function About() {
     {
       year: '2024 — 2026',
       title: 'Frontend Engineer',
-      company: 'SaaS Tech Studio',
+      subtitle: 'SaaS Tech Studio',
       description:
         "Kompleks veri görselleştirme araçları ve interaktif analitik panellerinin React/Next.js ile inşası. Sayfa yüklenme hızlarında %40'a varan optimizasyon başarımları.",
       type: 'experience',
@@ -38,74 +52,10 @@ export default function About() {
     {
       year: '2021 — 2025',
       title: 'Bachelor of Computer Science',
-      company: 'Software Engineering Focus',
+      subtitle: 'Software Engineering Focus',
       description:
         'Yazılım mühendisliği, veri yapıları ve algoritma optimizasyonu üzerine akademik temel. Dağıtık sistemler ve modern web mimarileri üzerine uzmanlaşma.',
       type: 'education',
-    },
-  ];
-
-  // My Core Principles Verileri
-  const principlesData: PrincipleItem[] = [
-    {
-      icon: (
-        <svg
-          className="w-8 h-8 text-cyan-400"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.5"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M13 10V3L4 14h7v7l9-11h-7z"
-          />
-        </svg>
-      ),
-      title: 'Performance First',
-      description:
-        'Optimization is not an afterthought. I build with Core Web Vitals in mind from day zero.',
-    },
-    {
-      icon: (
-        <svg
-          className="w-8 h-8 text-cyan-400"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
-          />
-        </svg>
-      ),
-      title: 'Scalable Patterns',
-      description:
-        'Clean, modular architecture that allows teams to scale without technical debt accumulation.',
-    },
-    {
-      icon: (
-        <svg
-          className="w-8 h-8 text-cyan-400"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M9.813 15.904L9 21l8.904-4.813L21 11l-5.187-3.904L9.813 15.904zM16 7l1-1M12 4l.5.5M19 11l.5.5"
-          />
-        </svg>
-      ),
-      title: 'User Centric',
-      description:
-        'Design is a conversation. I ensure every pixel serves a purpose for the end user.',
     },
   ];
 
@@ -132,7 +82,7 @@ export default function About() {
         />
       </div>
 
-      <div className="max-w-5xl w-full mx-auto flex flex-col gap-32 relative z-10">
+      <div className="max-w-6xl w-full mx-auto flex flex-col gap-32 relative z-10">
         {/* ================= 1. KISIM: CORE IDENTITY ================= */}
         <div className="text-center flex flex-col items-center justify-center min-h-[40vh] pt-12">
           <Reveal>
@@ -168,10 +118,10 @@ export default function About() {
           </Reveal>
         </div>
 
-        {/* ================= 2. KISIM: ABOUT ME BİLGİLERİ (FOTOĞRAFSIZ) ================= */}
+        {/* ================= 2. KISIM: ABOUT ME BİLGİLERİ ================= */}
         <div className="flex flex-col items-center text-center max-w-4xl mx-auto border-t border-zinc-800/60 pt-24 w-full">
           <Reveal>
-            <p className="text-zinc-500 uppercase tracking-[0.4em] text-xs font-mono mb-6">
+            <p className="text-zinc-500 uppercase tracking-[0.4em] text-sm font-mono mb-6">
               ABOUT ME
             </p>
           </Reveal>
@@ -182,14 +132,14 @@ export default function About() {
             </h3>
           </Reveal>
 
-          <div className="space-y-6 text-zinc-300 text-lg md:text-2xl font-light leading-relaxed max-w-3xl">
+          <div className="space-y-6 text-zinc-300 text-xl md:text-2xl font-light leading-relaxed max-w-3xl">
             <Reveal>
               <p>
                 I am a{' '}
                 <strong className="text-cyan-400 font-bold">
                   Frontend Developer
                 </strong>{' '}
-                focused on building SaaS interfaces and modern digital
+                focused on building premium SaaS interfaces and cinematic web
                 experiences. My approach combines technical rigor with a deep
                 understanding of user psychology.
               </p>
@@ -208,7 +158,6 @@ export default function About() {
           </div>
 
           <Reveal>
-            {/* DEĞİŞİKLİK: Simgeli Teknik Rozet Şeridi (KODUNUN DEĞİŞTİĞİ YER TAM OLARAK BURASI) */}
             <div className="flex flex-wrap justify-center gap-x-10 gap-y-4 pt-12 mt-4 font-mono text-xs tracking-widest text-cyan-400/90">
               <span className="flex items-center gap-2">
                 <i className="fa-solid fa-cube text-[14px] text-cyan-400"></i>{' '}
@@ -230,80 +179,108 @@ export default function About() {
           </Reveal>
         </div>
 
-        {/* ================= 3. KISIM: LOWER SECTION (CORE PRINCIPLES & MY JOURNEY TAM HİZALI) ================= */}
-        <div className="grid lg:grid-cols-12 gap-16 lg:gap-20 items-start border-t border-zinc-800/60 pt-24">
-          {/* SOL SÜTUN - MY CORE PRINCIPLES */}
-          <div className="lg:col-span-5 space-y-12">
+        {/* ================= 3. KISIM: LOWER SECTION (BÜYÜTÜLMÜŞ TIMELINE'LAR) ================= */}
+        <div className="grid lg:grid-cols-2 gap-16 lg:gap-12 items-start border-t border-zinc-800/60 pt-24">
+          {/* SOL SÜTUN - ACADEMIC FOUNDATION TIMELINE */}
+          <div className="space-y-12">
             <Reveal>
-              {/* Hizalamayı eşitleyen üst etiket eklendi */}
               <div className="space-y-2">
-                <p className="text-zinc-500 uppercase tracking-[0.3em] text-xs font-mono">
-                  VALUES
+                <p className="text-zinc-500 uppercase tracking-[0.3em] text-sm font-mono">
+                  EDUCATION
                 </p>
-                <h3 className="text-3xl md:text-4xl font-black tracking-tight text-white">
-                  My Core <span className="text-cyan-400">Principles</span>
+                <h3 className="text-4xl md:text-5xl font-black tracking-tight text-white">
+                  Academic <span className="text-cyan-400">Foundation</span>
                 </h3>
               </div>
             </Reveal>
 
-            {/* Dikey Kart Akışı */}
-            <div className="flex flex-col gap-6">
-              {principlesData.map((principle, index) => (
-                <Reveal key={index}>
-                  <div className="bg-zinc-900/40 backdrop-blur-sm border border-zinc-800/50 p-6 md:p-8 rounded-2xl shadow-[0_4px_30px_rgba(0,0,0,0.2)] hover:border-zinc-700/80 hover:bg-zinc-900/60 transition-all duration-300 flex flex-col text-left gap-4">
-                    <div className="p-2 w-12 h-12 rounded-xl bg-zinc-800/50 flex items-center justify-center border border-zinc-700/40">
-                      {principle.icon}
-                    </div>
-                    <div className="space-y-2">
-                      <h4 className="text-xl font-bold tracking-tight text-white">
-                        {principle.title}
-                      </h4>
-                      <p className="text-zinc-400 text-sm leading-relaxed font-light">
-                        {principle.description}
+            {/* Sol Zaman Çizgisi */}
+            <div className="relative border-l border-zinc-800 ml-2 pl-6 md:pl-10 space-y-10">
+              {academicData.map((item, index) => (
+                <div key={index} className="relative group">
+                  {/* Parlayan Nokta (Yazı büyüdüğü için top-2.5 ile hizası dengelendi) */}
+                  <div className="absolute -left-[31px] md:-left-[45px] top-2.5 w-2.5 h-2.5 rounded-full bg-zinc-950 border-2 border-zinc-700 group-hover:border-cyan-400 group-hover:bg-cyan-400 transition-all duration-300 group-hover:shadow-[0_0_12px_rgba(34,211,238,0.8)] z-10" />
+
+                  <Reveal>
+                    {/* p-6'dan p-8 md:p-10'a yükseltildi */}
+                    <div className="bg-zinc-900/20 backdrop-blur-sm border border-zinc-800/40 rounded-2xl p-8 md:p-10 hover:border-zinc-700/80 hover:bg-zinc-900/40 transition-all duration-300">
+                      {/* text-[10px]'den text-xs'e yükseltildi */}
+                      <div className="font-mono text-xs font-bold text-cyan-400 tracking-wider mb-2">
+                        {item.year}
+                      </div>
+
+                      <div className="flex flex-wrap items-baseline gap-2 mb-3">
+                        {/* text-lg'den text-xl md:text-2xl'ye yükseltildi */}
+                        <h4 className="text-xl md:text-2xl font-bold tracking-tight text-white group-hover:text-cyan-400 transition-colors duration-300">
+                          {item.title}
+                        </h4>
+                        {item.subtitle && (
+                          /* text-xs'den text-sm'e yükseltildi */
+                          <span className="text-zinc-400 text-sm font-medium ml-1">
+                            @ {item.subtitle}
+                          </span>
+                        )}
+
+                        {/* Rozet etiketi text-[9px]'den text-xs'e yükseltildi */}
+                        <span className="ml-auto text-xs font-mono font-bold tracking-widest px-3 py-1 rounded-full uppercase bg-violet-500/10 text-violet-400 border border-violet-500/20">
+                          {item.type}
+                        </span>
+                      </div>
+
+                      {/* Açıklama metni text-sm'den text-base'e yükseltildi */}
+                      <p className="text-zinc-400 text-base leading-relaxed">
+                        {item.description}
                       </p>
                     </div>
-                  </div>
-                </Reveal>
+                  </Reveal>
+                </div>
               ))}
             </div>
           </div>
 
-          {/* SAĞ SÜTUN: MY JOURNEY TIMELINE */}
-          <div className="lg:col-span-7 space-y-12">
+          {/* SAĞ SÜTUN - MY JOURNEY TIMELINE */}
+          <div className="space-y-12">
             <Reveal>
               <div className="space-y-2">
-                <p className="text-zinc-500 uppercase tracking-[0.3em] text-xs font-mono">
+                <p className="text-zinc-500 uppercase tracking-[0.3em] text-sm font-mono">
                   MILESTONES
                 </p>
-                <h3 className="text-3xl md:text-4xl font-black tracking-tight text-white">
+                <h3 className="text-4xl md:text-5xl font-black tracking-tight text-white">
                   My Journey
                 </h3>
               </div>
             </Reveal>
 
-            {/* Zaman Çizgisi Akışı */}
+            {/* Sağ Zaman Çizgisi */}
             <div className="relative border-l border-zinc-800 ml-2 pl-6 md:pl-10 space-y-10">
               {journeyData.map((item, index) => (
                 <div key={index} className="relative group">
-                  {/* Çizgi Üzerindeki Parlayan Nokta */}
-                  <div className="absolute -left-[31px] md:-left-[45px] top-1.5 w-2.5 h-2.5 rounded-full bg-zinc-950 border-2 border-zinc-700 group-hover:border-cyan-400 group-hover:bg-cyan-400 transition-all duration-300 group-hover:shadow-[0_0_12px_rgba(34,211,238,0.8)] z-10" />
+                  {/* Parlayan Nokta */}
+                  <div className="absolute -left-[31px] md:-left-[45px] top-2.5 w-2.5 h-2.5 rounded-full bg-zinc-950 border-2 border-zinc-700 group-hover:border-cyan-400 group-hover:bg-cyan-400 transition-all duration-300 group-hover:shadow-[0_0_12px_rgba(34,211,238,0.8)] z-10" />
 
                   <Reveal>
-                    <div className="bg-zinc-900/20 backdrop-blur-sm border border-zinc-800/40 rounded-2xl p-6 md:p-8 hover:border-zinc-700/80 hover:bg-zinc-900/40 transition-all duration-300">
-                      <div className="font-mono text-[10px] font-bold text-cyan-400 tracking-wider mb-2">
+                    {/* p-6'dan p-8 md:p-10'a yükseltildi */}
+                    <div className="bg-zinc-900/20 backdrop-blur-sm border border-zinc-800/40 rounded-2xl p-8 md:p-10 hover:border-zinc-700/80 hover:bg-zinc-900/40 transition-all duration-300">
+                      {/* text-xs yapıldı */}
+                      <div className="font-mono text-xs font-bold text-cyan-400 tracking-wider mb-2">
                         {item.year}
                       </div>
 
                       <div className="flex flex-wrap items-baseline gap-2 mb-3">
-                        <h4 className="text-lg font-bold tracking-tight text-white group-hover:text-cyan-400 transition-colors duration-300">
+                        {/* text-xl md:text-2xl yapıldı */}
+                        <h4 className="text-xl md:text-2xl font-bold tracking-tight text-white group-hover:text-cyan-400 transition-colors duration-300">
                           {item.title}
                         </h4>
-                        <span className="text-zinc-400 text-xs font-medium">
-                          @ {item.company}
-                        </span>
+                        {item.subtitle && (
+                          /* text-sm yapıldı */
+                          <span className="text-zinc-400 text-sm font-medium ml-1">
+                            @ {item.subtitle}
+                          </span>
+                        )}
 
+                        {/* text-xs yapıldı */}
                         <span
-                          className={`ml-auto text-[9px] font-mono font-bold tracking-widest px-2.5 py-1 rounded-full uppercase ${
+                          className={`ml-auto text-xs font-mono font-bold tracking-widest px-3 py-1 rounded-full uppercase ${
                             item.type === 'experience'
                               ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
                               : 'bg-violet-500/10 text-violet-400 border border-violet-500/20'
@@ -313,7 +290,8 @@ export default function About() {
                         </span>
                       </div>
 
-                      <p className="text-zinc-400 text-sm leading-relaxed">
+                      {/* text-base yapıldı */}
+                      <p className="text-zinc-400 text-base leading-relaxed">
                         {item.description}
                       </p>
                     </div>
