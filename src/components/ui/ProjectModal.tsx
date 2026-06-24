@@ -185,7 +185,7 @@ export default function ProjectModal({ project, onClose }: Props) {
             <div className="grid grid-cols-4 gap-2.5 h-14 md:h-16 shrink-0">
               {galleryImages.slice(0, 4).map((img, idx) => (
                 <button
-                  key={idx}
+                  key={`thumb-${idx}`}
                   onClick={() => setActiveImgIndex(idx)}
                   className={`relative rounded-xl overflow-hidden border transition-all duration-300 ${
                     idx === activeImgIndex
@@ -258,9 +258,9 @@ export default function ProjectModal({ project, onClose }: Props) {
                 Technologies Used
               </span>
               <div className="flex flex-wrap gap-1.5">
-                {project.tech.map((t) => (
+                {project.tech.map((t, idx) => (
                   <span
-                    key={t}
+                    key={`${t}-${idx}`}
                     className="px-3 py-1 text-[11px] font-mono rounded-lg bg-cyan-500/5 border border-cyan-500/10 text-cyan-400/90 shadow-[0_2px_10px_rgba(6,182,212,0.02)]"
                   >
                     {t}
@@ -270,7 +270,7 @@ export default function ProjectModal({ project, onClose }: Props) {
             </div>
           </div>
 
-          {/* OYLAMA ALANI (RAFINE EDİLMİŞ KART) */}
+          {/* OYLAMA ALANI */}
           <div className="mt-8 pt-6 border-t border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white/[0.01] -mx-4 px-4 py-3 rounded-xl border border-white/[0.02]">
             <div className="space-y-0.5">
               <h4 className="text-[11px] font-mono uppercase tracking-wider text-slate-400">
@@ -286,7 +286,7 @@ export default function ProjectModal({ project, onClose }: Props) {
                 const isSelected = star <= (hoverRating || rating);
                 return (
                   <button
-                    key={star}
+                    key={`star-${star}`}
                     type="button"
                     onClick={() => setRating(star)}
                     onMouseEnter={() => setHoverRating(star)}
