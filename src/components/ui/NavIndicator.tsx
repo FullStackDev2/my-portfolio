@@ -12,7 +12,7 @@ type Props = {
 export default function NavIndicator({ activeRect }: Props) {
   return (
     <motion.div
-      className="absolute bottom-[-4px] h-[3px] rounded-full bg-gradient-to-r from-[#ff3d6e] to-[#ff5b8a]"
+      className="absolute top-full mt-1 h-[3px] rounded-full bg-gradient-to-r from-[#ff3d6e] to-[#ff5b8a] "
       animate={{
         left: activeRect?.left || 0,
         width: activeRect?.width || 0,

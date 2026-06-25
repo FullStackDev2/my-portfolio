@@ -69,27 +69,17 @@ export default function Navbar() {
   useEffect(() => {
     const updateIndicator = () => {
       const el = itemRefs.current[active];
-      const nav = navRef.current;
-      if (!el || !nav) return;
+
+      if (!el) return;
 
       setActiveRect({
         left: el.offsetLeft,
         width: el.offsetWidth,
       });
-
-      const navRect = nav.getBoundingClientRect();
-      const elRect = el.getBoundingClientRect();
-
-      setActiveRect({
-        left: elRect.left - navRect.left,
-        width: elRect.width,
-      });
     };
 
-    // İlk yüklemede çalıştır
     updateIndicator();
 
-    // Sayfa boyutu değiştiğinde pozisyonu güncelle (ÇOK ÖNEMLİ!)
     window.addEventListener('resize', updateIndicator);
 
     return () => window.removeEventListener('resize', updateIndicator);
@@ -142,7 +132,7 @@ export default function Navbar() {
 
           {/* DEĞİŞİKLİK 2: ml-auto'yu kaldırdık. justify-between zaten sağa itecek */}
           <nav ref={navRef} className="relative flex items-center gap-8">
-            <div className="flex items-center gap-8 ml-6">
+            <div ref={navRef} className="relative flex items-center gap-8 ml-6">
               {navItems.map((item) => (
                 <a
                   key={item.id}
@@ -159,9 +149,9 @@ export default function Navbar() {
                   {item.label}
                 </a>
               ))}
-            </div>
 
-            <NavIndicator activeRect={activeRect} />
+              <NavIndicator activeRect={activeRect} />
+            </div>
 
             <motion.div
               style={{
