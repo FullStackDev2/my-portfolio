@@ -62,7 +62,7 @@ export default function About() {
   return (
     <section
       id="about"
-      className="min-h-screen flex flex-col justify-center px-6 py-32 relative overflow-hidden border-t border-zinc-800/50 bg-[#020617]"
+      className="min-h-screen flex flex-col justify-center px-6 py-32 relative overflow-hidden border-t border-zinc-800/50 bg-[#020617] scroll-mt-20"
       style={{
         scrollSnapAlign: 'start',
         scrollSnapStop: 'always',

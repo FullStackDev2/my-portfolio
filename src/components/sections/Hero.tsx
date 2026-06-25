@@ -22,7 +22,10 @@ const textItemVariants: Variants = {
 
 export default function Hero() {
   return (
-    <section className="relative w-full min-h-screen overflow-hidden border-t border-zinc-800/50 bg-[#020617]">
+    <section
+      id="hero"
+      className="relative w-full min-h-screen overflow-hidden border-t border-zinc-800/50 bg-[#020617] scroll-mt-20"
+    >
       {/* Arka Plan Dokusu */}
       <div
         className="absolute inset-0 pointer-events-none opacity-[0.03]"
@@ -39,9 +42,9 @@ export default function Hero() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_70%,rgba(139,92,246,0.04),transparent_45%)]" />
       </div>
 
-      <div className="max-w-[1400px] mx-auto h-screen flex flex-col md:flex-row items-center px-6 lg:px-16">
-        {/* SOL: İÇERİK */}
-        <div className="flex-1 flex flex-col justify-center z-20 pt-20 md:pt-0">
+      <div className="max-w-[1400px] mx-auto h-screen flex flex-col md:flex-row items-center  px-6 lg:px-16">
+        {/* SOL: İÇERİK - items-start eklendi */}
+        <div className="scale-98 flex-1 flex flex-col justify-center items-start z-20 pt-20 md:pt-0 -translate-x-45 w-full text-left">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -93,7 +96,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8 }}
-            className="flex flex-wrap gap-4 mt-10"
+            className="flex flex-wrap gap-4 mt-10 justify-start"
           >
             <motion.button
               whileHover={{ scale: 1.02 }}
@@ -123,17 +126,17 @@ export default function Hero() {
           </motion.div>
         </div>
 
-        {/* SAĞ: PORTRE - YUKARI ALINDI */}
+        {/* SAĞ: PORTRE */}
         <div
-          className="absolute right-0 top-16 w-[40%] h-[85%] hidden md:block pointer-events-none z-10 
-                [mask-image:linear-gradient(to_bottom,black_60%,transparent_100%)]"
+          className="absolute right-0 top-16 w-[46%] h-[85%] hidden md:block pointer-events-none z-10 
+              [mask-image:linear-gradient(to_bottom,black_60%,transparent_100%)]"
         >
           <div className="relative w-full h-full">
             <Image
               src="/NobackGroundd.png"
               alt="Nurettin Dincer"
               fill
-              className="object-contain object-bottom scale-100 origin-bottom grayscale contrast-120 brightness-[60%]"
+              className="object-contain object-bottom -translate-x-23 scale-103 origin-bottom grayscale contrast-115 brightness-[45%] opacity-70 blur-[1px]"
               priority
             />
           </div>
@@ -142,12 +145,49 @@ export default function Hero() {
       </div>
 
       {/* SCROLL INDICATOR */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-20">
-        <span className="text-[10px] tracking-[0.2em] text-zinc-500 font-bold">
-          SCROLL
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.5, duration: 1 }}
+        className="absolute bottom-2 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-3 z-20 pointer-events-none"
+      >
+        <span className="text-[10px] tracking-[0.4em] font-semibold text-zinc-400 uppercase">
+          Scroll to Explore
         </span>
-        <div className="w-[1px] h-10 bg-gradient-to-b from-transparent to-zinc-500" />
-      </div>
+
+        <motion.div
+          animate={{ y: [0, 6, 0] }}
+          transition={{
+            duration: 1.8,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+          className="mt-1"
+        >
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className="drop-shadow-[0_0_10px_rgba(34,211,238,0.9)]"
+          >
+            <path
+              d="M12 5V18"
+              stroke="#22d3ee"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+            />
+            <path
+              d="M8 14L12 18L16 14"
+              stroke="#22d3ee"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </motion.div>
+      </motion.div>
     </section>
   );
 }

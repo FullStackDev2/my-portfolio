@@ -57,7 +57,7 @@ const getProjectIcon = (slug: string) => {
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
-            d="M9.813 15.904 9 21l8.904-4.473M9.813 15.904 12.11 9.171m-2.297 6.733L3.686 12.11m13.218 4.417L21 9l-4.096-1.289m-4.794 1.46 2.297-6.733M12.11 9.171 16.904 7.71M9.813 15.904 3.686 12.11M3.686 12.11 7.71 7.71m4.4M7.71 7.71l4.4-4.4M7.71 7.71 12.11 9.171m4.794-1.461 4.096-4.096M16.904 7.71l4.096-4.096"
+            d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.828a2.25 2.25 0 1 0 3.935-2.186 2.25 2.25 0 0 0-3.935 2.186Z"
           />
         </svg>
       );
@@ -182,7 +182,7 @@ export default function Projects() {
   return (
     <section
       id="projects"
-      className="min-h-screen px-6 py-32 flex flex-col select-none text-white relative overflow-hidden border-t border-zinc-800/50 bg-[#020617]"
+      className="min-h-screen px-6 py-32 flex flex-col select-none text-white relative overflow-hidden border-t border-zinc-800/50 bg-[#020617] scroll-mt-20"
       style={{ scrollSnapAlign: 'start', scrollSnapStop: 'always' }}
     >
       {/* SINEMATIK ARKA PLAN ISIKLARI */}

@@ -12,15 +12,15 @@ type Props = {
 export default function NavIndicator({ activeRect }: Props) {
   return (
     <motion.div
-      className="absolute bottom-0 h-[3px] rounded-full bg-gradient-to-r from-pink-500 via-rose-400 to-orange-400"
+      className="absolute bottom-[-4px] h-[3px] rounded-full bg-gradient-to-r from-[#ff3d6e] to-[#ff5b8a]"
       animate={{
-        x: activeRect?.left || 0,
+        left: activeRect?.left || 0,
         width: activeRect?.width || 0,
       }}
+      // Spring yerine tween kullanıyoruz
       transition={{
-        type: 'spring',
-        stiffness: 500,
-        damping: 35,
+        duration: 0.25, // Animasyon süresi (saniye)
+        ease: 'easeInOut', // Yumuşak başla, yumuşak bitir
       }}
     />
   );
