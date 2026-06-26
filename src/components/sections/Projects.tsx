@@ -211,8 +211,14 @@ export default function Projects() {
           <p className="text-cyan-500 tracking-[0.3em] uppercase mb-4 text-xs font-semibold font-mono">
             {'// LATEST WORK // PROJECTS'}
           </p>
-          <h2 className="text-5xl md:text-7xl font-black tracking-tight bg-clip-text bg-gradient-to-b from-white to-white/50">
-            Projects I’ve Built
+          <h2
+            className="text-5xl md:text-7xl font-black tracking-tight text-transparent bg-clip-text leading-normal"
+            style={{
+              backgroundImage:
+                'linear-gradient(90deg, #71B2FF 1%, #7E8FFF 12%, #B46BFF 20%, #F46D9C 30%, #FF9562 47%, #FFD66B 100%)',
+            }}
+          >
+            Projects I&#39;ve Built
           </h2>
         </div>
 
@@ -260,94 +266,135 @@ export default function Projects() {
           className="grid lg:grid-cols-3 md:grid-cols-2 gap-10"
         >
           <AnimatePresence mode="popLayout">
-            {visibleProjects.map((project, i) => (
-              <motion.div
-                key={project.slug}
-                layout
-                variants={cardVariants}
-                whileHover={{
-                  y: -10,
-                  scale: 1.02,
-                  transition: { duration: 0.18 },
-                }}
-                onClick={() => setSelectedProject(project)}
-                className="relative cursor-pointer rounded-2xl bg-zinc-900/10 border border-zinc-800/20 overflow-hidden group will-change-transform shadow-2xl shadow-black/80 flex flex-col h-[420px] justify-end backdrop-blur-sm transition-all duration-500 hover:bg-zinc-900/30"
-              >
-                {/* Resim Katmani & Fallback */}
-                <div className="absolute inset-0 z-0 bg-gradient-to-br from-zinc-950 to-zinc-900">
-                  {project.image ? (
-                    <>
+            {visibleProjects.map((project, i) => {
+              // Her kartın kendi renk temasını tanımlıyoruz
+              const getTheme = (index: number) => {
+                switch (index % 3) {
+                  case 0:
+                    return {
+                      bg: 'bg-zinc-900/40',
+                      border: 'border-zinc-800/60',
+                      glow: 'from-cyan-500/10',
+                      icon: 'bg-cyan-500/10 border-cyan-500/20 text-cyan-400',
+                      tag: 'bg-cyan-500/5 border-cyan-500/10 text-cyan-400',
+                    };
+                  case 1:
+                    return {
+                      bg: 'bg-purple-950/40',
+                      border: 'border-white/5',
+                      glow: 'from-purple-500/15',
+                      icon: 'bg-purple-500/10 border-purple-500/20 text-purple-400',
+                      tag: 'bg-purple-500/5 border-purple-500/10 text-purple-400',
+                    };
+                  case 2:
+                    return {
+                      bg: 'bg-amber-950/30',
+                      border: 'border-amber-500/15',
+                      glow: 'from-amber-500/15',
+                      icon: 'bg-amber-500/10 border-amber-500/20 text-amber-400',
+                      tag: 'bg-amber-500/9 border-amber-500/10 text-amber-400',
+                    };
+                }
+              };
+              const theme = getTheme(i)!;
+
+              return (
+                <motion.div
+                  key={project.slug}
+                  layout
+                  variants={cardVariants}
+                  whileHover={{ y: -10, scale: 1.02 }}
+                  onClick={() => setSelectedProject(project)}
+                  className={`relative cursor-pointer rounded-2xl backdrop-blur-md border border-white/10 overflow-hidden group shadow-2xl flex flex-col h-[420px] justify-end transition-all duration-500 ${theme.bg} hover:border-white/20`}
+                >
+                  {/* Arka Plan Katmanı */}
+                  <div className="absolute inset-0 z-0">
+                    {project.image ? (
                       <Image
                         src={project.image}
                         alt={project.title}
                         fill
-                        sizes="(max-w-768px) 100vw, 33vw"
+                        sizes="(max-width: 768px) 100vw, 33vw"
                         priority={i < 3}
                         className="object-cover transition-transform duration-1000 ease-out group-hover:scale-105"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/70 to-transparent opacity-90 group-hover:opacity-85 transition-opacity duration-500" />
-                    </>
-                  ) : (
-                    <div className="absolute inset-0 opacity-40 bg-[linear-gradient(to_right,#1f2937_1px,transparent_1px),linear-gradient(to_bottom,#1f2937_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]">
-                      <div className="absolute inset-0 bg-gradient-to-tr from-cyan-500/[0.03] via-transparent to-purple-500/[0.03]" />
-                    </div>
-                  )}
-                </div>
+                    ) : (
+                      <div className="absolute inset-0 bg-zinc-900/80" />
+                    )}
+                    {/* Yeni Eklenen Glow*/}
+                    {/* 1. Sol Alt Köşe Işık (Ana Kaynak) */}
+                    <div
+                      className={`absolute -bottom-10 -left-10 w-2/3 h-2/3 bg-gradient-to-tr ${theme.glow} via-transparent to-transparent opacity-50 blur-3xl z-0 pointer-events-none`}
+                    />
 
-                {/* Premium Capraz Cam Pariltisi */}
-                <div className="absolute inset-0 w-[200%] h-full z-20 pointer-events-none bg-gradient-to-r from-transparent via-white/[0.04] to-transparent -skew-x-12 -translate-x-[150%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-out" />
+                    {/* 2. Taban Işığı (Tüm alt kenarı besler) */}
+                    <div
+                      className={`absolute -bottom-24 left-0 right-0 h-64 bg-gradient-to-t ${theme.glow} via-transparent to-transparent opacity-40 blur-3xl z-0 pointer-events-none`}
+                    />
 
-                {/* Icerik Bloku */}
-                <div className="relative z-10 p-6 flex flex-col justify-end h-full w-full bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-10 h-10 flex items-center justify-center shrink-0 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.1)]">
-                      {getProjectIcon(project.slug)}
-                    </div>
-                    <h3 className="text-xl font-bold tracking-tight text-white group-hover:text-cyan-400 transition-colors duration-300">
-                      {project.title}
-                    </h3>
+                    {/* 3. Karanlık Gradyan (Okunabilirlik için) */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#020617] via-[#020617]/50 to-transparent z-10" />
+                    {/* Yeni Eklenen Glow*/}
+
+                    {/* Kartın içine hafif bir renkli glow/ışık efekti veriyoruz */}
+                    <div
+                      className={`absolute inset-0 bg-gradient-to-tr ${theme.glow} via-transparent to-transparent opacity-80`}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#020617] via-[#020617]/70 to-transparent" />
                   </div>
 
-                  <p className="text-zinc-400 group-hover:text-zinc-300 text-xs line-clamp-2 leading-relaxed mb-5 opacity-90 transition-all duration-500">
-                    {project.description}
-                  </p>
-
-                  <div className="flex justify-between items-center pt-4 border-t border-zinc-800/60 w-full">
-                    <div className="flex flex-wrap gap-2">
-                      {project.tech?.slice(0, 3).map((tech) => (
-                        <span
-                          key={tech}
-                          className="px-2.5 py-1 rounded-md bg-cyan-500/5 border border-cyan-500/10 text-cyan-400 text-[10px] font-medium tracking-wide"
-                        >
-                          {tech}
-                        </span>
-                      ))}
-                    </div>
-
-                    <div className="text-zinc-400 group-hover:text-cyan-400 transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300 ease-out shrink-0">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={2.5}
-                        stroke="currentColor"
-                        className="w-4 h-4"
+                  {/* İçerik Bloğu */}
+                  <div className="relative z-30 p-6 flex flex-col justify-end h-full w-full">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div
+                        className={`w-10 h-10 flex items-center justify-center shrink-0 rounded-xl border shadow-[0_0_15px_rgba(0,0,0,0.1)] ${theme.icon}`}
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"
-                        />
-                      </svg>
+                        {getProjectIcon(project.slug)}
+                      </div>
+                      <h3 className="text-xl font-bold tracking-tight text-white group-hover:text-white/90 transition-colors duration-300">
+                        {project.title}
+                      </h3>
+                    </div>
+
+                    <p className="text-zinc-400 group-hover:text-zinc-300 text-xs line-clamp-2 leading-relaxed mb-5 opacity-90 transition-all duration-500">
+                      {project.description}
+                    </p>
+
+                    <div
+                      className={`flex justify-between items-center pt-4 border-t ${theme.border} w-full`}
+                    >
+                      <div className="flex flex-wrap gap-2">
+                        {project.tech?.slice(0, 3).map((tech) => (
+                          <span
+                            key={tech}
+                            className={`px-2.5 py-1 rounded-md border text-[10px] font-medium tracking-wide ${theme.tag}`}
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+
+                      <div className="text-zinc-500 group-hover:text-white transition-all duration-300 shrink-0">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={2.5}
+                          stroke="currentColor"
+                          className="w-4 h-4"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"
+                          />
+                        </svg>
+                      </div>
                     </div>
                   </div>
-                </div>
-
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-700 bg-gradient-to-br from-cyan-500/5 via-transparent to-purple-500/5" />
-                <div className="absolute inset-0 shadow-[0_0_120px_rgba(34,211,238,.08)] opacity-0 group-hover:opacity-100 transition duration-700" />
-                <div className="absolute inset-0 rounded-2xl pointer-events-none z-30 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] transition-all duration-500 group-hover:shadow-[0_0_40px_-15px_rgba(34,211,238,0.2)]" />
-              </motion.div>
-            ))}
+                </motion.div>
+              );
+            })}
           </AnimatePresence>
         </motion.div>
 
