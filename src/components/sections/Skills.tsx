@@ -96,6 +96,26 @@ export default function Skills() {
       className="min-h-screen px-6 pt-12 pb-32 flex flex-col justify-center relative overflow-hidden bg-[#020617] scroll-mt-20"
       style={{ scrollSnapAlign: 'start', scrollSnapStop: 'always' }}
     >
+      {/* SINEMATIK ARKA PLAN ISIKLARI */}
+      <div className="absolute inset-0 pointer-events-none z-0">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(34,211,238,0.04),transparent_55%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_70%,rgba(139,92,246,0.03),transparent_45%)]" />
+        <div
+          className="absolute inset-0 opacity-[0.12]"
+          style={{
+            backgroundImage:
+              'radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px)',
+            backgroundSize: '32px 32px',
+          }}
+        />
+      </div>
+
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -left-60 top-20 w-[700px] h-[700px] rounded-full bg-cyan-500/10 blur-[180px]" />
+        <div className="absolute -right-60 bottom-0 w-[800px] h-[800px] rounded-full bg-purple-500/10 blur-[220px]" />
+        <div className="absolute left-1/2 top-1/2 w-[600px] h-[600px] rounded-full bg-blue-500/5 blur-[160px] -translate-x-1/2 -translate-y-1/2" />
+      </div>
+
       {/* Arka Plan Matris Izgarası */}
       <div
         className="absolute inset-0 pointer-events-none z-0 opacity-[0.03]"

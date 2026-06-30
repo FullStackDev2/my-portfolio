@@ -36,12 +36,6 @@ export default function Hero() {
         }}
       />
 
-      {/* SİNEMATİK ARKA PLAN IŞIKLARI */}
-      <div className="absolute inset-0 pointer-events-none z-0">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(34,211,238,0.06),transparent_55%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_70%,rgba(139,92,246,0.04),transparent_45%)]" />
-      </div>
-
       <div className="max-w-[1400px] mx-auto h-screen flex flex-col md:flex-row items-center  px-6 lg:px-16">
         {/* SOL: İÇERİK - items-start eklendi */}
         <div className="scale-98 flex-1 flex flex-col justify-center items-start z-20 pt-20 md:pt-0 -translate-x-45 w-full text-left">
@@ -100,20 +94,33 @@ export default function Hero() {
           >
             <motion.button
               whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              whileTap={{ scale: 1.08 }}
               className="group relative inline-flex items-center gap-2.5 rounded-full p-[1.5px] bg-gradient-to-r from-blue-500 to-purple-500 shadow-[0_0_15px_rgba(139,92,246,0.3)] hover:shadow-[0_0_25px_rgba(139,92,246,0.5)]"
             >
-              <span className="flex items-center gap-2.5 rounded-full bg-[#0a0a0f] px-8 py-4 text-[15px] font-semibold text-white">
+              <span className="flex items-center gap-2.5 rounded-full bg-[#0a0a0f] px-8 py-4 text-[15px] font-semibold text-white ">
                 View Projects
-                <svg
-                  className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-1"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                >
-                  <path d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
+                <div className="relative flex items-center justify-center transition-colors duration-300 ease-in-out text-white group-hover:text-[#08d565] group-hover:delay-[100ms]">
+                  <svg
+                    className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-2"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path
+                      d="M5 12h14"
+                      className="transition-transform duration-300 ease-out group-hover:translate-x-[2px]"
+                    />
+
+                    <path
+                      d="M12 5l7 7-7 7"
+                      className="transition-transform duration-300 ease-out group-hover:translate-x-[5px]"
+                    />
+                  </svg>
+                  <div className="absolute inset-0 -z-10 rounded-full bg-blue-500/0 blur-md transition-all duration-300 group-hover:bg-blue-500/40 group-hover:delay-[300ms]"></div>
+                </div>
               </span>
             </motion.button>
             <motion.button

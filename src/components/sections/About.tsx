@@ -68,15 +68,15 @@ export default function About() {
         scrollSnapStop: 'always',
       }}
     >
-      {/* SİNEMATİK ARKA PLAN IŞIKLARI */}
+      {/* SINEMATIK ARKA PLAN ISIKLARI */}
       <div className="absolute inset-0 pointer-events-none z-0">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(34,211,238,0.06),transparent_55%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_70%,rgba(139,92,246,0.04),transparent_45%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(34,211,238,0.04),transparent_55%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_70%,rgba(139,92,246,0.03),transparent_45%)]" />
         <div
-          className="absolute inset-0 opacity-[0.15]"
+          className="absolute inset-0 opacity-[0.12]"
           style={{
             backgroundImage:
-              'radial-gradient(rgba(255,255,255,0.15) 1px, transparent 1px)',
+              'radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px)',
             backgroundSize: '32px 32px',
           }}
         />

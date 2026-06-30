@@ -7,6 +7,8 @@ import Footer from '@/components/layout/Footer';
 import Skills from '@/components/sections/Skills';
 import ScrollProgress from '@/components/ui/ScrollProgress';
 import GlowBackground from '@/components/ui/GlowBackground';
+import Vision from '@/components/sections/Connect';
+import Connect from '@/components/sections/Vision';
 
 export default function Home() {
   return (
@@ -20,6 +22,8 @@ export default function Home() {
       <About />
       <Skills />
       <Projects />
+      <Connect />
+      <Vision />
       <Contact />
       <Footer />
     </main>
