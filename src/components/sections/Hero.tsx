@@ -36,9 +36,9 @@ export default function Hero() {
         }}
       />
 
-      <div className="max-w-[1400px] mx-auto h-screen flex flex-col md:flex-row items-center  px-6 lg:px-16">
+      <div className="max-w-[1400px] mx-auto h-screen flex flex-col md:flex-row items-center px-6 lg:px-0">
         {/* SOL: İÇERİK - items-start eklendi */}
-        <div className="scale-98 flex-1 flex flex-col justify-center items-start z-20 pt-20 md:pt-0 -translate-x-45 w-full text-left">
+        <div className="flex flex-col justify-center items-start z-20 pt-20 md:pt-0 w-full text-left">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}

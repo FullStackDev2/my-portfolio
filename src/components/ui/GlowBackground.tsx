@@ -3,7 +3,15 @@
 import { useEffect, useState } from 'react';
 
 // Klasöründeki section dosyalarına göre ID'ler (Küçük harf hassasiyeti önemlidir)
-const SECTIONS = ['hero', 'about', 'skills', 'projects', 'contact'];
+const SECTIONS = [
+  'hero',
+  'about',
+  'skills',
+  'projects',
+  'connect',
+  'vision',
+  'contact',
+];
 
 export default function GlowBackground() {
   const [activeSection, setActiveSection] = useState('hero');
@@ -37,21 +45,26 @@ export default function GlowBackground() {
   }, []);
 
   return (
-    <div className="fixed inset-0 -z-50 pointer-events-none overflow-hidden select-none">
+    <div
+      aria-hidden="true"
+      className="fixed inset-0 -z-10 overflow-hidden bg-[#0a0e1a] pointer-events-none"
+    >
+      {/* mavi + teal, düşük opaklık — mor yok */}
+      <div className="absolute top-[2%] left-[10%] w-[380px] h-[380px] rounded-full bg-[#4facfe] blur-[70px] opacity-[0.22] animate-drift1" />
+      <div className="absolute top-[22%] right-[8%] w-[300px] h-[300px] rounded-full bg-[#2dd4bf] blur-[70px] opacity-[0.18] animate-drift2" />
+      <div className="absolute top-[55%] left-[60%] w-[340px] h-[340px] rounded-full bg-[#4facfe] blur-[70px] opacity-[0.16] animate-drift1-reverse" />
+      <div className="absolute top-[78%] left-[5%] w-[280px] h-[280px] rounded-full bg-[#2dd4bf] blur-[70px] opacity-[0.18] animate-drift2-reverse" />
+      <div className="absolute top-[100%] right-[12%] w-[320px] h-[320px] rounded-full bg-[#4facfe] blur-[70px] opacity-[0.16] animate-drift1-slow" />
+      <div className="absolute top-[130%] left-[35%] w-[260px] h-[260px] rounded-full bg-[#2dd4bf] blur-[70px] opacity-[0.14] animate-drift2-slow" />
+      <div className="absolute top-[160%] right-[5%] w-[300px] h-[300px] rounded-full bg-[#4facfe] blur-[70px] opacity-[0.16] animate-drift1-reverse" />
+
+      {/* çok hafif grain doku — blob'ların "plastik" durmasını önler, opsiyonel */}
       <div
-        className={`absolute -top-40 -left-40 w-96 h-96 rounded-full bg-blue-500/10 blur-[128px] transition-opacity duration-1000 ${activeSection === 'hero' ? 'opacity-100' : 'opacity-0'}`}
-      />
-      <div
-        className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-emerald-500/5 blur-[160px] transition-opacity duration-1000 ${activeSection === 'about' ? 'opacity-100' : 'opacity-0'}`}
-      />
-      <div
-        className={`absolute top-1/3 right-10 w-[450px] h-[450px] rounded-full bg-amber-500/5 blur-[140px] transition-opacity duration-1000 ${activeSection === 'skills' ? 'opacity-100' : 'opacity-0'}`}
-      />
-      <div
-        className={`absolute bottom-10 right-10 w-[600px] h-[600px] rounded-full bg-purple-500/10 blur-[180px] transition-opacity duration-1000 ${activeSection === 'projects' ? 'opacity-100' : 'opacity-0'}`}
-      />
-      <div
-        className={`absolute inset-0 m-auto w-80 h-80 rounded-full bg-rose-500/10 blur-[120px] transition-opacity duration-1000 ${activeSection === 'contact' ? 'opacity-100' : 'opacity-0'}`}
+        className="absolute inset-0 opacity-[0.035]"
+        style={{
+          backgroundImage:
+            "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
+        }}
       />
     </div>
   );

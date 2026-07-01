@@ -1,11 +1,12 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import Image from 'next/image';
 
 type Project = {
   title: string;
+  subtitle?: string;
   description: string;
   tech: string[];
   image?: string;
@@ -13,6 +14,8 @@ type Project = {
   client?: string;
   category?: string;
   date?: string;
+  projectUrl?: string;
+  githubUrl?: string;
 };
 
 type Props = {
@@ -22,15 +25,42 @@ type Props = {
 
 export default function ProjectModal({ project, onClose }: Props) {
   const [activeImgIndex, setActiveImgIndex] = useState(0);
-  const [rating, setRating] = useState<number>(0);
-  const [hoverRating, setHoverRating] = useState<number>(0);
   const [prevProjectTitle, setPrevProjectTitle] = useState<string | null>(null);
 
-  if (project && project.title !== prevProjectTitle) {
-    setPrevProjectTitle(project.title);
-    setActiveImgIndex(0);
-    setRating(0);
-  }
+  const galleryImages = useMemo(() => {
+    if (!project) return [];
+
+    if (project.images && project.images.length > 0) {
+      return project.images;
+    }
+
+    if (project.image) {
+      return [project.image];
+    }
+
+    return [];
+  }, [project]);
+
+  const hasImages = galleryImages.length > 0;
+
+  const THUMB_VISIBLE = 5;
+
+  const visibleThumbnails = useMemo(() => {
+    if (galleryImages.length <= THUMB_VISIBLE) return galleryImages;
+
+    let start = activeImgIndex - Math.floor(THUMB_VISIBLE / 2);
+    start = Math.max(0, start);
+    start = Math.min(start, galleryImages.length - THUMB_VISIBLE);
+
+    return galleryImages.slice(start, start + THUMB_VISIBLE);
+  }, [galleryImages, activeImgIndex]);
+
+  useEffect(() => {
+    if (project && project.title !== prevProjectTitle) {
+      setPrevProjectTitle(project.title);
+      setActiveImgIndex(0);
+    }
+  }, [project, prevProjectTitle]);
 
   useEffect(() => {
     document.body.style.overflow = project ? 'hidden' : 'auto';
@@ -43,51 +73,55 @@ export default function ProjectModal({ project, onClose }: Props) {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     };
+
     window.addEventListener('keydown', handleEsc);
     return () => window.removeEventListener('keydown', handleEsc);
   }, [onClose]);
 
+  useEffect(() => {
+    const handleKeys = (e: KeyboardEvent) => {
+      if (!project || galleryImages.length === 0) return;
+
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        setActiveImgIndex((p) => (p + 1) % galleryImages.length);
+      }
+
+      if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        setActiveImgIndex(
+          (p) => (p - 1 + galleryImages.length) % galleryImages.length,
+        );
+      }
+    };
+
+    window.addEventListener('keydown', handleKeys);
+    return () => window.removeEventListener('keydown', handleKeys);
+  }, [project, galleryImages]);
+
   if (!project) return null;
-
-  const galleryImages =
-    project.images && project.images.length > 0
-      ? project.images
-      : ([project.image].filter(Boolean) as string[]);
-
-  const hasImages = galleryImages.length > 0;
-
-  const handleNextImage = () => {
-    setActiveImgIndex((prev) => (prev + 1) % galleryImages.length);
-  };
-
-  const handlePrevImage = () => {
-    setActiveImgIndex(
-      (prev) => (prev - 1 + galleryImages.length) % galleryImages.length,
-    );
-  };
 
   return (
     <div
       className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 md:p-8 select-none"
       onClick={onClose}
     >
-      {/* Modal Açılış */}
       <motion.div
         initial={{ opacity: 0, scale: 0.9, y: 40 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 40 }}
         transition={{ duration: 0.35, ease: 'easeOut' }}
-        className="w-full max-w-5xl h-[85vh] md:h-[80vh] max-h-[780px] bg-[#070a13]/90 backdrop-blur-2xl border border-white/10 rounded-[2rem] overflow-hidden flex flex-col md:flex-row relative shadow-[0_0_60px_rgba(0,0,0,0.7)]"
+        className="w-full max-w-6xl h-[85vh] md:h-[82vh] max-h-[720px] bg-[#0d1220]/95 backdrop-blur-2xl border border-white/10 rounded-[1.5rem] overflow-hidden flex flex-row relative shadow-[0_0_60px_rgba(0,0,0,0.7)]"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Dekoratif Arka Plan Işıkları (Premium Glow Effect) */}
+        {/* Dekoratif Arka Plan Işıkları */}
         <div className="absolute -top-24 -left-24 w-72 h-72 bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none" />
         <div className="absolute -bottom-24 -right-24 w-72 h-72 bg-blue-600/10 rounded-full blur-[120px] pointer-events-none" />
 
         {/* Kapatma Butonu */}
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 z-40 p-2.5 rounded-full bg-white/5 border border-white/10 text-white/60 hover:text-white hover:bg-white/10 hover:scale-105 active:scale-95 transition-all duration-200 backdrop-blur-sm"
+          className="absolute top-4 right-4 z-40 p-2 rounded-full bg-white/5 border border-white/10 text-white/60 hover:text-white hover:bg-white/10 hover:scale-105 active:scale-95 transition-all duration-200 backdrop-blur-sm"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -105,219 +139,280 @@ export default function ProjectModal({ project, onClose }: Props) {
           </svg>
         </button>
 
-        {/* SOL TARAF: PREMIUM GALERİ */}
-        <div className="w-full md:w-1/2 h-[45%] md:h-full bg-black/20 p-4 md:p-6 flex flex-col gap-4 justify-between border-b md:border-b-0 md:border-r border-white/5 relative z-10">
-          <div className="w-full h-full relative rounded-2xl overflow-hidden border border-white/5 bg-zinc-950/40 flex-1 group">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeImgIndex}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                className="absolute inset-0"
+        {/* SOL: Dikey Thumbnail Kartları */}
+        {galleryImages.length > 1 && (
+          <div className="flex w-[100px] md:w-[116px] h-full flex-col items-center gap-2 px-4 md:px-5 py-4 bg-black/30 z-10 order-1">
+            {/* UP */}
+            <button
+              onClick={() =>
+                setActiveImgIndex(
+                  (prev) =>
+                    (prev - 1 + galleryImages.length) % galleryImages.length,
+                )
+              }
+              className="w-full flex items-center justify-center py-1.5 rounded-lg bg-white/5 border border-white/10 text-white/50 hover:text-white"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2.5}
+                stroke="currentColor"
+                className="w-3.5 h-3.5"
               >
-                {hasImages ? (
-                  <Image
-                    src={galleryImages[activeImgIndex]}
-                    alt={`${project.title} screenshot ${activeImgIndex + 1}`}
-                    fill
-                    priority
-                    className="object-cover"
-                  />
-                ) : (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-zinc-950/50 to-zinc-900/50 text-white/20">
-                    <span className="text-xs font-mono uppercase tracking-widest opacity-40">
-                      No Preview Available
-                    </span>
-                  </div>
-                )}
-              </motion.div>
-            </AnimatePresence>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M4.5 15.75l7.5-7.5 7.5 7.5"
+                />
+              </svg>
+            </button>
 
-            {/* Görsel Üstü Sağ/Sol Navigasyon Okları */}
-            {galleryImages.length > 1 && (
-              <div className="absolute inset-x-4 top-1/2 -translate-y-1/2 flex justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                <button
-                  onClick={handlePrevImage}
-                  className="p-2 rounded-xl bg-black/60 border border-white/10 text-white hover:bg-black/80 pointer-events-auto transition-all active:scale-90"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={2.5}
-                    stroke="currentColor"
-                    className="w-4 h-4"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M15.75 19.5L8.25 12l7.5-7.5"
-                    />
-                  </svg>
-                </button>
-                <button
-                  onClick={handleNextImage}
-                  className="p-2 rounded-xl bg-black/60 border border-white/10 text-white hover:bg-black/80 pointer-events-auto transition-all active:scale-90"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={2.5}
-                    stroke="currentColor"
-                    className="w-4 h-4"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M8.25 4.5l7.5 7.5-7.5 7.5"
-                    />
-                  </svg>
-                </button>
-              </div>
-            )}
-          </div>
+            {/* Thumbnail Listesi */}
+            <div className="flex-1 w-full flex flex-col gap-2.5 overflow-hidden">
+              {visibleThumbnails.map((img, idx) => {
+                const realIndex = galleryImages.findIndex((x) => x === img);
 
-          {/* Küçük Thumbnails Listesi */}
-          {galleryImages.length > 1 && (
-            <div className="grid grid-cols-4 gap-2.5 h-14 md:h-16 shrink-0">
-              {galleryImages.slice(0, 4).map((img, idx) => (
-                <button
-                  key={`thumb-${idx}`}
-                  onClick={() => setActiveImgIndex(idx)}
-                  className={`relative rounded-xl overflow-hidden border transition-all duration-300 ${
-                    idx === activeImgIndex
-                      ? 'border-cyan-400 scale-[0.96] ring-4 ring-cyan-500/10 opacity-100'
-                      : 'border-white/5 opacity-40 hover:opacity-90'
-                  }`}
-                >
-                  <Image
-                    src={img}
-                    alt="thumbnail"
-                    fill
-                    className="object-cover"
-                  />
-                </button>
-              ))}
+                return (
+                  <button
+                    key={`thumb-${realIndex}-${idx}`}
+                    onClick={() => setActiveImgIndex(realIndex)}
+                    className={`relative w-full aspect-square rounded-xl overflow-hidden border transition-all duration-300 ${
+                      realIndex === activeImgIndex
+                        ? 'border-cyan-400/70 opacity-100'
+                        : 'border-white/5 opacity-50 hover:opacity-90'
+                    }`}
+                  >
+                    <Image
+                      src={img}
+                      alt="thumbnail"
+                      fill
+                      className="object-cover"
+                    />
+                  </button>
+                );
+              })}
             </div>
-          )}
+
+            {/* Aşağı Ok */}
+            <button
+              onClick={() =>
+                setActiveImgIndex((prev) => (prev + 1) % galleryImages.length)
+              }
+              className="w-full flex items-center justify-center py-1.5 rounded-lg bg-white/5 border border-white/10 text-white/50 hover:text-white"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2.5}
+                stroke="currentColor"
+                className="w-3.5 h-3.5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                />
+              </svg>
+            </button>
+          </div>
+        )}
+
+        {/* ORTA: Büyük Görsel */}
+        <div className="w-[47%] md:w-[51%] relative bg-black/20 relative shrink-0 border-r border-white/5 z-10 order-2">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeImgIndex}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="absolute inset-0 flex items-center justify-center p-4"
+            >
+              {hasImages ? (
+                <Image
+                  src={galleryImages[activeImgIndex]}
+                  alt={`${project.title}`}
+                  fill
+                  priority
+                  className="max-h-full max-w-full rounded-lg object-cover"
+                />
+              ) : (
+                <div className="absolute flex items-center justify-center text-white/20">
+                  No Preview
+                </div>
+              )}
+            </motion.div>
+          </AnimatePresence>
         </div>
 
-        {/* SAĞ TARAF: DETAYLAR PANELİ */}
-        <div className="w-full md:w-1/2 h-[55%] md:h-full p-6 md:p-10 flex flex-col justify-between overflow-y-auto text-white relative z-10 custom-scrollbar">
+        {/* SAĞ: Detaylar Paneli */}
+        <div className="flex-1 h-full p-6 md:p-10 flex flex-col justify-between overflow-y-auto text-white relative z-10 custom-scrollbar order-3">
           <div className="space-y-6">
             {/* Üst Bilgi ve Başlık */}
-            <div className="space-y-1">
+            <div className="space-y-2.5">
               <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-[10px] font-mono uppercase tracking-wider">
                 <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
                 Project Case Study
               </div>
-              <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-slate-400 leading-tight pt-1">
+              <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white leading-tight">
                 {project.title}
               </h2>
+              <p className="text-slate-400 text-[13px] leading-relaxed font-normal">
+                {project.subtitle || project.description}
+              </p>
             </div>
 
-            {/* Proje Açıklaması */}
-            <p className="text-slate-400 text-[14px] leading-relaxed font-normal">
-              {project.description}
-            </p>
-
-            {/* Modern Künyeler Paneli (Grid) */}
-            <div className="grid grid-cols-2 gap-3 p-4 rounded-2xl bg-white/[0.02] border border-white/5 backdrop-blur-sm">
-              <div className="space-y-0.5">
-                <span className="block font-mono text-white/30 text-[10px] uppercase tracking-wider">
-                  Client
-                </span>
-                <span className="text-slate-200 text-xs font-medium">
-                  {project.client || 'Nurettin D. Labs'}
-                </span>
+            {/* Künyeler Paneli (İkonlu liste) */}
+            <div className="space-y-3 p-5 rounded-2xl bg-white/[0.02] border border-white/5 backdrop-blur-sm">
+              <div className="flex items-center gap-3">
+                <div className="w-7 h-7 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.8}
+                    stroke="currentColor"
+                    className="w-3.5 h-3.5 text-white/80"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
+                  </svg>
+                </div>
+                <div className="flex items-center justify-between flex-1">
+                  <span className="font-mono text-white/60 text-[10px] uppercase tracking-wider">
+                    Client
+                  </span>
+                  <span className="text-slate-200 text-xs font-medium">
+                    {project.client || 'Nurettin D. Labs'}
+                  </span>
+                </div>
               </div>
-              <div className="space-y-0.5">
-                <span className="block font-mono text-white/30 text-[10px] uppercase tracking-wider">
-                  Category
-                </span>
-                <span className="text-slate-200 text-xs font-medium">
-                  {project.category || 'Full-Stack Dev'}
-                </span>
+              <div className="flex items-center gap-3 pt-3 border-t border-white/5">
+                <div className="w-7 h-7 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.8}
+                    stroke="currentColor"
+                    className="w-3.5 h-3.5 text-white/80"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z"
+                    />
+                  </svg>
+                </div>
+                <div className="flex items-center justify-between flex-1">
+                  <span className="font-mono text-white/60 text-[10px] uppercase tracking-wider">
+                    Category
+                  </span>
+                  <span className="text-slate-200 text-xs font-medium">
+                    {project.category || 'Full-Stack Dev'}
+                  </span>
+                </div>
               </div>
-              <div className="space-y-0.5 col-span-2 pt-2 border-t border-white/5">
-                <span className="block font-mono text-white/30 text-[10px] uppercase tracking-wider">
-                  Date
-                </span>
-                <span className="text-slate-200 text-xs font-medium">
-                  {project.date || '2026.06.23'}
-                </span>
+              <div className="flex items-center gap-3 pt-3 border-t border-white/5">
+                <div className="w-7 h-7 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.8}
+                    stroke="currentColor"
+                    className="w-3.5 h-3.5 text-white/80"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"
+                    />
+                  </svg>
+                </div>
+                <div className="flex items-center justify-between flex-1">
+                  <span className="font-mono text-white/60 text-[10px] uppercase tracking-wider">
+                    Date
+                  </span>
+                  <span className="text-slate-200 text-xs font-medium">
+                    {project.date || '2026.06.23'}
+                  </span>
+                </div>
               </div>
             </div>
 
             {/* Teknolojiler (Tags) */}
-            <div className="space-y-2">
+            <div className="flex flex-wrap gap-2">
+              {project.tech.map((t, idx) => (
+                <span
+                  key={`${t}-${idx}`}
+                  className="px-3 py-1 text-[11px] font-mono rounded-lg bg-cyan-500/5 border border-cyan-500/10 text-cyan-400/90"
+                >
+                  {t}
+                </span>
+              ))}
+            </div>
+
+            {/* About Project */}
+            <div className="space-y-1.5 pt-5 border-t border-white/5">
               <span className="block font-mono text-white/30 text-[10px] uppercase tracking-wider">
-                Technologies Used
+                About Project
               </span>
-              <div className="flex flex-wrap gap-1.5">
-                {project.tech.map((t, idx) => (
-                  <span
-                    key={`${t}-${idx}`}
-                    className="px-3 py-1 text-[11px] font-mono rounded-lg bg-cyan-500/5 border border-cyan-500/10 text-cyan-400/90 shadow-[0_2px_10px_rgba(6,182,212,0.02)]"
-                  >
-                    {t}
-                  </span>
-                ))}
-              </div>
+              <p className="text-slate-400 text-[13px] leading-relaxed font-normal">
+                {project.description}
+              </p>
             </div>
           </div>
 
-          {/* OYLAMA ALANI */}
-          <div className="mt-8 pt-6 border-t border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white/[0.01] -mx-4 px-4 py-3 rounded-xl border border-white/[0.02]">
-            <div className="space-y-0.5">
-              <h4 className="text-[11px] font-mono uppercase tracking-wider text-slate-400">
-                Rate this project
-              </h4>
-              <p className="text-[11px] text-zinc-500">
-                Your feedback helps shape our craftsmanship.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-1 bg-zinc-950/40 p-1.5 rounded-xl border border-white/5 w-fit shadow-inner">
-              {[1, 2, 3, 4, 5].map((star) => {
-                const isSelected = star <= (hoverRating || rating);
-                return (
-                  <button
-                    key={`star-${star}`}
-                    type="button"
-                    onClick={() => setRating(star)}
-                    onMouseEnter={() => setHoverRating(star)}
-                    onMouseLeave={() => setHoverRating(0)}
-                    className="p-1 transition-transform duration-100 hover:scale-120 active:scale-90 focus:outline-none"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                      className={`w-5 h-5 transition-all duration-200 ${
-                        isSelected
-                          ? 'text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.5)] scale-105'
-                          : 'text-white/10 hover:text-white/30'
-                      }`}
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </button>
-                );
-              })}
-              {rating > 0 && (
-                <span className="text-xs font-mono font-bold text-amber-400 ml-2 pr-1 animate-pulse">
-                  {rating}/5
-                </span>
-              )}
-            </div>
+          {/* Aksiyon Butonları */}
+          <div className="mt-8 pt-6 border-t border-white/5 flex items-center gap-4">
+            {project.projectUrl && (
+              <a
+                href={project.projectUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 inline-flex items-center justify-center gap-1.5 px-5 py-3 rounded-xl bg-cyan-400 text-[#070a13] text-xs font-semibold hover:bg-cyan-300 transition-colors duration-200"
+              >
+                Visit Project
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={2.5}
+                  stroke="currentColor"
+                  className="w-3.5 h-3.5"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"
+                  />
+                </svg>
+              </a>
+            )}
+            {project.githubUrl && (
+              <a
+                href={project.githubUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 inline-flex items-center justify-center gap-1.5 px-5 py-3 rounded-xl bg-white/5 border border-white/10 text-slate-200 text-xs font-semibold hover:bg-white/10 transition-colors duration-200"
+              >
+                View Code
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  className="w-3.5 h-3.5"
+                >
+                  <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.757-1.333-1.757-1.09-.745.083-.73.083-.73 1.205.085 1.84 1.237 1.84 1.237 1.07 1.834 2.807 1.304 3.492.997.108-.775.418-1.305.762-1.605-2.665-.303-5.467-1.333-5.467-5.93 0-1.31.467-2.38 1.235-3.22-.124-.303-.535-1.523.117-3.176 0 0 1.008-.322 3.3 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.29-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.873.118 3.176.77.84 1.233 1.91 1.233 3.22 0 4.61-2.807 5.625-5.48 5.92.43.372.823 1.103.823 2.222 0 1.606-.015 2.896-.015 3.29 0 .322.218.694.825.576C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
+                </svg>
+              </a>
+            )}
           </div>
         </div>
       </motion.div>

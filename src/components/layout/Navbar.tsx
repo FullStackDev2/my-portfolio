@@ -133,8 +133,8 @@ export default function Navbar() {
           </div>
 
           {/* DEĞİŞİKLİK 2: ml-auto'yu kaldırdık. justify-between zaten sağa itecek */}
-          <nav ref={navRef} className="relative flex items-center gap-8">
-            <div ref={navRef} className="relative flex items-center gap-8 ml-6">
+          <nav ref={navRef} className="relative flex items-center gap-6">
+            <div ref={navRef} className="relative flex items-center gap-6 ml-6">
               {navItems.map((item) => (
                 <a
                   key={item.id}
