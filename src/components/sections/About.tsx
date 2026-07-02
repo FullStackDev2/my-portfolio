@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
+import SectionGlow from '../ui/SectionGlow';
 import {
   motion,
   useScroll,
@@ -17,16 +18,11 @@ interface TimelineItem {
   type: 'experience' | 'education';
 }
 
-// Her nokta aktif olduğunda kullanacağı renk paleti (sırayla döner)
 const ACTIVE_COLORS = [
-  {
-    hex: '#10b981',
-    shadow: 'rgba(16,185,129,0.9)',
-    text: 'text-emerald-500',
-  }, // emerald
-  { hex: '#a78bfa', shadow: 'rgba(167,139,250,0.9)', text: 'text-violet-400' }, // violet
-  { hex: '#f472b6', shadow: 'rgba(244,114,182,0.9)', text: 'text-pink-400' }, // pink/fuchsia
-  { hex: '#34d399', shadow: 'rgba(52,211,153,0.9)', text: 'text-emerald-400' }, // emerald
+  { hex: '#10b981', shadow: 'rgba(16,185,129,0.9)', text: 'text-emerald-500' },
+  { hex: '#a78bfa', shadow: 'rgba(167,139,250,0.9)', text: 'text-violet-400' },
+  { hex: '#f472b6', shadow: 'rgba(244,114,182,0.9)', text: 'text-pink-400' },
+  { hex: '#34d399', shadow: 'rgba(52,211,153,0.9)', text: 'text-emerald-400' },
 ];
 
 export default function About() {
@@ -98,7 +94,6 @@ export default function About() {
     );
   });
 
-  // Bir noktanın aktif olup olmadığını ve rengini hesaplayan yardımcı fonksiyon
   const getPointState = (index: number, activeIndex: number) => {
     const isActive = index <= activeIndex;
     const color = ACTIVE_COLORS[index % ACTIVE_COLORS.length];
@@ -114,9 +109,16 @@ export default function About() {
         scrollSnapStop: 'always',
       }}
     >
-      <div className="absolute inset-0 pointer-events-none z-0">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(34,211,238,0.04),transparent_55%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_70%,rgba(139,92,246,0.03),transparent_45%)]" />
+      <div className="absolute inset-0 pointer-events-none z-0 opacity-[0.12]">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_8%_8%,rgba(45,212,191,0.09),transparent_40%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_92%_5%,rgba(34,211,238,0.08),transparent_42%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(34,211,238,0.06),transparent_55%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_95%_95%,rgba(139,92,246,0.08),transparent_45%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_5%_92%,rgba(16,185,129,0.08),transparent_42%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_88%_50%,rgba(16,185,129,0.05),transparent_40%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_55%,rgba(45,212,191,0.06),transparent_45%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_40%_90%,rgba(34,211,238,0.05),transparent_45%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_15%,rgba(139,92,246,0.05),transparent_38%)]" />
         <div
           className="absolute inset-0 opacity-[0.12]"
           style={{
@@ -126,6 +128,70 @@ export default function About() {
           }}
         />
       </div>
+
+      {/* ===== GLOW KATMANI — section'ın tam genişliğinde, container'ların DIŞINDA ===== */}
+      {/* Core Identity glow'ları — hero bloğunun dikey aralığına denk gelen top yüzdeleri */}
+      <SectionGlow
+        spots={[
+          {
+            color: 'blue',
+            top: '15%',
+            left: '2%',
+            size: 450,
+            opacity: 0.12,
+            blur: 90,
+            animate: 'drift1',
+          },
+          {
+            color: 'teal',
+            top: '5%',
+            right: '4%',
+            size: 380,
+            opacity: 0.18,
+            blur: 90,
+            animate: 'drift2',
+          },
+        ]}
+      />
+
+      {/* About Me glow'ları */}
+      <SectionGlow
+        spots={[
+          {
+            color: 'teal',
+            top: '50%',
+            right: '42%',
+            size: 400,
+            opacity: 0.15,
+            blur: 90,
+            animate: 'drift2',
+          },
+        ]}
+      />
+
+      {/* Timeline glow'ları */}
+      <SectionGlow
+        spots={[
+          {
+            color: 'purple',
+            top: '79%',
+            left: '7%',
+            size: 340,
+            opacity: 0.1,
+            blur: 85,
+            animate: 'drift2',
+          },
+          {
+            color: 'blue',
+            top: '62%',
+            right: '2%',
+            size: 340,
+            opacity: 0.13,
+            blur: 85,
+            animate: 'drift1',
+          },
+        ]}
+      />
 
       <div className="max-w-6xl w-full mx-auto flex flex-col gap-32 relative z-10">
         {/* ================= 1. KISIM: CORE IDENTITY ================= */}
@@ -166,18 +232,27 @@ export default function About() {
         {/* ================= 2. KISIM: ABOUT ME BİLGİLERİ ================= */}
         <div className="flex flex-col items-center text-center max-w-4xl mx-auto border-t border-zinc-700/60 pt-24 w-full">
           <Reveal>
-            <p className="text-white-500/90 uppercase tracking-[0.4em] text-sm font-mono mb-6">
+            <p className="text-white-500/90 uppercase tracking-[0.4em] text-lg font-mono mb-1">
               ABOUT ME
             </p>
           </Reveal>
 
           <Reveal>
-            <h3 className="text-4xl md:text-6xl font-black text-white mb-10 tracking-tight">
+            <h3
+              className="font-black text-white mb-2 tracking-normal"
+              style={{
+                fontSize: 'clamp(2.5rem, 6vw + 1rem, 6rem)',
+                fontFamily: 'BespokeSerif_number',
+              }}
+            >
               Nurettin <span className="text-cyan-400">Dincer</span>
             </h3>
           </Reveal>
 
-          <div className="space-y-6 text-zinc-300 text-xl md:text-2xl font-light leading-relaxed max-w-3xl">
+          <div
+            className="space-y-4 text-zinc-200 font-light leading-[1.65] max-w-3xl mx-auto"
+            style={{ fontSize: 'clamp(1.125rem, 1.2vw + 0.85rem, 1.5rem)' }}
+          >
             <Reveal>
               <p>
                 I am a{' '}
@@ -203,21 +278,24 @@ export default function About() {
           </div>
 
           <Reveal>
-            <div className="flex flex-wrap justify-center gap-x-10 gap-y-4 pt-12 mt-4 font-mono text-xs tracking-widest text-cyan-400/90">
-              <span className="flex items-center gap-2">
-                <i className="fa-solid fa-cube text-[14px] text-cyan-400"></i>{' '}
+            <div
+              className="flex flex-wrap justify-center gap-x-12  gap-y-6 pt-16 mt-4 text-base md:text-lg tracking-widest text-cyan-400/90 max-w-6xl mx-auto w-full"
+              style={{ fontFamily: 'Manrope-Semibold' }}
+            >
+              <span className="flex items-center gap-3 whitespace-nowrap">
+                <i className="fa-solid fa-cube text-[20px] text-cyan-400"></i>{' '}
                 MODERN ARCHITECTURE
               </span>
-              <span className="flex items-center gap-2">
-                <i className="fa-solid fa-bolt text-[14px] text-cyan-400"></i>{' '}
+              <span className="flex items-center gap-3 whitespace-nowrap">
+                <i className="fa-solid fa-bolt text-[20px] text-cyan-400"></i>{' '}
                 HIGH PERFORMANCE
               </span>
-              <span className="flex items-center gap-2">
-                <i className="fa-solid fa-wand-magic-sparkles text-[14px] text-cyan-400"></i>{' '}
+              <span className="flex items-center gap-3 whitespace-nowrap">
+                <i className="fa-solid fa-wand-magic-sparkles text-[20px] text-cyan-400"></i>{' '}
                 USER-CENTRIC DESIGN
               </span>
-              <span className="flex items-center gap-2">
-                <i className="fa-solid fa-leaf text-[14px] text-cyan-400"></i>{' '}
+              <span className="flex items-center gap-3 whitespace-nowrap">
+                <i className="fa-solid fa-leaf text-[20px] text-cyan-400"></i>{' '}
                 SUSTAINABLE
               </span>
             </div>
@@ -233,7 +311,7 @@ export default function About() {
           <div className="space-y-12 h-full flex flex-col">
             <Reveal>
               <div className="space-y-2">
-                <p className="text-zinc-500 uppercase tracking-[0.3em] text-sm font-mono">
+                <p className="text-zinc-100 uppercase tracking-[0.3em] text-[1rem] font-mono">
                   EDUCATION
                 </p>
                 <h3 className="text-4xl md:text-5xl font-black tracking-tight text-white">
@@ -249,10 +327,8 @@ export default function About() {
             </Reveal>
 
             <div className="relative ml-2 pl-6 md:pl-10 space-y-10">
-              {/* Sönük taban çizgisi */}
               <div className="absolute left-0 top-0 bottom-0 w-px bg-zinc-800" />
 
-              {/* Neon ilerleme çizgisi — scroll'a bağlı */}
               <motion.div
                 className="absolute left-0 top-0 w-px bg-cyan-400"
                 style={{
@@ -262,7 +338,6 @@ export default function About() {
                 }}
               />
 
-              {/* Çizginin ucundaki parlayan nokta */}
               <motion.div
                 className="absolute left-[-3.5px] w-[8px] h-[8px] rounded-full bg-cyan-400"
                 style={{
@@ -292,18 +367,23 @@ export default function About() {
 
                     <Reveal>
                       <div
-                        className="bg-zinc-900/20 backdrop-blur-sm border rounded-2xl p-8 md:p-10 transition-all duration-300"
+                        className="relative bg-zinc-900/20 backdrop-blur-sm border rounded-2xl p-8 md:p-10 transition-all duration-300"
                         style={{
                           borderColor: isActive
                             ? `${color.hex}55`
                             : 'rgba(63,63,70,0.4)',
                         }}
                       >
-                        <div
-                          className="font-mono text-sm font-bold tracking-wider mb-2 transition-colors duration-300"
-                          style={{ color: isActive ? color.hex : '#22d3ee' }}
-                        >
-                          {item.year}
+                        <div className="flex items-center justify-between mb-4 mt-0 -translate-y-2">
+                          <div
+                            className="font-sans text-base font-bold tracking-wider transition-colors duration-300"
+                            style={{ color: isActive ? color.hex : '#22d3ee' }}
+                          >
+                            {item.year}
+                          </div>
+                          <span className="text-xs font-mono font-bold tracking-widest px-3 py-1 rounded-full uppercase bg-violet-500/10 text-violet-400 border border-violet-500/20">
+                            {item.type}
+                          </span>
                         </div>
 
                         <div className="flex flex-wrap items-baseline gap-2 mb-3">
@@ -315,10 +395,6 @@ export default function About() {
                               @ {item.subtitle}
                             </span>
                           )}
-
-                          <span className="ml-auto text-xs font-mono font-bold tracking-widest px-3 py-1 rounded-full uppercase bg-violet-500/10 text-violet-400 border border-violet-500/20">
-                            {item.type}
-                          </span>
                         </div>
 
                         <p className="text-zinc-400 text-lg leading-relaxed">
@@ -331,7 +407,6 @@ export default function About() {
               })}
             </div>
 
-            {/* Boş spacer — sütunu diğerine boy olarak eşitler, çizgiyi ETKİLEMEZ */}
             <div className="flex-1" />
           </div>
 
@@ -339,7 +414,7 @@ export default function About() {
           <div className="space-y-12 h-full flex flex-col">
             <Reveal>
               <div className="space-y-2">
-                <p className="text-zinc-500 uppercase tracking-[0.3em] text-sm font-mono">
+                <p className="text-zinc-100 uppercase tracking-[0.3em] text-[1rem] font-mono">
                   MILESTONES
                 </p>
                 <h3 className="text-4xl md:text-5xl font-black tracking-tight text-white">
@@ -395,21 +470,33 @@ export default function About() {
 
                     <Reveal>
                       <div
-                        className="bg-zinc-900/20 backdrop-blur-sm border rounded-2xl p-8 md:p-10 transition-all duration-300"
+                        className="relative bg-zinc-900/20 backdrop-blur-sm border rounded-2xl p-8 md:p-10 transition-all duration-300"
                         style={{
                           borderColor: isActive
                             ? `${color.hex}55`
                             : 'rgba(63,63,70,0.4)',
                         }}
                       >
-                        <div
-                          className="font-mono text-sm font-bold tracking-wider mb-2 transition-colors duration-300"
-                          style={{ color: isActive ? color.hex : '#22d3ee' }}
-                        >
-                          {item.year}
+                        <div className="flex items-center justify-between mb-2 mt-0 -translate-y-2">
+                          <div
+                            className="font-sans text-sm font-bold tracking-wider transition-colors duration-300"
+                            style={{ color: isActive ? color.hex : '#22d3ee' }}
+                          >
+                            {item.year}
+                          </div>
+
+                          <span
+                            className={`text-xs font-mono font-bold tracking-widest px-3 py-1 rounded-full uppercase ${
+                              item.type === 'experience'
+                                ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                                : 'bg-violet-500/10 text-violet-400 border border-violet-500/20'
+                            }`}
+                          >
+                            {item.type}
+                          </span>
                         </div>
 
-                        <div className="flex flex-wrap items-baseline gap-2 mb-3">
+                        <div className="flex flex-wrap items-baseline gap-2 mb-3 pr-24">
                           <h4 className="text-2xl md:text-3xl font-bold tracking-tight text-white group-hover:text-cyan-400 transition-colors duration-300">
                             {item.title}
                           </h4>
@@ -418,16 +505,6 @@ export default function About() {
                               @ {item.subtitle}
                             </span>
                           )}
-
-                          <span
-                            className={`ml-auto text-xs font-mono font-bold tracking-widest px-3 py-1 rounded-full uppercase ${
-                              item.type === 'experience'
-                                ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
-                                : 'bg-violet-500/10 text-violet-400 border border-violet-500/20'
-                            }`}
-                          >
-                            {item.type}
-                          </span>
                         </div>
 
                         <p className="text-zinc-400 text-lg leading-relaxed">
@@ -440,7 +517,6 @@ export default function About() {
               })}
             </div>
 
-            {/* Boş spacer */}
             <div className="flex-1" />
           </div>
         </div>

@@ -25,13 +25,25 @@ const skillCategories: SkillCategory[] = [
     description:
       'Building pixel-perfect, hyper-performing user interfaces with modern reactive paradigms.',
     skills: [
-      { name: 'React', icon: 'fa-brands fa-react text-cyan-400' },
-      { name: 'Next.js', icon: 'fa-solid fa-cube text-zinc-300' },
-      { name: 'TypeScript', icon: 'fa-solid fa-code text-blue-400' },
-      { name: 'Tailwind CSS', icon: 'fa-solid fa-wind text-teal-400' },
+      {
+        name: 'React',
+        icon: 'fa-brands fa-react text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]',
+      },
+      {
+        name: 'Next.js',
+        icon: 'fa-solid fa-cube text-zinc-300 drop-shadow-[0_0_8px_rgba(212,212,216,0.6)]',
+      },
+      {
+        name: 'TypeScript',
+        icon: 'fa-solid fa-code text-blue-400 drop-shadow-[0_0_8px_rgba(96,165,250,0.8)]',
+      },
+      {
+        name: 'Tailwind CSS',
+        icon: 'fa-solid fa-wind text-teal-400 drop-shadow-[0_0_8px_rgba(45,212,191,0.8)]',
+      },
       {
         name: 'Framer Motion',
-        icon: 'fa-solid fa-wand-magic-sparkles text-purple-400',
+        icon: 'fa-solid fa-wand-magic-sparkles text-purple-400 drop-shadow-[0_0_8px_rgba(192,132,252,0.8)]',
       },
     ],
     glowClass:
@@ -63,7 +75,7 @@ const skillCategories: SkillCategory[] = [
       { name: 'Git', icon: 'fa-brands fa-git-alt text-orange-500' },
       { name: 'GitHub', icon: 'fa-brands fa-github text-white' },
       { name: 'CI/CD', icon: 'fa-solid fa-gears text-indigo-400' },
-      { name: 'Vercel', icon: 'fa-solid fa-triangle text-zinc-200 rotate-180' },
+      { name: 'Vercel', icon: 'fa-solid fa-caret-up text-white shadow-lg' },
       { name: 'Linux', icon: 'fa-brands fa-linux text-yellow-500' },
     ],
     glowClass:
@@ -180,7 +192,7 @@ export default function Skills() {
         </div>
 
         {/* 3 SÜTUNLU KART DÜZENİ */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start relative">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start relative mt-0">
           {skillCategories.map((category: SkillCategory, idx: number) => (
             <div
               key={category.id}
@@ -193,27 +205,36 @@ export default function Skills() {
                 transition={{ duration: 0.5, delay: idx * 0.1 }}
                 className="w-full"
               >
-                <div className="w-full h-full rounded-[23px] bg-[#020617] p-6 md:p-8 flex flex-col justify-between min-h-[380px]">
-                  <div>
-                    {/* Başlık Satırı */}
-                    <div className="flex justify-between items-start mb-3">
-                      <h3 className="text-xl md:text-2xl font-black tracking-tight text-white">
-                        {category.title}
-                      </h3>
-                      <div className="flex items-center gap-1.5 font-mono text-zinc-600">
-                        <i
-                          className={`fa-solid fa-arrow-up-right text-[10px] transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 ${category.arrowColor}`}
-                        />
-                      </div>
+                {/* Kart içeriği */}
+                <div className="w-full h-full rounded-[23px] bg-[#020617] p-6 md:p-6 flex flex-col justify-between min-h-[380px]">
+                  <div className="flex flex-col items-center text-center">
+                    {/* Büyütülmüş ve Parlayan İkon Bölümü */}
+                    <div className="mb-6 p-5 rounded-3xl bg-white/[0.03] border border-white/30 shadow-[0_0_20px_rgba(255,255,255,0.05)] text-cyan-400">
+                      {category.id === 'frontend-architecture' && (
+                        <i className="fa-solid fa-code text-4xl" />
+                      )}
+                      {category.id === 'Backend & Database' && (
+                        <i className="fa-solid fa-database text-4xl" />
+                      )}
+                      {category.id === 'DevOps & Workflow' && (
+                        <i className="fa-solid fa-infinity text-4xl" />
+                      )}
                     </div>
+                  </div>
 
-                    {/* Açıklama */}
-                    <p className="text-sm text-zinc-400/90 leading-relaxed mb-4">
+                  {/* Başlık Bölümü (Ortalanmış ve Çizgili) */}
+                  <div className="flex flex-col items-center text-center">
+                    <h3 className="text-xl md:text-2xl font-black tracking-tight text-white mb-3">
+                      {category.title}
+                    </h3>
+                    <div className="w-66 h-[3px] bg-gradient-to-r from-transparent via-zinc-400 to-transparent mb-6" />
+
+                    <p className="text-sm font-medium text-zinc-300 leading-relaxed mb-6 bg-gradient-to-r from-zinc-300 via-white to-zinc-400 bg-clip-text text-transparent drop-shadow-[0_0_2px_rgba(255,255,255,0.2)]">
                       {category.description}
                     </p>
                   </div>
 
-                  {/* SIKIŞTIRILMIŞ İKİLİ GRID */}
+                  {/* Beceri Grid'i */}
                   <motion.div
                     variants={containerVariants}
                     initial="hidden"
