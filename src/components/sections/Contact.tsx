@@ -67,7 +67,7 @@ export default function Contact() {
   return (
     <section
       id="contact"
-      className="min-h-screen py-32 px-6 bg-[#0a0a0a] text-white flex flex-col"
+      className="min-h-screen py-32 px-6 text-white flex flex-col"
     >
       <div className="max-w-5xl mx-auto w-full mt-auto">
         <div className="mb-16 text-center flex flex-col items-center">

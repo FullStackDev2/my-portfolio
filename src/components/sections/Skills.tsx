@@ -93,7 +93,7 @@ export default function Skills() {
   return (
     <section
       id="skills"
-      className="min-h-screen px-6 pt-12 pb-32 flex flex-col justify-center relative overflow-hidden bg-[#020617] scroll-mt-20"
+      className="min-h-screen px-6 pt-12 pb-32 flex flex-col justify-center relative overflow-hidden scroll-mt-20"
       style={{ scrollSnapAlign: 'start', scrollSnapStop: 'always' }}
     >
       {/* SINEMATIK ARKA PLAN ISIKLARI */}

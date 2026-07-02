@@ -4,7 +4,7 @@ export default function Connect() {
   return (
     <section
       id="connect"
-      className="relative min-h-[105vh] w-full flex flex-col items-center justify-center px-6 overflow-hidden bg-[#020617]"
+      className="relative min-h-[105vh] w-full flex flex-col items-center justify-center px-6 overflow-hidden"
     >
       {/* Arka Plan: Kilit Görseli - Opacity 30 yapılarak biraz daha belirginleşti */}
       <div className="absolute inset-0 z-0">

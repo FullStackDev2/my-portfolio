@@ -2,6 +2,7 @@
 
 import { motion, Variants } from 'framer-motion';
 import Image from 'next/image';
+import HeroGlow from '@/components/ui/HeroGlow';
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -24,7 +25,7 @@ export default function Hero() {
   return (
     <section
       id="hero"
-      className="relative w-full min-h-screen overflow-hidden border-t border-zinc-800/50 bg-[#020617] scroll-mt-20"
+      className="relative w-full min-h-screen overflow-hidden border-t border-zinc-800/50 scroll-mt-20"
     >
       {/* Arka Plan Dokusu */}
       <div
@@ -35,7 +36,7 @@ export default function Hero() {
           backgroundSize: '30px 30px',
         }}
       />
-
+      <HeroGlow />
       <div className="max-w-[1400px] mx-auto h-screen flex flex-col md:flex-row items-center px-6 lg:px-0">
         {/* SOL: İÇERİK - items-start eklendi */}
         <div className="flex flex-col justify-center items-start z-20 pt-20 md:pt-0 w-full text-left">

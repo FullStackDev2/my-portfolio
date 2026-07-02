@@ -1,5 +1,12 @@
 'use client';
 
+import { useRef, useState } from 'react';
+import {
+  motion,
+  useScroll,
+  useTransform,
+  useMotionValueEvent,
+} from 'framer-motion';
 import Reveal from '../ui/Reveal';
 
 interface TimelineItem {
@@ -10,8 +17,19 @@ interface TimelineItem {
   type: 'experience' | 'education';
 }
 
+// Her nokta aktif olduğunda kullanacağı renk paleti (sırayla döner)
+const ACTIVE_COLORS = [
+  {
+    hex: '#10b981',
+    shadow: 'rgba(16,185,129,0.9)',
+    text: 'text-emerald-500',
+  }, // emerald
+  { hex: '#a78bfa', shadow: 'rgba(167,139,250,0.9)', text: 'text-violet-400' }, // violet
+  { hex: '#f472b6', shadow: 'rgba(244,114,182,0.9)', text: 'text-pink-400' }, // pink/fuchsia
+  { hex: '#34d399', shadow: 'rgba(52,211,153,0.9)', text: 'text-emerald-400' }, // emerald
+];
+
 export default function About() {
-  // SOL SÜTUN: ACADEMIC FOUNDATION VERİLERİ
   const academicData: TimelineItem[] = [
     {
       year: '2021 — 2025',
@@ -31,7 +49,6 @@ export default function About() {
     },
   ];
 
-  // SAĞ SÜTUN: MY JOURNEY VERİLERİ
   const journeyData: TimelineItem[] = [
     {
       year: '2026 — PRESENT',
@@ -59,16 +76,44 @@ export default function About() {
     },
   ];
 
+  const timelinesRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress: sharedProgress } = useScroll({
+    target: timelinesRef,
+    offset: ['start 0.85', 'end 0.4'],
+  });
+
+  const lineHeight = useTransform(sharedProgress, [0, 1], ['0%', '100%']);
+  const [academicActiveIndex, setAcademicActiveIndex] = useState(-1);
+  const [journeyActiveIndex, setJourneyActiveIndex] = useState(-1);
+
+  useMotionValueEvent(sharedProgress, 'change', (latest) => {
+    const academicIdx = Math.floor(latest * academicData.length);
+    setAcademicActiveIndex(
+      latest > 0 ? Math.min(academicIdx, academicData.length - 1) : -1,
+    );
+
+    const journeyIdx = Math.floor(latest * journeyData.length);
+    setJourneyActiveIndex(
+      latest > 0 ? Math.min(journeyIdx, journeyData.length - 1) : -1,
+    );
+  });
+
+  // Bir noktanın aktif olup olmadığını ve rengini hesaplayan yardımcı fonksiyon
+  const getPointState = (index: number, activeIndex: number) => {
+    const isActive = index <= activeIndex;
+    const color = ACTIVE_COLORS[index % ACTIVE_COLORS.length];
+    return { isActive, color };
+  };
+
   return (
     <section
       id="about"
-      className="min-h-screen flex flex-col justify-center px-6 py-32 relative overflow-hidden border-t border-zinc-800/50 bg-[#020617] scroll-mt-20"
+      className="min-h-screen flex flex-col justify-center px-6 py-32 relative overflow-hidden border-t border-zinc-800/50 scroll-mt-20"
       style={{
         scrollSnapAlign: 'start',
         scrollSnapStop: 'always',
       }}
     >
-      {/* SINEMATIK ARKA PLAN ISIKLARI */}
       <div className="absolute inset-0 pointer-events-none z-0">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(34,211,238,0.04),transparent_55%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_70%,rgba(139,92,246,0.03),transparent_45%)]" />
@@ -119,9 +164,9 @@ export default function About() {
         </div>
 
         {/* ================= 2. KISIM: ABOUT ME BİLGİLERİ ================= */}
-        <div className="flex flex-col items-center text-center max-w-4xl mx-auto border-t border-zinc-800/60 pt-24 w-full">
+        <div className="flex flex-col items-center text-center max-w-4xl mx-auto border-t border-zinc-700/60 pt-24 w-full">
           <Reveal>
-            <p className="text-zinc-500 uppercase tracking-[0.4em] text-sm font-mono mb-6">
+            <p className="text-white-500/90 uppercase tracking-[0.4em] text-sm font-mono mb-6">
               ABOUT ME
             </p>
           </Reveal>
@@ -180,125 +225,223 @@ export default function About() {
         </div>
 
         {/* ================= 3. KISIM: LOWER SECTION (BÜYÜTÜLMÜŞ TIMELINE'LAR) ================= */}
-        <div className="grid lg:grid-cols-2 gap-16 lg:gap-12 items-start border-t border-zinc-800/60 pt-24">
+        <div
+          ref={timelinesRef}
+          className="grid lg:grid-cols-2 gap-16 lg:gap-12 items-stretch  border-t border-zinc-800/60 pt-24"
+        >
           {/* SOL SÜTUN - ACADEMIC FOUNDATION TIMELINE */}
-          <div className="space-y-12">
+          <div className="space-y-12 h-full flex flex-col">
             <Reveal>
               <div className="space-y-2">
                 <p className="text-zinc-500 uppercase tracking-[0.3em] text-sm font-mono">
                   EDUCATION
                 </p>
                 <h3 className="text-4xl md:text-5xl font-black tracking-tight text-white">
-                  Academic <span className="text-cyan-400">Foundation</span>
+                  Academic{' '}
+                  <span
+                    className="text-cyan-400"
+                    style={{ textShadow: '0 0 20px rgba(34,211,238,0.5)' }}
+                  >
+                    Foundation
+                  </span>
                 </h3>
               </div>
             </Reveal>
 
-            {/* Sol Zaman Çizgisi */}
-            <div className="relative border-l border-zinc-800 ml-2 pl-6 md:pl-10 space-y-10">
-              {academicData.map((item, index) => (
-                <div key={index} className="relative group">
-                  {/* Parlayan Nokta (Yazı büyüdüğü için top-2.5 ile hizası dengelendi) */}
-                  <div className="absolute -left-[31px] md:-left-[45px] top-2.5 w-2.5 h-2.5 rounded-full bg-zinc-950 border-2 border-zinc-700 group-hover:border-cyan-400 group-hover:bg-cyan-400 transition-all duration-300 group-hover:shadow-[0_0_12px_rgba(34,211,238,0.8)] z-10" />
+            <div className="relative ml-2 pl-6 md:pl-10 space-y-10">
+              {/* Sönük taban çizgisi */}
+              <div className="absolute left-0 top-0 bottom-0 w-px bg-zinc-800" />
 
-                  <Reveal>
-                    {/* p-6'dan p-8 md:p-10'a yükseltildi */}
-                    <div className="bg-zinc-900/20 backdrop-blur-sm border border-zinc-800/40 rounded-2xl p-8 md:p-10 hover:border-zinc-700/80 hover:bg-zinc-900/40 transition-all duration-300">
-                      {/* text-[10px]'den text-xs'e yükseltildi */}
-                      <div className="font-mono text-xs font-bold text-cyan-400 tracking-wider mb-2">
-                        {item.year}
-                      </div>
+              {/* Neon ilerleme çizgisi — scroll'a bağlı */}
+              <motion.div
+                className="absolute left-0 top-0 w-px bg-cyan-400"
+                style={{
+                  height: lineHeight,
+                  boxShadow:
+                    '0 0 8px 2px rgba(34,211,238,0.8), 0 0 20px 6px rgba(34,211,238,0.35)',
+                }}
+              />
 
-                      <div className="flex flex-wrap items-baseline gap-2 mb-3">
-                        {/* text-lg'den text-xl md:text-2xl'ye yükseltildi */}
-                        <h4 className="text-xl md:text-2xl font-bold tracking-tight text-white group-hover:text-cyan-400 transition-colors duration-300">
-                          {item.title}
-                        </h4>
-                        {item.subtitle && (
-                          /* text-xs'den text-sm'e yükseltildi */
-                          <span className="text-zinc-400 text-sm font-medium ml-1">
-                            @ {item.subtitle}
+              {/* Çizginin ucundaki parlayan nokta */}
+              <motion.div
+                className="absolute left-[-3.5px] w-[8px] h-[8px] rounded-full bg-cyan-400"
+                style={{
+                  top: lineHeight,
+                  boxShadow: '0 0 12px 4px rgba(34,211,238,0.9)',
+                }}
+              />
+
+              {academicData.map((item, index) => {
+                const { isActive, color } = getPointState(
+                  index,
+                  academicActiveIndex,
+                );
+                return (
+                  <div key={index} className="relative group">
+                    <div
+                      className="absolute -left-[31px] md:-left-[45px] top-2.5 w-2.5 h-2.5 rounded-full transition-all duration-500 z-10"
+                      style={{
+                        backgroundColor: isActive ? color.hex : '#09090b',
+                        borderWidth: 2,
+                        borderColor: isActive ? color.hex : '#3f3f46',
+                        boxShadow: isActive
+                          ? `0 0 14px 4px ${color.shadow}`
+                          : 'none',
+                      }}
+                    />
+
+                    <Reveal>
+                      <div
+                        className="bg-zinc-900/20 backdrop-blur-sm border rounded-2xl p-8 md:p-10 transition-all duration-300"
+                        style={{
+                          borderColor: isActive
+                            ? `${color.hex}55`
+                            : 'rgba(63,63,70,0.4)',
+                        }}
+                      >
+                        <div
+                          className="font-mono text-sm font-bold tracking-wider mb-2 transition-colors duration-300"
+                          style={{ color: isActive ? color.hex : '#22d3ee' }}
+                        >
+                          {item.year}
+                        </div>
+
+                        <div className="flex flex-wrap items-baseline gap-2 mb-3">
+                          <h4 className="text-2xl md:text-3xl font-bold tracking-tight text-white group-hover:text-cyan-400 transition-colors duration-300">
+                            {item.title}
+                          </h4>
+                          {item.subtitle && (
+                            <span className="text-zinc-400 text-base font-medium ml-1">
+                              @ {item.subtitle}
+                            </span>
+                          )}
+
+                          <span className="ml-auto text-xs font-mono font-bold tracking-widest px-3 py-1 rounded-full uppercase bg-violet-500/10 text-violet-400 border border-violet-500/20">
+                            {item.type}
                           </span>
-                        )}
+                        </div>
 
-                        {/* Rozet etiketi text-[9px]'den text-xs'e yükseltildi */}
-                        <span className="ml-auto text-xs font-mono font-bold tracking-widest px-3 py-1 rounded-full uppercase bg-violet-500/10 text-violet-400 border border-violet-500/20">
-                          {item.type}
-                        </span>
+                        <p className="text-zinc-400 text-lg leading-relaxed">
+                          {item.description}
+                        </p>
                       </div>
-
-                      {/* Açıklama metni text-sm'den text-base'e yükseltildi */}
-                      <p className="text-zinc-400 text-base leading-relaxed">
-                        {item.description}
-                      </p>
-                    </div>
-                  </Reveal>
-                </div>
-              ))}
+                    </Reveal>
+                  </div>
+                );
+              })}
             </div>
+
+            {/* Boş spacer — sütunu diğerine boy olarak eşitler, çizgiyi ETKİLEMEZ */}
+            <div className="flex-1" />
           </div>
 
           {/* SAĞ SÜTUN - MY JOURNEY TIMELINE */}
-          <div className="space-y-12">
+          <div className="space-y-12 h-full flex flex-col">
             <Reveal>
               <div className="space-y-2">
                 <p className="text-zinc-500 uppercase tracking-[0.3em] text-sm font-mono">
                   MILESTONES
                 </p>
                 <h3 className="text-4xl md:text-5xl font-black tracking-tight text-white">
-                  My Journey
+                  My{' '}
+                  <span
+                    className="text-cyan-400"
+                    style={{ textShadow: '0 0 20px rgba(34,211,238,0.5)' }}
+                  >
+                    Journey
+                  </span>
                 </h3>
               </div>
             </Reveal>
 
-            {/* Sağ Zaman Çizgisi */}
-            <div className="relative border-l border-zinc-800 ml-2 pl-6 md:pl-10 space-y-10">
-              {journeyData.map((item, index) => (
-                <div key={index} className="relative group">
-                  {/* Parlayan Nokta */}
-                  <div className="absolute -left-[31px] md:-left-[45px] top-2.5 w-2.5 h-2.5 rounded-full bg-zinc-950 border-2 border-zinc-700 group-hover:border-cyan-400 group-hover:bg-cyan-400 transition-all duration-300 group-hover:shadow-[0_0_12px_rgba(34,211,238,0.8)] z-10" />
+            <div className="relative ml-2 pl-6 md:pl-10 space-y-10">
+              <div className="absolute left-0 top-0 bottom-0 w-px bg-zinc-800" />
 
-                  <Reveal>
-                    {/* p-6'dan p-8 md:p-10'a yükseltildi */}
-                    <div className="bg-zinc-900/20 backdrop-blur-sm border border-zinc-800/40 rounded-2xl p-8 md:p-10 hover:border-zinc-700/80 hover:bg-zinc-900/40 transition-all duration-300">
-                      {/* text-xs yapıldı */}
-                      <div className="font-mono text-xs font-bold text-cyan-400 tracking-wider mb-2">
-                        {item.year}
-                      </div>
+              <motion.div
+                className="absolute left-0 top-0 w-px bg-cyan-400"
+                style={{
+                  height: lineHeight,
+                  boxShadow:
+                    '0 0 8px 2px rgba(34,211,238,0.8), 0 0 20px 6px rgba(34,211,238,0.35)',
+                }}
+              />
 
-                      <div className="flex flex-wrap items-baseline gap-2 mb-3">
-                        {/* text-xl md:text-2xl yapıldı */}
-                        <h4 className="text-xl md:text-2xl font-bold tracking-tight text-white group-hover:text-cyan-400 transition-colors duration-300">
-                          {item.title}
-                        </h4>
-                        {item.subtitle && (
-                          /* text-sm yapıldı */
-                          <span className="text-zinc-400 text-sm font-medium ml-1">
-                            @ {item.subtitle}
-                          </span>
-                        )}
+              <motion.div
+                className="absolute left-[-3.5px] w-[8px] h-[8px] rounded-full bg-cyan-400"
+                style={{
+                  top: lineHeight,
+                  boxShadow: '0 0 12px 4px rgba(34,211,238,0.9)',
+                }}
+              />
 
-                        {/* text-xs yapıldı */}
-                        <span
-                          className={`ml-auto text-xs font-mono font-bold tracking-widest px-3 py-1 rounded-full uppercase ${
-                            item.type === 'experience'
-                              ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
-                              : 'bg-violet-500/10 text-violet-400 border border-violet-500/20'
-                          }`}
+              {journeyData.map((item, index) => {
+                const { isActive, color } = getPointState(
+                  index,
+                  journeyActiveIndex,
+                );
+                return (
+                  <div key={index} className="relative group">
+                    <div
+                      className="absolute -left-[31px] md:-left-[45px] top-2.5 w-2.5 h-2.5 rounded-full transition-all duration-500 z-10"
+                      style={{
+                        backgroundColor: isActive ? color.hex : '#09090b',
+                        borderWidth: 2,
+                        borderColor: isActive ? color.hex : '#3f3f46',
+                        boxShadow: isActive
+                          ? `0 0 14px 4px ${color.shadow}`
+                          : 'none',
+                      }}
+                    />
+
+                    <Reveal>
+                      <div
+                        className="bg-zinc-900/20 backdrop-blur-sm border rounded-2xl p-8 md:p-10 transition-all duration-300"
+                        style={{
+                          borderColor: isActive
+                            ? `${color.hex}55`
+                            : 'rgba(63,63,70,0.4)',
+                        }}
+                      >
+                        <div
+                          className="font-mono text-sm font-bold tracking-wider mb-2 transition-colors duration-300"
+                          style={{ color: isActive ? color.hex : '#22d3ee' }}
                         >
-                          {item.type}
-                        </span>
-                      </div>
+                          {item.year}
+                        </div>
 
-                      {/* text-base yapıldı */}
-                      <p className="text-zinc-400 text-base leading-relaxed">
-                        {item.description}
-                      </p>
-                    </div>
-                  </Reveal>
-                </div>
-              ))}
+                        <div className="flex flex-wrap items-baseline gap-2 mb-3">
+                          <h4 className="text-2xl md:text-3xl font-bold tracking-tight text-white group-hover:text-cyan-400 transition-colors duration-300">
+                            {item.title}
+                          </h4>
+                          {item.subtitle && (
+                            <span className="text-zinc-400 text-base font-medium ml-1">
+                              @ {item.subtitle}
+                            </span>
+                          )}
+
+                          <span
+                            className={`ml-auto text-xs font-mono font-bold tracking-widest px-3 py-1 rounded-full uppercase ${
+                              item.type === 'experience'
+                                ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                                : 'bg-violet-500/10 text-violet-400 border border-violet-500/20'
+                            }`}
+                          >
+                            {item.type}
+                          </span>
+                        </div>
+
+                        <p className="text-zinc-400 text-lg leading-relaxed">
+                          {item.description}
+                        </p>
+                      </div>
+                    </Reveal>
+                  </div>
+                );
+              })}
             </div>
+
+            {/* Boş spacer */}
+            <div className="flex-1" />
           </div>
         </div>
       </div>

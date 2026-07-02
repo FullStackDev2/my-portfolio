@@ -117,14 +117,20 @@ const cardVariants: Variants = {
   exit: { scale: 0.85, opacity: 0, y: 20, transition: { duration: 0.2 } },
 };
 
-const additionalProjects = [
+const additionalProjects: (typeof importedProjects)[0][] = [
   {
     slug: 'nexus-analytics',
     title: 'Nexus AI Analytics',
     description:
       'Real-time predictive data pipelines and autonomous financial trend analysis dashboards wrapped in a professional UI.',
     image: '',
+    images: [],
     tech: ['Python', 'FastAPI', 'PostgreSQL'],
+    client: 'Private Client',
+    category: 'AI / Data Platform',
+    date: '2026',
+    projectUrl: '',
+    githubUrl: '',
   },
   {
     slug: 'aether-saas',
@@ -132,7 +138,13 @@ const additionalProjects = [
     description:
       'Next-generation decentralized serverless orchestration platform with sub-millisecond edge deployments.',
     image: '',
+    images: [],
     tech: ['TypeScript', 'Docker', 'Kubernetes'],
+    client: 'Private Client',
+    category: 'Cloud Infrastructure',
+    date: '2026',
+    projectUrl: '',
+    githubUrl: '',
   },
   {
     slug: 'vortex-crypto',
@@ -140,7 +152,13 @@ const additionalProjects = [
     description:
       'High-frequency institutional crypto liquidity aggregator and smart-contract yield optimization engine.',
     image: '',
+    images: [],
     tech: ['Solidity', 'Web3.js', 'GraphQL'],
+    client: 'Private Client',
+    category: 'Web3 / DeFi',
+    date: '2026',
+    projectUrl: '',
+    githubUrl: '',
   },
 ];
 

@@ -2,13 +2,13 @@ export default function Vision() {
   return (
     <section
       id="vision"
-      className="relative min-h-[105vh] overflow-hidden bg-[#020617] flex items-center justify-center px-10 py-20"
+      className="relative min-h-[105vh] overflow-hidden flex items-center justify-center px-10 py-20"
     >
       {/* Sağ üst ışık */}
-      <div className="absolute right-0 top-0 h-[600px] w-[600px] rounded-full bg-blue-500/10 blur-[200px]" />
+      <div className="absolute right-0 top-0 h-[600px] w-[600px] rounded-full bg-blue-600/55 blur-[230px]" />
 
       {/* Sol alt ışık */}
-      <div className="absolute left-0 bottom-0 h-[500px] w-[500px] rounded-full bg-indigo-500/10 blur-[200px]" />
+      <div className="absolute left-0 bottom-0 h-[500px] w-[500px] rounded-full bg-indigo-500/45 blur-[200px]" />
 
       <div className="relative w-full max-w-[1400px]">
         {/* Sol tırnak - Daha Büyük */}

@@ -6,15 +6,13 @@ import Contact from '@/components/sections/Contact';
 import Footer from '@/components/layout/Footer';
 import Skills from '@/components/sections/Skills';
 import ScrollProgress from '@/components/ui/ScrollProgress';
-import GlowBackground from '@/components/ui/GlowBackground';
 import Vision from '@/components/sections/Connect';
 import Connect from '@/components/sections/Vision';
 
 export default function Home() {
   return (
-    <main className="text-white min-h-screen relative w-full selection:bg-white selection:text-black">
+    <main className="text-white min-h-screen relative w-full selection:bg-white selection:text-black bg-[#0a0e1a]">
       <ScrollProgress />
-      <GlowBackground />
       <Navbar />
 
       {/* Section Akışı */}

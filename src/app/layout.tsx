@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Geist } from 'next/font/google';
 import PageTransition from '@/components/layout/PageTransition';
+import SmoothScroll from '@/components/ui/SmoothScroll';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
 const geistSans = Geist({
@@ -22,7 +23,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="tr" className={`${geistSans.variable} h-full`}>
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col bg-[#0a0e1a]">
+        <SmoothScroll />
         <PageTransition>{children}</PageTransition>
       </body>
     </html>
