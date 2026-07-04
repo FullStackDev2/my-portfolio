@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 import type { ChangeEvent } from 'react';
 import { contactSchema } from '../schemas/contactSchema';
+import RotatingHeading from '../layout/RotatingHeading';
 
 export default function Contact() {
   type FormData = {
@@ -44,16 +45,29 @@ export default function Contact() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Sağdaki bilgi kartı — telefon/adres yok, sadece email vurgulanıyor
-  const contactInfo = {
-    label: 'Email',
-    value: 'nurettin.dincerfsd@gmail.com',
-    href: 'mailto:nurettin.dincerfsd@gmail.com',
-    icon: 'fa-solid fa-envelope',
-  };
+  // Sağdaki iletişim bilgisi satırları — sadece ikon + değer, etiket yok,
+  // arkaplan kutusu yok (referans görseldeki sade stil)
+  const contactRows = [
+    {
+      value: '',
+      icon: 'fa-solid fa-phone',
+      color: 'text-blue-500',
+    },
+    {
+      value: 'nurettin.dincerfsd@gmail.com',
+      href: undefined,
+      icon: 'fa-solid fa-envelope',
+      color: 'text-blue-500',
+    },
+    {
+      value: 'Istanbul, Türkiye',
+      href: undefined,
+      icon: 'fa-solid fa-location-dot',
+      color: 'text-blue-500',
+    },
+  ];
 
-  // Alttaki sosyal medya ikon butonları (referans görseldeki gibi
-  // outline kare butonlar)
+  // Alttaki sosyal medya ikon butonları — gradientli
   const socialLinks = [
     {
       label: 'LinkedIn',
@@ -70,137 +84,166 @@ export default function Contact() {
   return (
     <section
       id="contact"
-      className="min-h-screen py-32 px-6 text-white flex flex-col"
+      className="min-h-screen py-24 px-6 text-white flex flex-col"
     >
-      <div className="max-w-5xl mx-auto w-full mt-auto">
-        <div className="mb-16 text-center flex flex-col items-center">
-          <motion.h2
+      <div className="max-w-5xl mx-auto w-full">
+        {/* Başlık bloğu */}
+        <div className="mb-24 text-center flex flex-col items-center">
+          <motion.span
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            className="text-5xl md:text-6xl font-black mb-6 bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent leading-normal"
+            transition={{ duration: 0.6 }}
+            className="uppercase tracking-[0.3em] text-sm md:text-base font-semibold bg-gradient-to-r from-orange-400 via-pink-500 to-fuchsia-500 bg-clip-text text-transparent"
           >
             Let&#39;s Work Together
-          </motion.h2>
-          <p className="text-white/60 text-lg">
+          </motion.span>
+          <RotatingHeading />
+
+          <div className="flex gap-3 mt-8 mb-8">
+            <span className="w-14 h-1.5 rounded-full bg-gradient-to-r from-orange-400 to-pink-500" />
+            <span className="w-14 h-1.5 rounded-full bg-gradient-to-r from-pink-500 to-fuchsia-500" />
+          </div>
+
+          <p className="max-w-2xl text-lg text-white/60 leading-8">
             I&#39;m always open to discussing new projects, creative ideas, or
             opportunities to be part of your vision.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-16 items-start">
-          {/* Form - arkasında organik blob şekli, kendisi DEĞİŞMEDİ */}
-          <div className="relative">
-            {/* Blob şekli — formun arkasında, hafif dönerek nefes alan bir blur'lu leke */}
-            <motion.div
-              aria-hidden="true"
-              className="absolute -inset-8 -z-10 opacity-40 blur-2xl"
-              style={{
-                background:
-                  'linear-gradient(135deg, #3b82f6, #8b5cf6 55%, #22d3ee)',
-                borderRadius: '60% 40% 30% 70% / 60% 30% 70% 40%',
-              }}
-              animate={{
-                borderRadius: [
-                  '60% 40% 30% 70% / 60% 30% 70% 40%',
-                  '40% 60% 70% 30% / 30% 70% 40% 60%',
-                  '60% 40% 30% 70% / 60% 30% 70% 40%',
-                ],
-                rotate: [0, 8, 0],
-              }}
-              transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
-            />
-            {/* İkinci, daha küçük ve daha net blob katmanı (derinlik için) */}
-            <motion.div
-              aria-hidden="true"
-              className="absolute -inset-4 -z-10 opacity-25 blur-xl"
-              style={{
-                background:
-                  'linear-gradient(135deg, #8b5cf6, #3b82f6 60%, #22d3ee)',
-                borderRadius: '40% 60% 70% 30% / 50% 60% 30% 60%',
-              }}
-              animate={{
-                borderRadius: [
-                  '40% 60% 70% 30% / 50% 60% 30% 60%',
-                  '60% 40% 30% 70% / 60% 30% 70% 40%',
-                  '40% 60% 70% 30% / 50% 60% 30% 60%',
-                ],
-                rotate: [0, -6, 0],
-              }}
-              transition={{ duration: 11, repeat: Infinity, ease: 'easeInOut' }}
-            />
-
-            <form
-              action="https://api.web3forms.com/submit"
-              method="POST"
-              className="relative space-y-6"
+        <div className="grid lg:grid-cols-[1.15fr_.85fr] gap-24 items-center">
+          {/* Form - arkasında statik pembe/mor organik blob, form birebir aynı */}
+          <div className="relative z-0 flex items-center justify-center min-h-[750px]">
+            {/* Statik blob şekli — animasyon yok, sabit organik form */}
+            <div
+              aria-hidden
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-0"
             >
-              {/* Access Key (Web3Forms için şart) */}
-              <input
-                type="hidden"
-                name="access_key"
-                value="b5030af0-7924-4da5-997f-a7111efdda29"
-              />
-
-              <div>
-                <label className="block text-sm font-medium mb-2">Name</label>
-                <input
-                  name="name"
-                  type="text"
-                  onBlur={handleBlur}
-                  onChange={handleInputChange}
-                  value={formData.name}
-                  className={`w-full bg-[#161616] border ${errors.name && touched.name ? 'border-red-500' : 'border-white/10'} rounded-xl p-4 focus:outline-none focus:border-blue-500 transition-colors`}
-                  placeholder="Enter Your name.."
-                />
-                {errors.name && touched.name && (
-                  <p className="text-red-500 text-xs mt-1">{errors.name}</p>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">Email</label>
-                <input
-                  name="email"
-                  type="email"
-                  onBlur={handleBlur}
-                  onChange={handleInputChange}
-                  value={formData.email}
-                  className={`w-full bg-[#161616] border ${errors.email && touched.email ? 'border-red-500' : 'border-white/10'} rounded-xl p-4 focus:outline-none focus:border-blue-500 transition-colors`}
-                  placeholder="your.email@example.com"
-                />
-                {errors.email && touched.email && (
-                  <p className="text-red-500 text-xs mt-1">{errors.email}</p>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Message
-                </label>
-                <textarea
-                  name="message"
-                  rows={4}
-                  onBlur={handleBlur}
-                  onChange={handleInputChange}
-                  value={formData.message}
-                  className={`w-full bg-[#161616] border ${errors.message && touched.message ? 'border-red-500' : 'border-white/10'} rounded-xl p-4 focus:outline-none focus:border-blue-500 transition-colors`}
-                  placeholder="How can I help you?.."
-                />
-                {errors.message && touched.message && (
-                  <p className="text-red-500 text-xs mt-1">{errors.message}</p>
-                )}
-              </div>
-
-              <button
-                type="submit"
-                className="bg-gradient-to-r from-blue-500 to-purple-500 px-8 py-4 rounded-full font-bold hover:opacity-90 transition-all flex items-center gap-2"
+              <svg
+                width="700"
+                height="760"
+                viewBox="0 0 820 820"
+                className="drop-shadow-[0_35px_50px_rgba(255,0,128,.35)]"
               >
-                Send Message <span>↗</span>
-              </button>
-            </form>
+                <defs>
+                  <linearGradient
+                    id="contactBlob"
+                    x1="0%"
+                    y1="0%"
+                    x2="100%"
+                    y2="100%"
+                  >
+                    <stop offset="0%" stopColor="#ff8a4c" />
+                    <stop offset="45%" stopColor="#ff4b93" />
+                    <stop offset="100%" stopColor="#bf00ff" />
+                  </linearGradient>
+                </defs>
+
+                <path
+                  fill="url(#contactBlob)"
+                  d="
+    M120 185
+    C80 65 200 5 355 35
+    C470 55 560 115 655 110
+    C760 105 805 240 780 370
+    C755 470 725 555 745 650
+    C765 760 665 825 530 810
+    C430 800 350 760 250 785
+    C130 815 45 745 35 635
+    C25 540 60 475 80 395
+    C100 320 155 285 120 185
+    Z
+  "
+                />
+              </svg>
+            </div>
+
+            <div className="relative z-10 w-full max-w-[430px] px-6 py-8">
+              <h3 className="text-2xl font-bold text-white mb-8 drop-shadow-sm">
+                Please fill this form
+              </h3>
+
+              <form
+                action="https://api.web3forms.com/submit"
+                method="POST"
+                className="space-y-6"
+              >
+                {/* Access Key (Web3Forms için şart) */}
+                <input
+                  type="hidden"
+                  name="access_key"
+                  value="b5030af0-7924-4da5-997f-a7111efdda29"
+                />
+
+                <div>
+                  <label className="block text-sm font-medium mb-2">Name</label>
+                  <input
+                    name="name"
+                    type="text"
+                    onBlur={handleBlur}
+                    onChange={handleInputChange}
+                    value={formData.name}
+                    className={`w-full bg-[#161616] border ${errors.name && touched.name ? 'border-red-500' : 'border-white/10'} rounded-xl p-4 focus:outline-none focus:border-blue-500 transition-colors`}
+                    placeholder="Enter Your name.."
+                  />
+                  {errors.name && touched.name && (
+                    <p className="text-white text-sm font-bold mt-1.5 inline-flex items-center gap-1.5 rounded-md px-2 ">
+                      {errors.name}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    Email
+                  </label>
+                  <input
+                    name="email"
+                    type="email"
+                    onBlur={handleBlur}
+                    onChange={handleInputChange}
+                    value={formData.email}
+                    className={`w-full bg-[#161616] border ${errors.email && touched.email ? 'border-red-500' : 'border-white/10'} rounded-xl p-4 focus:outline-none focus:border-blue-500 transition-colors`}
+                    placeholder="your.email@example.com"
+                  />
+                  {errors.email && touched.email && (
+                    <p className="text-white text-sm font-bold mt-1.5 inline-flex items-center gap-1.5 rounded-md px-2 ">
+                      {errors.email}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    Message
+                  </label>
+                  <textarea
+                    name="message"
+                    rows={4}
+                    onBlur={handleBlur}
+                    onChange={handleInputChange}
+                    value={formData.message}
+                    className={`w-full bg-[#161616] border ${errors.message && touched.message ? 'border-red-500' : 'border-white/10'} rounded-xl p-4 focus:outline-none focus:border-blue-500 transition-colors`}
+                    placeholder="How can I help you?.."
+                  />
+                  {errors.message && touched.message && (
+                    <p className="text-white text-sm font-bold mt-1.5 inline-flex items-center gap-1.5 rounded-md px-2 ">
+                      {errors.message}
+                    </p>
+                  )}
+                </div>
+
+                <button
+                  type="submit"
+                  className="group bg-yellow-400 rounded-[6px] px-8 py-4 font-bold text-white hover:scale-[1.05] active:scale-[0.98] flex items-center gap-2"
+                >
+                  Send Message
+                  <i className="fa-solid fa-paper-plane text-sm group-hover:translate-x-1 group-hover:-translate-y-0.5" />
+                </button>
+              </form>
+            </div>
           </div>
 
-          {/* Contact Info - yeniden tasarlandı */}
+          {/* Contact Info - sade ikon + metin, arkaplansız, etiketsiz */}
           <div className="space-y-10 pt-2">
             <div className="space-y-3">
               <h3 className="text-2xl font-bold">
@@ -215,28 +258,29 @@ export default function Contact() {
               </p>
             </div>
 
-            {/* Öne çıkan iletişim bilgisi (email) — referans görseldeki
-                telefon/email/adres satırlarına benzer */}
-            <a
-              href={contactInfo.href}
-              className="group flex items-center gap-4 w-fit"
-            >
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 border border-white/10 flex items-center justify-center text-lg text-cyan-400 group-hover:border-cyan-400/60 group-hover:text-cyan-300 transition-colors">
-                <i className={contactInfo.icon} />
-              </div>
-              <div>
-                <p className="text-xs text-white/50 tracking-widest uppercase">
-                  {contactInfo.label}
-                </p>
-                <p className="text-base font-medium text-white/90 group-hover:text-cyan-300 transition-colors">
-                  {contactInfo.value}
-                </p>
-              </div>
-            </a>
+            <div className="space-y-6">
+              {contactRows.map((item) => {
+                const Wrapper = item.href ? 'a' : 'div';
+                return (
+                  <Wrapper
+                    key={item.value}
+                    {...(item.href ? { href: item.href } : {})}
+                    className="group flex items-center gap-4 w-fit"
+                  >
+                    <i
+                      className={`${item.icon} ${item.color} text-xl w-6 text-center`}
+                    />
+                    <p className="text-base font-medium text-white/90 group-hover:text-cyan-300 transition-colors">
+                      {item.value}
+                    </p>
+                  </Wrapper>
+                );
+              })}
+            </div>
 
             <div className="h-px w-full bg-white/10" />
 
-            {/* Sosyal medya ikonları — outline kare butonlar */}
+            {/* Sosyal medya ikonları — gradientli kare butonlar */}
             <div className="flex items-center gap-4">
               {socialLinks.map((item) => (
                 <a
@@ -245,9 +289,52 @@ export default function Contact() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={item.label}
-                  className="w-11 h-11 rounded-lg border border-white/15 flex items-center justify-center text-white/70 hover:text-cyan-300 hover:border-cyan-400/60 hover:bg-cyan-400/5 transition-colors"
+                  className="
+    group
+    relative
+    w-14
+    h-14
+    rounded-lg
+    p-[1.5px]
+    bg-gradient-to-br
+    from-orange-400
+    via-pink-500
+    to-fuchsia-500
+    transition-all
+    duration-300
+    hover:scale-110
+    hover:shadow-[0_0_20px_rgba(236,72,153,.4)]
+  "
                 >
-                  <i className={item.icon} />
+                  <div
+                    className="
+      flex
+      h-full
+      w-full
+      items-center
+      justify-center
+      rounded-[7px]
+      bg-[#0b0f1a]
+      transition-all
+      duration-300
+      group-hover:bg-transparent
+    "
+                  >
+                    <i
+                      className={`${item.icon}
+      text-[22px]
+      bg-gradient-to-br
+      from-orange-400
+      via-pink-500
+      to-fuchsia-500
+      bg-clip-text
+      text-transparent
+      transition-all
+      duration-300
+      group-hover:text-white
+      group-hover:bg-none`}
+                    />
+                  </div>
                 </a>
               ))}
             </div>
