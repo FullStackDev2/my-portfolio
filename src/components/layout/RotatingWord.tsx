@@ -52,13 +52,13 @@ export default function RotatingWord() {
   return (
     <span className="inline-flex w-[14ch] items-center text-left">
       <span
-        className={
+        className={`inline-block min-h-[1em] ${
           isDeleting
             ? 'bg-gradient-to-r from-emerald-400 via-teal-300 to-violet-500 bg-clip-text text-transparent'
             : 'text-cyan-400'
-        }
+        }`}
       >
-        {text}
+        {text || '\u00A0'}
       </span>
 
       <span

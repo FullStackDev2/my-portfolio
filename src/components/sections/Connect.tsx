@@ -22,10 +22,10 @@ export default function Connect() {
         <h2 className="flex flex-col items-center text-6xl md:text-8xl lg:text-[6rem] font-semibold text-white tracking-tighter leading-[0.9] mb-12 gap-4">
           <span>LET&#39;S BUILD</span>
 
-          <span className="flex items-center justify-center">
+          <span className="flex items-center justify-center  translate-x-26">
             <span>SOMETHING&nbsp;</span>
 
-            <span className="inline-block w-[14ch] text-left">
+            <span className="inline-block w-[14ch] text-left translate-y-1">
               <RotatingWord />
             </span>
           </span>

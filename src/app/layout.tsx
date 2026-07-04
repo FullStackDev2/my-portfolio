@@ -1,14 +1,8 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import { Geist } from 'next/font/google';
 import PageTransition from '@/components/layout/PageTransition';
 import SmoothScroll from '@/components/ui/SmoothScroll';
 import '@fortawesome/fontawesome-free/css/all.min.css';
-
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin'],
-});
 
 export const metadata: Metadata = {
   title: 'Nurettin | Full Stack Developer',
@@ -22,8 +16,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="tr" className={`${geistSans.variable} h-full`}>
-      <body className="min-h-full flex flex-col bg-[#0a0e1a]">
+    <html lang="tr" className="h-full">
+      <body className="antialiased bg-[#0a0e1a] text-white">
+        {/* SmoothScroll'u PageTransition'ın da dışına, en üste koyuyoruz */}
         <SmoothScroll />
         <PageTransition>{children}</PageTransition>
       </body>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 import Image from 'next/image';
 import ProjectModal from '@/components/ui/ProjectModal';
@@ -102,7 +102,7 @@ const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.06 },
+    transition: { staggerChildren: 0.045, delayChildren: 0 },
   },
 };
 
@@ -112,9 +112,9 @@ const cardVariants: Variants = {
     scale: 1,
     opacity: 1,
     y: 0,
-    transition: { type: 'spring', stiffness: 140, damping: 18 },
+    transition: { type: 'spring', stiffness: 550, damping: 28, mass: 0.5 },
   },
-  exit: { scale: 0.85, opacity: 0, y: 20, transition: { duration: 0.2 } },
+  exit: { scale: 0.85, opacity: 0, y: 20, transition: { duration: 0.1 } },
 };
 
 const additionalProjects: (typeof importedProjects)[0][] = [
@@ -160,13 +160,29 @@ const additionalProjects: (typeof importedProjects)[0][] = [
     projectUrl: '',
     githubUrl: '',
   },
+  {
+    slug: 'vortex-crypto',
+    title: 'Vortex Protocol',
+    description:
+      'High-frequency institutional crypto liquidity aggregator and smart-contract yield optimization engine.',
+    image: '',
+    images: [],
+    tech: ['Solidity', 'Web3.js', 'GraphQL'],
+    client: 'Private Client',
+    category: 'Web3 / DeFi',
+    date: '2026',
+    projectUrl: '',
+    githubUrl: '',
+  },
 ];
+
+const PAGE_SIZE = 6;
 
 export default function Projects() {
   const [selectedProject, setSelectedProject] = useState<
     (typeof importedProjects)[0] | null
   >(null);
-  const [showAll, setShowAll] = useState(false);
+  const [page, setPage] = useState(0);
 
   // STATS DIZISI - Inline SVG entegrasyonu tamamlandı
   const stats = [
@@ -193,9 +209,41 @@ export default function Projects() {
   ];
 
   const combinedProjects = [...importedProjects, ...additionalProjects];
-  const visibleProjects = showAll
-    ? combinedProjects
-    : combinedProjects.slice(0, 6);
+  const totalPages = Math.ceil(combinedProjects.length / PAGE_SIZE);
+  const visibleProjects = combinedProjects.slice(
+    page * PAGE_SIZE,
+    page * PAGE_SIZE + PAGE_SIZE,
+  );
+
+  // Sayfa değiştirme (baştan/sondan sarmalı - wrap around)
+  const goToPage = useCallback(
+    (index: number) => {
+      setPage(() => {
+        if (index < 0) return totalPages - 1;
+        if (index >= totalPages) return 0;
+        return index;
+      });
+    },
+    [totalPages],
+  );
+
+  // Klavye ok tuşları ile sayfa geçişi
+  useEffect(() => {
+    if (totalPages <= 1) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        goToPage(page + 1);
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        goToPage(page - 1);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [page, totalPages, goToPage]);
 
   return (
     <section
@@ -241,7 +289,6 @@ export default function Projects() {
         </div>
 
         {/* SOL ISTATISTIK PANELİ DÖNGÜSÜ */}
-        {/* Kartlar genişlediği için ana taşıyıcıyı -left-72 yaptık */}
         <div className="hidden xl:flex flex-col gap-4 absolute -left-72 top-92">
           {stats.map((item, index) => (
             <motion.div
@@ -251,7 +298,6 @@ export default function Projects() {
               transition={{ delay: index * 0.1 }}
               className="w-64 rounded-2xl border border-zinc-800/80 bg-zinc-900/40 backdrop-blur-xl p-4 flex items-center gap-4 group hover:border-blue-500/30 transition-colors duration-300"
             >
-              {/* İkon Kutusu (shrink-0 ile yazı uzun olsa bile ikonun büzülmesini engelledik) */}
               <div className="w-16 h-16 flex items-center justify-center rounded-xl bg-blue-500/10 border border-blue-500/20 group-hover:bg-blue-500/20 group-hover:border-blue-500/40 transition-all duration-300 shadow-[0_0_20px_rgba(59,130,246,0.18)] shrink-0">
                 <Image
                   src={item.iconPath}
@@ -262,7 +308,6 @@ export default function Projects() {
                 />
               </div>
 
-              {/* Yazı Kutusu (Kendi içinde alt alta durmaları için flex-col yaptık) */}
               <div className="flex flex-col justify-center">
                 <div className="text-white text-2xl font-bold tracking-tight leading-none">
                   {item.value}
@@ -275,17 +320,17 @@ export default function Projects() {
           ))}
         </div>
 
-        {/* PROJE KARTLARININ BULUNDUGU GRID */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-30px' }}
-          className="grid lg:grid-cols-3 md:grid-cols-2 gap-10"
-        >
-          <AnimatePresence mode="popLayout">
+        {/* PROJE KARTLARININ BULUNDUGU GRID - sayfa değişince yeniden animasyonlanır */}
+        <AnimatePresence>
+          <motion.div
+            key={page}
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            className="grid lg:grid-cols-3 md:grid-cols-2 gap-10 min-h-[800px] items-start"
+          >
             {visibleProjects.map((project, i) => {
-              // Her kartın kendi renk temasını tanımlıyoruz
               const getTheme = (index: number) => {
                 switch (index % 3) {
                   case 0:
@@ -295,6 +340,9 @@ export default function Projects() {
                       glow: 'from-cyan-500/10',
                       icon: 'bg-cyan-500/10 border-cyan-500/20 text-cyan-400',
                       tag: 'bg-cyan-500/5 border-cyan-500/10 text-cyan-400',
+                      cardBorder: 'border-cyan-500/30 hover:border-cyan-400/60',
+                      neonShadow:
+                        'shadow-[0_0_45px_-5px_rgba(34,211,238,0.55)]',
                     };
                   case 1:
                     return {
@@ -303,6 +351,10 @@ export default function Projects() {
                       glow: 'from-purple-500/15',
                       icon: 'bg-purple-500/10 border-purple-500/20 text-purple-400',
                       tag: 'bg-purple-500/5 border-purple-500/10 text-purple-400',
+                      cardBorder:
+                        'border-purple-500/30 hover:border-purple-400/60',
+                      neonShadow:
+                        'shadow-[0_0_45px_-5px_rgba(168,85,247,0.55)]',
                     };
                   case 2:
                     return {
@@ -311,6 +363,10 @@ export default function Projects() {
                       glow: 'from-amber-500/15',
                       icon: 'bg-amber-500/10 border-amber-500/20 text-amber-400',
                       tag: 'bg-amber-500/9 border-amber-500/10 text-amber-400',
+                      cardBorder:
+                        'border-amber-500/30 hover:border-amber-400/60',
+                      neonShadow:
+                        'shadow-[0_0_45px_-5px_rgba(245,158,11,0.55)]',
                     };
                 }
               };
@@ -319,13 +375,11 @@ export default function Projects() {
               return (
                 <motion.div
                   key={project.slug}
-                  layout
                   variants={cardVariants}
                   whileHover={{ y: -10, scale: 1.02 }}
                   onClick={() => setSelectedProject(project)}
-                  className={`relative cursor-pointer rounded-2xl backdrop-blur-md border border-white/10 overflow-hidden group shadow-2xl flex flex-col h-[420px] justify-end transition-all duration-500 ${theme.bg} hover:border-white/20`}
+                  className={`relative cursor-pointer rounded-2xl backdrop-blur-md border-2 overflow-hidden group shadow-2xl flex flex-col h-[420px] justify-end transition-all duration-500 ${theme.bg} ${theme.cardBorder} ${theme.neonShadow}`}
                 >
-                  {/* Arka Plan Katmanı */}
                   <div className="absolute inset-0 z-0">
                     {project.image ? (
                       <Image
@@ -339,29 +393,19 @@ export default function Projects() {
                     ) : (
                       <div className="absolute inset-0 bg-zinc-900/80" />
                     )}
-                    {/* Yeni Eklenen Glow*/}
-                    {/* 1. Sol Alt Köşe Işık (Ana Kaynak) */}
                     <div
                       className={`absolute -bottom-10 -left-10 w-2/3 h-2/3 bg-gradient-to-tr ${theme.glow} via-transparent to-transparent opacity-50 blur-3xl z-0 pointer-events-none`}
                     />
-
-                    {/* 2. Taban Işığı (Tüm alt kenarı besler) */}
                     <div
                       className={`absolute -bottom-24 left-0 right-0 h-64 bg-gradient-to-t ${theme.glow} via-transparent to-transparent opacity-40 blur-3xl z-0 pointer-events-none`}
                     />
-
-                    {/* 3. Karanlık Gradyan (Okunabilirlik için) */}
                     <div className="absolute inset-0 bg-gradient-to-t from-[#020617] via-[#020617]/50 to-transparent z-10" />
-                    {/* Yeni Eklenen Glow*/}
-
-                    {/* Kartın içine hafif bir renkli glow/ışık efekti veriyoruz */}
                     <div
                       className={`absolute inset-0 bg-gradient-to-tr ${theme.glow} via-transparent to-transparent opacity-80`}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#020617] via-[#020617]/70 to-transparent" />
                   </div>
 
-                  {/* İçerik Bloğu */}
                   <div className="relative z-30 p-6 flex flex-col justify-end h-full w-full">
                     <div className="flex items-center gap-3 mb-3">
                       <div
@@ -413,19 +457,70 @@ export default function Projects() {
                 </motion.div>
               );
             })}
-          </AnimatePresence>
-        </motion.div>
-
-        {/* View More / Less Butonu */}
-        {combinedProjects.length > 6 && (
-          <motion.div layout className="flex justify-center pt-2">
-            <button
-              onClick={() => setShowAll(!showAll)}
-              className="px-8 py-3 rounded-full border border-zinc-800 bg-zinc-900/40 hover:bg-zinc-800/60 backdrop-blur-md font-medium text-xs uppercase tracking-widest text-zinc-400 hover:text-white transition-all duration-300 shadow-xl font-mono"
-            >
-              {showAll ? '// View Less' : '// View More'}
-            </button>
           </motion.div>
+        </AnimatePresence>
+
+        {/* Sayfalama Noktaları (Pagination Dots) */}
+        {totalPages > 1 && (
+          <div className="flex justify-center items-center gap-5 pt-2">
+            <button
+              onClick={() => goToPage(page - 1)}
+              aria-label="Önceki sayfa"
+              className="w-9 h-9 flex items-center justify-center rounded-full border border-white/10 text-white/70 hover:text-white hover:border-white/30 hover:bg-white/5 transition-all duration-300"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2.5}
+                stroke="currentColor"
+                className="w-4 h-4"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M15.75 19.5 8.25 12l7.5-7.5"
+                />
+              </svg>
+            </button>
+
+            <div className="flex items-center gap-3">
+              {Array.from({ length: totalPages }).map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => goToPage(index)}
+                  aria-label={`${index + 1}. sayfaya git`}
+                  aria-current={page === index}
+                  className={`rounded-full transition-all duration-300 ${
+                    page === index
+                      ? 'w-8 h-2.5 bg-white'
+                      : 'w-2.5 h-2.5 bg-white/25 hover:bg-white/50'
+                  }`}
+                />
+              ))}
+            </div>
+
+            <button
+              onClick={() => goToPage(page + 1)}
+              aria-label="Sonraki sayfa"
+              className="w-9 h-9 flex items-center justify-center rounded-full border border-white/10 text-white/70 hover:text-white hover:border-white/30 hover:bg-white/5 transition-all duration-300"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2.5}
+                stroke="currentColor"
+                className="w-4 h-4"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="m8.25 4.5 7.5 7.5-7.5 7.5"
+                />
+              </svg>
+            </button>
+          </div>
         )}
       </div>
 
