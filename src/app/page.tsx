@@ -6,8 +6,8 @@ import Contact from '@/components/sections/Contact';
 import Footer from '@/components/layout/Footer';
 import Skills from '@/components/sections/Skills';
 import ScrollProgress from '@/components/ui/ScrollProgress';
-import Vision from '@/components/sections/Connect';
-import Connect from '@/components/sections/Vision';
+import Vision from '@/components/sections/Vision';
+import Connect from '@/components/sections/Connect';
 
 export default function Home() {
   return (

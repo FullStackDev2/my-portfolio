@@ -163,7 +163,7 @@ export default function Skills() {
         {/* ================= 1. ÜST BAĞLANTI (CORE - ÇİZGİNİN EN UCU / BAŞLANGICI) ================= */}
         <div className="hidden md:flex flex-col items-center w-full">
           <div className="px-8 py-3 rounded-xl border border-cyan-500/30 bg-[#040817] shadow-[0_0_20px_rgba(34,211,238,0.15)] text-white font-mono tracking-wider z-20">
-            ENGINEERING CORE
+            SKILLS
           </div>
 
           {/* Butondan çıkıp aşağıdaki köprüye kadar uzanan tek ve kesintisiz dikey hat */}

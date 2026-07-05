@@ -70,7 +70,7 @@ export default function About() {
       title: 'Lead Frontend Developer',
       subtitle: 'SaaS Enterprise Solutions',
       description:
-        'Kurumsal düzeyde dashboard ve premium SaaS arayüz mimarilerinin geliştirilmesi. Piksel kusursuz teslimat, performance optimizasyonu ve modern bileşen sistemlerinin kurgulanması.Focused on Software Engineering and Distributed Systems. Developed a deep understanding of data structures and algorithm optimization.Focused on Software Engineering and Distributed Systems. Developed a deep understanding of data structures and algorithm optimization.Focused on Software Engineering and Distributed Systems. Developed a deep understanding of data structures and algorithm optimization.Focused on Software Engineering and Distributed Systems. Developed a deep understanding of data structures and algorithm optimization.Focused on Software Engineering and Distributed Systems. Developed a deep understanding of data structures and algorithm optimization.Focused on Software Engineering and Distributed Systems. Developed a deep understanding of data structures and algorithm optimization.',
+        'Kurumsal düzeyde dashboard ve premium SaaS arayüz mimarilerinin geliştirilmesi. Piksel kusursuz teslimat, performance optimizasyonu ve modern bileşen sistemlerinin kurgulanması.',
       type: 'experience',
     },
     {
@@ -78,7 +78,7 @@ export default function About() {
       title: 'Frontend Engineer',
       subtitle: 'SaaS Tech Studio',
       description:
-        "Kompleks veri görselleştirme araçları ve interaktif analitik panellerinin React/Next.js ile inşası. Sayfa yüklenme hızlarında %40'a varan optimizasyon başarılarsssssssssssssssssssssssss sssssssssssssssssssssssssssssssssssssf.",
+        "Kompleks veri görselleştirme araçları ve interaktif analitik panellerinin React/Next.js ile inşası. Sayfa yüklenme hızlarında %40'a varan optimizasyon.",
       type: 'experience',
     },
     {

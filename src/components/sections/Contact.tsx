@@ -21,6 +21,9 @@ export default function Contact() {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [status, setStatus] = useState<
+    'idle' | 'loading' | 'success' | 'error'
+  >('idle');
 
   const handleBlur = async (
     e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -43,13 +46,81 @@ export default function Contact() {
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+
+    // Kullanıcı yazmaya devam ederken eski hata mesajını hemen temizle
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: '' }));
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    // 1) Tüm formu bir kerede doğrula (yup)
+    try {
+      await contactSchema.validate(formData, { abortEarly: false });
+    } catch (err: unknown) {
+      // yup ValidationError -> inner[] içinde her alanın hatası var
+      const newErrors: Record<string, string> = {};
+
+      if (
+        err &&
+        typeof err === 'object' &&
+        'inner' in err &&
+        Array.isArray((err as { inner: unknown[] }).inner)
+      ) {
+        for (const validationError of (
+          err as { inner: { path?: string; message: string }[] }
+        ).inner) {
+          if (validationError.path && !newErrors[validationError.path]) {
+            newErrors[validationError.path] = validationError.message;
+          }
+        }
+      }
+
+      setErrors(newErrors);
+      setTouched({ name: true, email: true, message: true });
+      return;
+    }
+
+    // 2) Doğrulama geçti -> arka planda gönder, sayfa hiç yönlenmiyor
+    setStatus('loading');
+
+    try {
+      const res = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({
+          access_key: 'b5030af0-7924-4da5-997f-a7111efdda29',
+          name: formData.name,
+          email: formData.email,
+          message: formData.message,
+        }),
+      });
+
+      const result = await res.json();
+
+      if (result.success) {
+        setStatus('success');
+        setFormData({ name: '', email: '', message: '' });
+        setTouched({});
+        setErrors({});
+      } else {
+        setStatus('error');
+      }
+    } catch {
+      setStatus('error');
+    }
   };
 
   // Sağdaki iletişim bilgisi satırları — sadece ikon + değer, etiket yok,
   // arkaplan kutusu yok (referans görseldeki sade stil)
   const contactRows = [
     {
-      value: '',
+      value: 'Unavailable',
       icon: 'fa-solid fa-phone',
       color: 'text-blue-500',
     },
@@ -78,6 +149,16 @@ export default function Contact() {
       label: 'GitHub',
       url: 'https://github.com/FullStackDev2',
       icon: 'fa-brands fa-github',
+    },
+    {
+      label: 'Instagram',
+      url: undefined,
+      icon: 'fa-brands fa-instagram',
+    },
+    {
+      label: 'Facebook',
+      url: undefined,
+      icon: 'fa-brands fa-facebook',
     },
   ];
 
@@ -162,18 +243,7 @@ export default function Contact() {
                 Please fill this form
               </h3>
 
-              <form
-                action="https://api.web3forms.com/submit"
-                method="POST"
-                className="space-y-6"
-              >
-                {/* Access Key (Web3Forms için şart) */}
-                <input
-                  type="hidden"
-                  name="access_key"
-                  value="b5030af0-7924-4da5-997f-a7111efdda29"
-                />
-
+              <form onSubmit={handleSubmit} noValidate className="space-y-6">
                 <div>
                   <label className="block text-sm font-medium mb-2">Name</label>
                   <input
@@ -234,11 +304,26 @@ export default function Contact() {
 
                 <button
                   type="submit"
-                  className="group bg-yellow-400 rounded-[6px] px-8 py-4 font-bold text-white hover:scale-[1.05] active:scale-[0.98] flex items-center gap-2"
+                  disabled={status === 'loading'}
+                  className="group bg-yellow-400 rounded-[6px] px-8 py-4 font-bold text-white hover:scale-[1.05] active:scale-[0.98] flex items-center gap-2 disabled:opacity-60 disabled:hover:scale-100 disabled:cursor-not-allowed"
                 >
-                  Send Message
+                  {status === 'loading' ? 'Sending...' : 'Send Message'}
                   <i className="fa-solid fa-paper-plane text-sm group-hover:translate-x-1 group-hover:-translate-y-0.5" />
                 </button>
+
+                {status === 'success' && (
+                  <p className="text-green-400 text-sm font-semibold mt-2 flex items-center gap-2">
+                    <i className="fa-solid fa-circle-check" />
+                    Message sent successfully! I&#39;ll get back to you soon.
+                  </p>
+                )}
+
+                {status === 'error' && (
+                  <p className="text-red-400 text-sm font-semibold mt-2 flex items-center gap-2">
+                    <i className="fa-solid fa-triangle-exclamation" />
+                    Something went wrong. Please try again or email me directly.
+                  </p>
+                )}
               </form>
             </div>
           </div>

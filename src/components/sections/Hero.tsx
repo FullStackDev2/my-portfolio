@@ -96,6 +96,12 @@ export default function Hero() {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 1.08 }}
+              onClick={() =>
+                document.getElementById('projects')?.scrollIntoView({
+                  behavior: 'smooth',
+                  block: 'start',
+                })
+              }
               className="group relative inline-flex items-center gap-2.5 rounded-full p-[1.5px] bg-gradient-to-r from-blue-500 to-purple-500 shadow-[0_0_15px_rgba(139,92,246,0.3)] hover:shadow-[0_0_25px_rgba(139,92,246,0.5)]"
             >
               <span className="flex items-center gap-2.5 rounded-full bg-[#0a0a0f] px-8 py-4 text-[15px] font-semibold text-white ">
@@ -127,9 +133,23 @@ export default function Hero() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="px-8 py-4 rounded-full border border-zinc-700 text-white font-semibold hover:border-zinc-500 hover:bg-zinc-900 transition-colors"
+              onClick={() =>
+                document.getElementById('contact')?.scrollIntoView({
+                  behavior: 'smooth',
+                  block: 'start',
+                })
+              }
+              className="px-8 py-4 rounded-xl font-semibold text-white group relative"
+              style={{
+                backgroundImage:
+                  'linear-gradient(#18181b, #18181b), linear-gradient(to top right, #38bdf8, #a855f7, #ec4899)',
+                backgroundOrigin: 'border-box',
+                backgroundClip: 'padding-box, border-box',
+                border: '1px solid transparent',
+              }}
             >
-              Contact Me
+              <span className="absolute inset-0 rounded-xl w-0 h-0 m-auto transition-all duration-300 ease-out bg-white group-hover:w-full group-hover:h-full opacity-10 pointer-events-none" />
+              <span className="relative">Contact Me</span>
             </motion.button>
           </motion.div>
         </div>

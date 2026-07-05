@@ -13,7 +13,7 @@ export default function Connect() {
           alt="Security Background"
           fill
           priority
-          className="object-cover opacity-28"
+          className="object-cover translate-x-35 opacity-28"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#020617]/40 via-[#020617]/20 to-[#020617]/50" />
       </div>

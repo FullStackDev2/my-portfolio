@@ -5,6 +5,7 @@ export default function Vision() {
     <section
       id="vision"
       className="relative min-h-[105vh] overflow-hidden flex items-center justify-center px-10 py-20"
+      style={{ scrollSnapAlign: 'start', scrollSnapStop: 'always' }}
     >
       {/* Background */}
       <div className="absolute inset-0 bg-[#070b16]" />

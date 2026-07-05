@@ -248,7 +248,7 @@ export default function Projects() {
   return (
     <section
       id="projects"
-      className="min-h-screen px-6 py-32 flex flex-col select-none text-white relative overflow-hidden border-t border-zinc-800/50 bg-[#020617] scroll-mt-20"
+      className="min-h-screen px-6 py-20 flex flex-col select-none text-white relative overflow-hidden border-t border-zinc-800/50 bg-[#020617] scroll-mt-20"
       style={{ scrollSnapAlign: 'start', scrollSnapStop: 'always' }}
     >
       {/* SINEMATIK ARKA PLAN ISIKLARI */}
@@ -273,193 +273,218 @@ export default function Projects() {
 
       <div className="max-w-6xl mx-auto w-full space-y-16 relative z-10">
         {/* BASLIK ALANI */}
-        <div>
-          <p className="text-cyan-500 tracking-[0.3em] uppercase mb-4 text-xs font-semibold font-mono">
-            {'// LATEST WORK // PROJECTS'}
+        <div className="relative px-8 py-16 md:py-12">
+          {/* Sol üst - dizin yolu */}
+          <span className="absolute top-0 -translate-x-16 text-emerald-400 font-bold text-lg md:text-xl">
+            ~/portfolio
+          </span>
+
+          {/* Sağ üst - yorum satırı */}
+          <span className="absolute top-0 right-8 text-cyan-700 font-bold text-base md:text-lg">
+            {'// portfolio.projects'}
+          </span>
+
+          <p className="text-emerald-400 font-bold text-lg md:text-xl -translate-x-15 mb-6 text-left">
+            $ const projects = [
           </p>
-          <h2
-            className="text-5xl md:text-7xl font-black tracking-tight text-transparent bg-clip-text leading-normal"
-            style={{
-              backgroundImage:
-                'linear-gradient(90deg, #71B2FF 1%, #7E8FFF 12%, #B46BFF 20%, #F46D9C 30%, #FF9562 47%, #FFD66B 100%)',
-            }}
-          >
-            Projects I&#39;ve Built
-          </h2>
-        </div>
 
-        {/* SOL ISTATISTIK PANELİ DÖNGÜSÜ */}
-        <div className="hidden xl:flex flex-col gap-4 absolute -left-72 top-92">
-          {stats.map((item, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className="w-64 rounded-2xl border border-zinc-800/80 bg-zinc-900/40 backdrop-blur-xl p-4 flex items-center gap-4 group hover:border-blue-500/30 transition-colors duration-300"
+          <div className="text-center">
+            <h2
+              className="text-[3.5rem] md:text-[5.8rem] font-black tracking-tight text-transparent bg-clip-text leading-normal"
+              style={{
+                backgroundImage:
+                  'linear-gradient(90deg, #71B2FF 20%, #7E8FFF 33.5%, #B46BFF 36%, #F46D9C 65%, #FF9562 69%, #FFD66B 81%)',
+              }}
             >
-              <div className="w-16 h-16 flex items-center justify-center rounded-xl bg-blue-500/10 border border-blue-500/20 group-hover:bg-blue-500/20 group-hover:border-blue-500/40 transition-all duration-300 shadow-[0_0_20px_rgba(59,130,246,0.18)] shrink-0">
-                <Image
-                  src={item.iconPath}
-                  alt={item.label}
-                  width={40}
-                  height={40}
-                  className="w-12 h-12 object-contain"
-                />
-              </div>
+              Projects I&#39;ve Built
+            </h2>
 
-              <div className="flex flex-col justify-center">
-                <div className="text-white text-2xl font-bold tracking-tight leading-none">
-                  {item.value}
-                </div>
-                <div className="text-zinc-400 text-xs mt-1.5 font-medium leading-tight group-hover:text-zinc-300 transition-colors duration-300">
-                  {item.label}
-                </div>
-              </div>
-            </motion.div>
-          ))}
+            <p className="text-zinc-300 text-lg md:text-xl mt-4">
+              Full-stack projects, AI tools and
+              <br />
+              modern web experiences.
+            </p>
+          </div>
+
+          <p className="text-emerald-400 font-bold text-[22px] md:text-[22px] mt-10 -mb-20 text-right pr-8 translate-x-7">
+            ]
+          </p>
         </div>
 
-        {/* PROJE KARTLARININ BULUNDUGU GRID - sayfa değişince yeniden animasyonlanır */}
-        <AnimatePresence>
-          <motion.div
-            key={page}
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            exit="hidden"
-            className="grid lg:grid-cols-3 md:grid-cols-2 gap-10 min-h-[800px] items-start"
-          >
-            {visibleProjects.map((project, i) => {
-              const getTheme = (index: number) => {
-                switch (index % 3) {
-                  case 0:
-                    return {
-                      bg: 'bg-zinc-900/40',
-                      border: 'border-zinc-800/60',
-                      glow: 'from-cyan-500/10',
-                      icon: 'bg-cyan-500/10 border-cyan-500/20 text-cyan-400',
-                      tag: 'bg-cyan-500/5 border-cyan-500/10 text-cyan-400',
-                      cardBorder: 'border-cyan-500/30 hover:border-cyan-400/60',
-                      neonShadow:
-                        'shadow-[0_0_45px_-5px_rgba(34,211,238,0.55)]',
-                    };
-                  case 1:
-                    return {
-                      bg: 'bg-purple-950/40',
-                      border: 'border-white/5',
-                      glow: 'from-purple-500/15',
-                      icon: 'bg-purple-500/10 border-purple-500/20 text-purple-400',
-                      tag: 'bg-purple-500/5 border-purple-500/10 text-purple-400',
-                      cardBorder:
-                        'border-purple-500/30 hover:border-purple-400/60',
-                      neonShadow:
-                        'shadow-[0_0_45px_-5px_rgba(168,85,247,0.55)]',
-                    };
-                  case 2:
-                    return {
-                      bg: 'bg-amber-950/30',
-                      border: 'border-amber-500/15',
-                      glow: 'from-amber-500/15',
-                      icon: 'bg-amber-500/10 border-amber-500/20 text-amber-400',
-                      tag: 'bg-amber-500/9 border-amber-500/10 text-amber-400',
-                      cardBorder:
-                        'border-amber-500/30 hover:border-amber-400/60',
-                      neonShadow:
-                        'shadow-[0_0_45px_-5px_rgba(245,158,11,0.55)]',
-                    };
-                }
-              };
-              const theme = getTheme(i)!;
+        <div className="relative">
+          {/* SOL ISTATISTIK PANELİ DÖNGÜSÜ - artık kartların ortasına göre ortalanıyor */}
+          <div className="hidden xl:flex flex-col gap-4 absolute -left-80 top-1/2 -translate-y-1/2">
+            {stats.map((item, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, x: -30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className="w-64 rounded-2xl border border-zinc-800/80 bg-zinc-900/40 backdrop-blur-xl p-4 flex items-center gap-4 group hover:border-blue-500/30 transition-colors duration-300"
+              >
+                <div className="w-16 h-16 flex items-center justify-center rounded-xl bg-blue-500/10 border border-blue-500/20 group-hover:bg-blue-500/20 group-hover:border-blue-500/40 transition-all duration-300 shadow-[0_0_20px_rgba(59,130,246,0.18)] shrink-0">
+                  <Image
+                    src={item.iconPath}
+                    alt={item.label}
+                    width={40}
+                    height={40}
+                    className="w-12 h-12 object-contain"
+                  />
+                </div>
 
-              return (
-                <motion.div
-                  key={project.slug}
-                  variants={cardVariants}
-                  whileHover={{ y: -10, scale: 1.02 }}
-                  onClick={() => setSelectedProject(project)}
-                  className={`relative cursor-pointer rounded-2xl backdrop-blur-md border-2 overflow-hidden group shadow-2xl flex flex-col h-[420px] justify-end transition-all duration-500 ${theme.bg} ${theme.cardBorder} ${theme.neonShadow}`}
-                >
-                  <div className="absolute inset-0 z-0">
-                    {project.image ? (
-                      <Image
-                        src={project.image}
-                        alt={project.title}
-                        fill
-                        sizes="(max-width: 768px) 100vw, 33vw"
-                        priority={i < 3}
-                        className="object-cover transition-transform duration-1000 ease-out group-hover:scale-105"
-                      />
-                    ) : (
-                      <div className="absolute inset-0 bg-zinc-900/80" />
-                    )}
-                    <div
-                      className={`absolute -bottom-10 -left-10 w-2/3 h-2/3 bg-gradient-to-tr ${theme.glow} via-transparent to-transparent opacity-50 blur-3xl z-0 pointer-events-none`}
-                    />
-                    <div
-                      className={`absolute -bottom-24 left-0 right-0 h-64 bg-gradient-to-t ${theme.glow} via-transparent to-transparent opacity-40 blur-3xl z-0 pointer-events-none`}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#020617] via-[#020617]/50 to-transparent z-10" />
-                    <div
-                      className={`absolute inset-0 bg-gradient-to-tr ${theme.glow} via-transparent to-transparent opacity-80`}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#020617] via-[#020617]/70 to-transparent" />
+                <div className="flex flex-col justify-center">
+                  <div className="text-white text-2xl font-bold tracking-tight leading-none">
+                    {item.value}
                   </div>
+                  <div className="text-zinc-400 text-xs mt-1.5 font-medium leading-tight group-hover:text-zinc-300 transition-colors duration-300">
+                    {item.label}
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
 
-                  <div className="relative z-30 p-6 flex flex-col justify-end h-full w-full">
-                    <div className="flex items-center gap-3 mb-3">
+          {/* PROJE KARTLARININ BULUNDUGU GRID - sayfa değişince yeniden animasyonlanır */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={page}
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              exit="hidden"
+              className="grid lg:grid-cols-3 md:grid-cols-2 gap-10 min-h-[800px] items-start"
+            >
+              {visibleProjects.map((project, i) => {
+                const getTheme = (index: number) => {
+                  switch (index % 3) {
+                    case 0:
+                      return {
+                        bg: 'bg-zinc-900/40',
+                        border: 'border-zinc-800/60',
+                        glow: 'from-cyan-500/10',
+                        icon: 'bg-cyan-500/10 border-cyan-500/20 text-cyan-400',
+                        tag: 'bg-cyan-500/5 border-cyan-500/10 text-cyan-400',
+                        cardBorder:
+                          'border-cyan-500/30 hover:border-cyan-400/60',
+                        neonShadow:
+                          'shadow-[0_0_45px_-5px_rgba(34,211,238,0.55)]',
+                      };
+                    case 1:
+                      return {
+                        bg: 'bg-purple-950/40',
+                        border: 'border-white/5',
+                        glow: 'from-purple-500/15',
+                        icon: 'bg-purple-500/10 border-purple-500/20 text-purple-400',
+                        tag: 'bg-purple-500/5 border-purple-500/10 text-purple-400',
+                        cardBorder:
+                          'border-purple-500/30 hover:border-purple-400/60',
+                        neonShadow:
+                          'shadow-[0_0_45px_-5px_rgba(168,85,247,0.55)]',
+                      };
+                    case 2:
+                      return {
+                        bg: 'bg-amber-950/30',
+                        border: 'border-amber-500/15',
+                        glow: 'from-amber-500/15',
+                        icon: 'bg-amber-500/10 border-amber-500/20 text-amber-400',
+                        tag: 'bg-amber-500/9 border-amber-500/10 text-amber-400',
+                        cardBorder:
+                          'border-amber-500/30 hover:border-amber-400/60',
+                        neonShadow:
+                          'shadow-[0_0_45px_-5px_rgba(245,158,11,0.55)]',
+                      };
+                  }
+                };
+                const theme = getTheme(i)!;
+
+                return (
+                  <motion.div
+                    key={project.slug}
+                    variants={cardVariants}
+                    whileHover={{ y: -10, scale: 1.02 }}
+                    onClick={() => setSelectedProject(project)}
+                    className={`relative cursor-pointer rounded-2xl backdrop-blur-md border-2 overflow-hidden group shadow-2xl flex flex-col h-[420px] justify-end transition-all duration-500 ${theme.bg} ${theme.cardBorder} ${theme.neonShadow}`}
+                  >
+                    <div className="absolute inset-0 z-0">
+                      {project.image ? (
+                        <Image
+                          src={project.image}
+                          alt={project.title}
+                          fill
+                          sizes="(max-width: 768px) 100vw, 33vw"
+                          priority={i < 3}
+                          className="object-cover transition-transform duration-1000 ease-out group-hover:scale-105"
+                        />
+                      ) : (
+                        <div className="absolute inset-0 bg-zinc-900/80" />
+                      )}
                       <div
-                        className={`w-10 h-10 flex items-center justify-center shrink-0 rounded-xl border shadow-[0_0_15px_rgba(0,0,0,0.1)] ${theme.icon}`}
-                      >
-                        {getProjectIcon(project.slug)}
-                      </div>
-                      <h3 className="text-xl font-bold tracking-tight text-white group-hover:text-white/90 transition-colors duration-300">
-                        {project.title}
-                      </h3>
+                        className={`absolute -bottom-10 -left-10 w-2/3 h-2/3 bg-gradient-to-tr ${theme.glow} via-transparent to-transparent opacity-50 blur-3xl z-0 pointer-events-none`}
+                      />
+                      <div
+                        className={`absolute -bottom-24 left-0 right-0 h-64 bg-gradient-to-t ${theme.glow} via-transparent to-transparent opacity-40 blur-3xl z-0 pointer-events-none`}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#020617] via-[#020617]/50 to-transparent z-10" />
+                      <div
+                        className={`absolute inset-0 bg-gradient-to-tr ${theme.glow} via-transparent to-transparent opacity-80`}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#020617] via-[#020617]/70 to-transparent" />
                     </div>
 
-                    <p className="text-zinc-400 group-hover:text-zinc-300 text-xs line-clamp-2 leading-relaxed mb-5 opacity-90 transition-all duration-500">
-                      {project.description}
-                    </p>
-
-                    <div
-                      className={`flex justify-between items-center pt-4 border-t ${theme.border} w-full`}
-                    >
-                      <div className="flex flex-wrap gap-2">
-                        {project.tech?.slice(0, 3).map((tech) => (
-                          <span
-                            key={tech}
-                            className={`px-2.5 py-1 rounded-md border text-[10px] font-medium tracking-wide ${theme.tag}`}
-                          >
-                            {tech}
-                          </span>
-                        ))}
-                      </div>
-
-                      <div className="text-zinc-500 group-hover:text-white transition-all duration-300 shrink-0">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          strokeWidth={2.5}
-                          stroke="currentColor"
-                          className="w-4 h-4"
+                    <div className="relative z-30 p-6 flex flex-col justify-end h-full w-full">
+                      <div className="flex items-center gap-3 mb-3">
+                        <div
+                          className={`w-10 h-10 flex items-center justify-center shrink-0 rounded-xl border shadow-[0_0_15px_rgba(0,0,0,0.1)] ${theme.icon}`}
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"
-                          />
-                        </svg>
+                          {getProjectIcon(project.slug)}
+                        </div>
+                        <h3 className="text-xl font-bold tracking-tight text-white group-hover:text-white/90 transition-colors duration-300">
+                          {project.title}
+                        </h3>
+                      </div>
+
+                      <p className="text-zinc-400 group-hover:text-zinc-300 text-xs line-clamp-2 leading-relaxed mb-5 opacity-90 transition-all duration-500">
+                        {project.description}
+                      </p>
+
+                      <div
+                        className={`flex justify-between items-center pt-4 border-t ${theme.border} w-full`}
+                      >
+                        <div className="flex flex-wrap gap-2">
+                          {project.tech?.slice(0, 3).map((tech) => (
+                            <span
+                              key={tech}
+                              className={`px-2.5 py-1 rounded-md border text-[10px] font-medium tracking-wide ${theme.tag}`}
+                            >
+                              {tech}
+                            </span>
+                          ))}
+                        </div>
+
+                        <div className="text-zinc-500 group-hover:text-white transition-all duration-300 shrink-0">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={2.5}
+                            stroke="currentColor"
+                            className="w-4 h-4"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"
+                            />
+                          </svg>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </motion.div>
-        </AnimatePresence>
-
+                  </motion.div>
+                );
+              })}
+            </motion.div>
+          </AnimatePresence>
+        </div>
         {/* Sayfalama Noktaları (Pagination Dots) */}
         {totalPages > 1 && (
           <div className="flex justify-center items-center gap-5 pt-2">
@@ -532,8 +557,8 @@ export default function Projects() {
             onClose={() => setSelectedProject(null)}
           />
         )}
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[70%] h-px bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent blur-sm" />
       </AnimatePresence>
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[70%] h-px bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent blur-sm" />
     </section>
   );
 }
