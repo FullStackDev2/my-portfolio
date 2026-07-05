@@ -3,6 +3,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import SectionGlow from '../ui/SectionGlow';
+import Image from 'next/image';
 import {
   motion,
   useScroll,
@@ -94,18 +95,12 @@ export default function About() {
   // --- TEK ORTAK SCROLL PROGRESS: iki sütun da AYNI ANDA başlar, AYNI ANDA biter ---
   const timelinesRef = useRef<HTMLDivElement>(null);
 
-  // --- MOUSE POZİSYONUNA GÖRE AKTİF SÜTUN ---
-  // Artık container'ın üzerine gelmeyi beklemiyoruz — mouse ekranın HERHANGİ
-  // bir yerinde olsa bile (köşeler dahil) window genişliğinin ortasına göre
-  // hangi yarıda olduğu hesaplanıyor. Bu, "aktif" tarafı belirler.
-  // Bu bilgi SADECE barlar ekranda göründüğünde (barsVisible) devreye girer.
   const [hoveredSide, setHoveredSide] = useState<'left' | 'right' | null>(null);
   const hoveredSideRef = useRef<'left' | 'right' | null>(null);
 
   const [barsVisible, setBarsVisible] = useState(false);
   const barsVisibleRef = useRef(false);
 
-  // Global mouse takibi — sectiona/karta girmeye gerek yok, tüm ekranı dinler
   useEffect(() => {
     const handleWindowMouseMove = (e: MouseEvent) => {
       const side: 'left' | 'right' =
@@ -119,8 +114,6 @@ export default function About() {
     return () => window.removeEventListener('mousemove', handleWindowMouseMove);
   }, []);
 
-  // Barlar (timeline grid'i) ekranda görünür mü? — mouse gating SADECE bu
-  // true olduğunda uygulanır. Görünmüyorken her iki bar da normal davranır.
   useEffect(() => {
     const el = timelinesRef.current;
     if (!el) return;
@@ -135,46 +128,31 @@ export default function About() {
     return () => io.disconnect();
   }, []);
 
-  // Bir tarafın "açık" (scroll'a göre ilerlemeye devam edebilir) olup
-  // olmadığını hesaplayan yardımcı — hem gated motion value'larda hem de
-  // opaklıkta kullanılıyor, ikisi de aynı mantıkla tutarlı olsun diye.
   const isSideOpen = (side: 'left' | 'right') =>
     !barsVisibleRef.current ||
     hoveredSideRef.current === null ||
     hoveredSideRef.current === side;
 
-  // Bar/nokta opaklık çarpanları — barlar görünmüyorsa veya mouse henüz
-  // hareket etmediyse ikisi de tam parlak. Barlar görününce mouse hangi
-  // taraftaysa o taraf parlak kalır, diğeri hem soluklaşır hem de DONAR
-  // (aşağıda gated motion value'lar ile).
   const academicBarOpacity =
     !barsVisible || hoveredSide === null || hoveredSide === 'left' ? 1 : 0.3;
   const journeyBarOpacity =
     !barsVisible || hoveredSide === null || hoveredSide === 'right' ? 1 : 0.3;
 
-  // İki sütun için ayrı ayrı "hangi kart açık" state'i (birbirinden bağımsız)
   const [expandedAcademic, setExpandedAcademic] = useState<number | null>(null);
   const [expandedJourney, setExpandedJourney] = useState<number | null>(null);
 
-  // --- PİKSEL BAZLI ORTAK YÜKSEKLİK ---
   const academicListRef = useRef<HTMLDivElement>(null);
   const journeyListRef = useRef<HTMLDivElement>(null);
   const [academicHeight, setAcademicHeight] = useState(0);
   const [journeyHeight, setJourneyHeight] = useState(0);
 
-  // Slot (yer tutucu) referansları — timeline breakpoint'leri (offsetTop) için
   const academicCardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const journeyCardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [academicBreakpoints, setAcademicBreakpoints] = useState<number[]>([]);
   const [journeyBreakpoints, setJourneyBreakpoints] = useState<number[]>([]);
 
-  // ASIL KART (motion.div) referansları — gerçek KAPALI yüksekliği ölçmek için
   const academicCardInnerRefs = useRef<(HTMLDivElement | null)[]>([]);
   const journeyCardInnerRefs = useRef<(HTMLDivElement | null)[]>([]);
-  // Her kartın "kapalı" haldeki gerçek piksel yüksekliği (border-box, padding
-  // DAHİL). Slot'un height'ı BUNA göre ayarlanıyor — sabit 260px değil.
-  // Kart açıkken bu değer GÜNCELLENMİYOR (donduruluyor), böylece slot
-  // büyümüyor ve açılan kart alttaki kartların üzerine biniyor, onları itmiyor.
   const [academicClosedHeights, setAcademicClosedHeights] = useState<number[]>(
     [],
   );
@@ -213,7 +191,7 @@ export default function About() {
     academicCardInnerRefs.current.forEach((el, index) => {
       if (!el) return;
       const ro = new ResizeObserver(() => {
-        if (expandedAcademic === index) return; // açıkken slot'u büyütme
+        if (expandedAcademic === index) return;
         const h = el.offsetHeight;
         setAcademicClosedHeights((prev) => {
           if (prev[index] === h) return prev;
@@ -302,11 +280,6 @@ export default function About() {
     journeyRatio >= 1 ? [0, journeyHeight] : [0, journeyHeight, journeyHeight],
   );
 
-  // GATED (kapılı) motion value'lar — bar'ların GERÇEKTEN render'da kullandığı
-  // değerler bunlar. Ham academicLineHeight/journeyLineHeight scroll'a göre
-  // sürekli hesaplanmaya devam eder, ama ilgili taraf "kapalıysa" (mouse
-  // diğer taraftaysa ve barlar görünürdeyse) bu gated değere YAZILMAZ —
-  // yani çizgi ve nokta o anki konumunda donar, kıpırdamaz bile.
   const gatedAcademicHeight = useMotionValue(0);
   const gatedJourneyHeight = useMotionValue(0);
 
@@ -328,9 +301,6 @@ export default function About() {
   const academicActiveIndexRef = useRef(-1);
   const journeyActiveIndexRef = useRef(-1);
 
-  // Nokta renklerinin de (yan taraftaki küçük daireler) donmuş bar ile
-  // TUTARLI kalması için index hesaplamasını GATED değerden yapıyoruz —
-  // gated değer donduğunda bu index de otomatik olarak donar.
   useMotionValueEvent(gatedAcademicHeight, 'change', (latest) => {
     let idx = -1;
     for (let i = 0; i < academicBreakpoints.length; i++) {
@@ -448,17 +418,17 @@ export default function About() {
         ]}
       />
 
-      <div className="max-w-6xl w-full mx-auto flex flex-col gap-32 relative z-10">
+      <div className="max-w-6xl w-full mx-auto flex flex-col gap-24 relative z-10">
         {/* ================= 1. KISIM: CORE IDENTITY ================= */}
-        <div className="text-center flex flex-col items-center justify-center min-h-[40vh] pt-12">
+        <div className="text-center flex flex-col items-center justify-center pt-4 pb-4">
           <Reveal>
-            <p className="text-zinc-500 uppercase tracking-[0.4em] text-xs font-mono mb-4">
+            <p className="text-white-500/90 uppercase tracking-[0.4em] text-lg font-mono mb-2">
               CORE IDENTITY
             </p>
           </Reveal>
 
           <Reveal>
-            <h2 className="text-6xl md:text-8xl font-black tracking-tight text-white uppercase select-none">
+            <h2 className="text-7xl md:text-9xl font-black tracking-tight text-white uppercase select-none">
               WHO AM{' '}
               <span
                 className="text-cyan-400"
@@ -471,16 +441,449 @@ export default function About() {
 
           <Reveal>
             <div
-              className="w-20 h-[3px] bg-cyan-400 rounded-full mt-6 mb-8"
+              className="w-28 h-[4px] bg-cyan-400 rounded-full mt-6 mb-8"
               style={{ boxShadow: '0 0 20px rgba(34, 211, 238, 0.8)' }}
             />
           </Reveal>
 
           <Reveal>
-            <p className="text-zinc-400 text-lg md:text-xl font-normal leading-relaxed max-w-2xl mx-auto">
+            <p className="text-zinc-300 text-lg md:text-xl font-normal leading-relaxed max-w-2xl mx-auto mb-8">
               A look into the vision, personality, and technical drive behind
               the code.
             </p>
+          </Reveal>
+        </div>
+
+        <div className="w-full max-w-[2050px] mx-auto flex flex-col xl:flex-row items-center justify-center gap-28 xl:gap-36">
+          {/* SOL PANEL */}
+          <Reveal>
+            <div
+              className="relative w-full max-w-[430px] lg:w-[430px] rounded-[30px] px-6 py-6 md:px-8 md:py-7 overflow-hidden"
+              style={{
+                background:
+                  'linear-gradient(180deg, rgba(8,12,24,.96), rgba(6,10,20,.88))',
+                border: '1px solid rgba(30,140,255,.28)',
+                boxShadow:
+                  '0 0 35px rgba(20,120,255,.12), inset 0 0 25px rgba(20,120,255,.04)',
+              }}
+            >
+              {/* Corner Accents */}
+              <div className="absolute left-0 top-0 w-12 h-12 border-l-2 border-t-2 border-cyan-400/70 rounded-tl-3xl" />
+              <div className="absolute right-0 bottom-0 w-12 h-12 border-r-2 border-b-2 border-cyan-400/70 rounded-br-3xl" />
+
+              {/* Header */}
+              <div className="flex items-center gap-4">
+                <div className="flex-1 h-px bg-gradient-to-r from-transparent to-cyan-400/50" />
+
+                <span className="uppercase tracking-[5px] text-[11px] text-cyan-400 font-semibold">
+                  MY APPROACH
+                </span>
+
+                <div className="flex-1 h-px bg-gradient-to-l from-transparent to-cyan-400/50" />
+              </div>
+
+              {/* Items */}
+              <div className="flex flex-col gap-4 mt-8">
+                {[
+                  {
+                    icon: 'fa-solid fa-bullseye',
+                    title: 'Solve Real Problems',
+                    desc: 'Creating products that solve meaningful challenges.',
+                  },
+                  {
+                    icon: 'fa-solid fa-rocket',
+                    title: 'Build & Improve',
+                    desc: 'Constantly refining every interaction and experience.',
+                  },
+                  {
+                    icon: 'fa-solid fa-users',
+                    title: 'User First',
+                    desc: 'Designing interfaces people genuinely enjoy using.',
+                  },
+                  {
+                    icon: 'fa-solid fa-chart-line',
+                    title: 'Keep Learning',
+                    desc: 'Growing through curiosity and continuous practice.',
+                  },
+                ].map((item, i) => (
+                  <div
+                    key={i}
+                    className="
+            group
+            flex
+            items-center
+            gap-5
+            rounded-2xl
+            px-5
+            py-4
+            border
+            transition-all
+            duration-300
+          "
+                    style={{
+                      background: 'rgba(255,255,255,.02)',
+                      borderColor: 'rgba(30,140,255,.12)',
+                    }}
+                  >
+                    {/* Icon */}
+
+                    <div
+                      className="
+              w-12 h-12 md:w-14 md:h-14 text-xl md:text-2xl
+              rounded-2xl
+              flex
+              items-center
+              justify-center
+              text-white
+              hover:text-blue-600
+              text-2xl
+              shrink-0
+              transition-all
+              duration-300
+              group-hover:scale-120
+            "
+                      style={{
+                        background: 'rgba(20,120,255,.08)',
+                        border: '1px solid rgba(30,140,255,.28)',
+                        boxShadow: '0 0 20px rgba(20,120,255,.08)',
+                      }}
+                    >
+                      <i className={item.icon} />
+                    </div>
+
+                    {/* Text */}
+
+                    <div>
+                      <h4 className="text-white text-lg font-bold">
+                        {item.title}
+                      </h4>
+
+                      <p className="text-zinc-400 text-sm leading-6 mt-1">
+                        {item.desc}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Bottom Divider */}
+              <div className="mt-7 h-px bg-gradient-to-r from-transparent via-cyan-400/40 to-transparent" />
+            </div>
+          </Reveal>
+
+          {/* ORTA: FOTOĞRAF */}
+          <div className="relative w-full max-w-[860px] aspect-[860/640] shrink-0 scale-100 lg:scale-[1.05]">
+            {/* Alt Glow — mobilde küçültüldü */}
+            <div className="absolute left-1/2 bottom-3 -translate-x-1/2 w-[280px] sm:w-[420px] md:w-[700px] h-[100px] sm:h-[150px] md:h-[220px] rounded-full bg-blue-500/40 blur-[60px] md:blur-[100px]" />
+
+            {/* Dış Glow */}
+            <div className="absolute inset-0 scale-100 blur-[60px] md:blur-[110px] bg-blue-600/25" />
+
+            {/* Sol yan mavilik — mobilde gizli, taşma riski */}
+            <div className="hidden md:block absolute -left-24 top-1/4 w-[280px] h-[380px] rounded-full bg-blue-500/25 blur-[90px]" />
+
+            {/* Sağ yan mavilik — mobilde gizli */}
+            <div className="hidden md:block absolute -right-24 top-1/3 w-[280px] h-[380px] rounded-full bg-blue-600/25 blur-[90px]" />
+
+            {/* Üst mavilik — mobilde küçültüldü */}
+            <div className="absolute left-1/2 -top-10 md:-top-20 -translate-x-1/2 w-[260px] sm:w-[380px] md:w-[500px] h-[110px] sm:h-[160px] md:h-[220px] rounded-full bg-blue-500/20 blur-[50px] md:blur-[100px]" />
+
+            {/* FRAME */}
+            <div
+              className="absolute inset-0 overflow-hidden"
+              style={{
+                clipPath:
+                  'polygon(8% 18%,82% 6%,100% 14%,96% 72%,72% 100%,10% 100%,0 72%,2% 32%)',
+                background:
+                  'linear-gradient(180deg,rgba(10,20,40,.15),rgba(10,20,40,.05))',
+                border: '1.5px solid rgba(30,140,255,0.8)',
+                backdropFilter: 'blur(20px) saturate(180%)',
+                boxShadow: `
+        inset 0 1px rgba(120,200,255,.15),
+        inset 0 -1px rgba(0,0,0,.2),
+        0 30px 70px rgba(0,0,0,.55),
+        0 0 40px rgba(20,120,255,.65),
+        0 0 90px rgba(10,100,255,.5),
+        0 0 160px rgba(5,80,220,.35),
+        0 0 240px rgba(0,60,200,.2)
+      `,
+              }}
+            >
+              {/* sadece arka plan kesiliyor */}
+              <div
+                className="absolute inset-0 overflow-hidden"
+                style={{
+                  clipPath:
+                    'polygon(8% 18%,82% 6%,100% 14%,96% 72%,72% 100%,10% 100%,0 72%,2% 32%)',
+                }}
+              >
+                <Image
+                  src="/images/computer_coding.png"
+                  alt="Coding"
+                  width={1920}
+                  height={1080}
+                  priority
+                  className="
+    absolute
+    inset-0
+    w-full
+    h-full
+    object-cover
+    scale-100
+    md:scale-[1.15]
+    brightness-[.75]
+    md:brightness-[.62]
+    contrast-110
+    saturate-115
+  "
+                />
+
+                <div className="absolute inset-0 bg-gradient-to-t from-[#020817] via-[#020817]/25 to-transparent" />
+
+                {/* merkez neon glow */}
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    background:
+                      'radial-gradient(circle at 50% 35%,rgba(20,120,255,.14),transparent 70%)',
+                  }}
+                />
+
+                {/* kenar vignette — fotoğrafı arka plana eritir */}
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    background:
+                      'radial-gradient(ellipse 90% 80% at 50% 50%, transparent 55%, #020817 100%)',
+                    opacity: 0.8,
+                  }}
+                />
+
+                {/* kenarlarda neon renk sızması */}
+                <div
+                  className="absolute inset-0 mix-blend-screen"
+                  style={{
+                    background: `
+              linear-gradient(90deg, rgba(20,120,255,.32) 0%, transparent 18%, transparent 82%, rgba(20,120,255,.32) 100%),
+              linear-gradient(180deg, rgba(20,120,255,.28) 0%, transparent 18%, transparent 82%, rgba(20,120,255,.28) 100%)
+            `,
+                  }}
+                />
+              </div>
+
+              {/* üst highlight */}
+              <div
+                className="absolute inset-x-4 md:inset-x-8 top-[1px] h-px"
+                style={{
+                  background:
+                    'linear-gradient(90deg,transparent,rgba(150,210,255,.7),transparent)',
+                  boxShadow: '0 0 10px rgba(30,140,255,0.6)',
+                }}
+              />
+
+              {/* sağ neon */}
+              <div
+                className="absolute right-6 md:right-10 top-0 h-full w-px bg-blue-400/40 blur-sm"
+                style={{ boxShadow: '0 0 12px rgba(20,120,255,0.5)' }}
+              />
+
+              {/* alt cyan */}
+              <div className="absolute bottom-0 left-0 right-0 h-16 md:h-24 bg-gradient-to-t from-blue-500/20 to-transparent" />
+
+              {/* iç glass border */}
+              <div
+                className="absolute inset-[2px] pointer-events-none"
+                style={{
+                  clipPath:
+                    'polygon(8% 18%,82% 6%,100% 14%,96% 72%,72% 100%,10% 100%,0 72%,2% 32%)',
+                  border: '1px solid rgba(30,140,255,0.45)',
+                  boxShadow: `
+      inset 0 1px rgba(150,210,255,.2),
+      inset 0 -1px rgba(0,0,0,.15),
+      inset 0 -45px 90px rgba(20,120,255,.25),
+      inset 0 0 60px rgba(20,120,255,.12),
+      0 0 30px rgba(20,120,255,.2)
+    `,
+                }}
+              />
+
+              {/* HUD — mobilde küçültüldü */}
+              <div
+                className="absolute left-4 md:left-8 top-4 md:top-8 w-12 md:w-20 h-px bg-blue-400/70"
+                style={{ boxShadow: '0 0 10px rgba(30,140,255,0.9)' }}
+              />
+              <div
+                className="absolute left-4 md:left-8 top-4 md:top-8 h-12 md:h-20 w-px bg-blue-400/70"
+                style={{ boxShadow: '0 0 10px rgba(30,140,255,0.9)' }}
+              />
+
+              <div
+                className="absolute right-4 md:right-8 bottom-4 md:bottom-8 w-12 md:w-20 h-px bg-blue-400/70"
+                style={{ boxShadow: '0 0 10px rgba(30,140,255,0.9)' }}
+              />
+              <div
+                className="absolute right-4 md:right-8 bottom-4 md:bottom-8 h-12 md:h-20 w-px bg-blue-400/70"
+                style={{ boxShadow: '0 0 10px rgba(30,140,255,0.9)' }}
+              />
+            </div>
+
+            {/* Character Halo — mobilde küçültüldü */}
+            <div
+              className="absolute left-1/2 bottom-4 md:bottom-8 -translate-x-1/2 w-[260px] sm:w-[360px] md:w-[480px] h-[300px] sm:h-[450px] md:h-[620px] rounded-full pointer-events-none blur-[60px] md:blur-[100px]"
+              style={{
+                background:
+                  'radial-gradient(circle, rgba(15,90,255,.22) 0%, rgba(10,60,180,.14) 45%, transparent 80%)',
+              }}
+            />
+
+            {/* Blue Ambient — mobilde küçültüldü */}
+            <div
+              className="absolute left-1/2 bottom-0 -translate-x-1/2 w-[280px] sm:w-[380px] md:w-[520px] h-[340px] sm:h-[500px] md:h-[720px] pointer-events-none blur-[45px] md:blur-[70px]"
+              style={{
+                background:
+                  'radial-gradient(circle at 50% 45%, rgba(20,120,255,.12), transparent 72%)',
+                mixBlendMode: 'screen',
+              }}
+            />
+
+            {/* PNG (frame dışında, kesilmiyor) */}
+            <Image
+              src="/images/NobackGroundddd.png"
+              alt="Developer"
+              width={900}
+              height={1100}
+              priority
+              className="
+absolute
+left-1/2
+bottom-0
+z-30
+w-[74%]
+sm:w-[73%]
+md:w-[73%]
+lg:w-auto
+lg:h-[720px]
+object-contain
+"
+              style={{
+                transform: 'translateX(calc(-50% + 10px))',
+                filter: `
+      brightness(.90)
+      contrast(1.08)
+      saturate(.92)
+      drop-shadow(0 30px 45px rgba(0,0,0,.65))
+      drop-shadow(0 0 25px rgba(20,120,255,.25))
+      drop-shadow(0 0 70px rgba(20,120,255,.18))
+    `,
+                opacity: 0.97,
+                clipPath: 'polygon(0 0,100% 0,100% 83.5%,78% 100%,0 100%)',
+              }}
+            />
+          </div>
+
+          {/* SAĞ: BAĞLANTILI ÖZELLİK KARTLARI */}
+          <Reveal>
+            <div
+              className="relative flex flex-col gap-44 shrink-0 pl-6"
+              style={{ flex: '0 0 420px', width: '420px', maxWidth: '420px' }}
+            >
+              {/* Kavisli SVG bağlantı çizgisi */}
+              <svg
+                className="hidden lg:block absolute pointer-events-none"
+                style={{ left: '-84px', top: 0, height: '100%' }}
+                width="60"
+                viewBox="0 0 60 970"
+                preserveAspectRatio="none"
+                aria-hidden
+              >
+                <path
+                  d="M 150 5
+C 115 5, 85 15, 110 52
+C 75 52, 35 78, 40 130
+C 15 220, 15 320, 35 378
+C 55 436, 55 520, 30 578
+C 10 626, 10 710, 32 768
+C 38 835, 70 900, 90 930
+C 145 950, 170 962, 140 995
+                     "
+                  fill="none"
+                  stroke="rgba(30,140,255,0.6)"
+                  strokeWidth="1.5"
+                  strokeDasharray="6 7"
+                  strokeLinecap="round"
+                  vectorEffect="non-scaling-stroke"
+                  style={{
+                    filter: 'drop-shadow(0 0 4px rgba(20,120,255,0.6))',
+                  }}
+                />
+                <circle
+                  cx="58"
+                  cy="71"
+                  r="4.5"
+                  fill="#3b9dff"
+                  style={{
+                    filter: 'drop-shadow(0 0 6px rgba(30,140,255,0.9))',
+                  }}
+                />
+
+                <circle
+                  cx="50"
+                  cy="480"
+                  r="4.5"
+                  fill="#3b9dff"
+                  style={{
+                    filter: 'drop-shadow(0 0 6px rgba(30,140,255,0.9))',
+                  }}
+                />
+                <circle
+                  cx="57.5"
+                  cy="870"
+                  r="4.5"
+                  fill="#3b9dff"
+                  style={{
+                    filter: 'drop-shadow(0 0 6px rgba(30,140,255,0.9))',
+                  }}
+                />
+              </svg>
+
+              {[
+                {
+                  icon: 'fa-code',
+                  title: 'Developer Mindset',
+                  desc: 'Focused on clean code, scalable solutions and continuous improvement.',
+                },
+                {
+                  icon: 'fa-bolt',
+                  title: 'Performance Driven',
+                  desc: 'I build with speed, efficiency and best practices to ensure high performance.',
+                },
+                {
+                  icon: 'fa-user',
+                  title: 'User Focused',
+                  desc: 'Crafting intuitive experiences that people love and make a difference.',
+                },
+              ].map((f, i) => (
+                <div key={i} className="relative flex items-start gap-5">
+                  <div
+                    className="relative w-16 h-16 rounded-full bg-zinc-950/70 backdrop-blur-sm flex items-center justify-center text-blue-400 text-lg shrink-0"
+                    style={{
+                      border: '1px solid rgba(30,140,255,0.4)',
+                      boxShadow: '0 0 18px rgba(20,120,255,0.3)',
+                    }}
+                  >
+                    <i className={`fa-solid ${f.icon}`} />
+                  </div>
+                  <div>
+                    <h5 className="text-xl font-bold text-white mb-1.5">
+                      {f.title}
+                    </h5>
+                    <p className="text-zinc-400 text-lg leading-relaxed">
+                      {f.desc}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </Reveal>
         </div>
 
@@ -618,9 +1021,6 @@ export default function About() {
                   academicActiveIndex,
                 );
                 const isExpanded = expandedAcademic === index;
-                // Slot'un height'ı: ölçülmüş kapalı yükseklik varsa ONU
-                // kullan; henüz ölçülmediyse (ilk frame) sadece geçici bir
-                // minimum yükseklik göster.
                 const measuredHeight = academicClosedHeights[index];
                 return (
                   <div

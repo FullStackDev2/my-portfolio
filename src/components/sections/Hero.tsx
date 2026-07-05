@@ -139,7 +139,7 @@ export default function Hero() {
                   block: 'start',
                 })
               }
-              className="px-8 py-4 rounded-xl font-semibold text-white group relative"
+              className="px-8 py-4 rounded-full font-semibold text-white group relative"
               style={{
                 backgroundImage:
                   'linear-gradient(#18181b, #18181b), linear-gradient(to top right, #38bdf8, #a855f7, #ec4899)',
@@ -148,7 +148,7 @@ export default function Hero() {
                 border: '1px solid transparent',
               }}
             >
-              <span className="absolute inset-0 rounded-xl w-0 h-0 m-auto transition-all duration-300 ease-out bg-white group-hover:w-full group-hover:h-full opacity-10 pointer-events-none" />
+              <span className="absolute inset-0 rounded-full w-0 h-0 m-auto transition-all duration-300 ease-out bg-white group-hover:w-full group-hover:h-full opacity-10 pointer-events-none" />
               <span className="relative">Contact Me</span>
             </motion.button>
           </motion.div>
