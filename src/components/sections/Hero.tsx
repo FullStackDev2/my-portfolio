@@ -25,7 +25,7 @@ export default function Hero() {
   return (
     <section
       id="hero"
-      className="relative w-full min-h-screen overflow-hidden border-t border-zinc-800/50 scroll-mt-20"
+      className="relative w-full min-h-[100dvh] overflow-hidden border-t border-zinc-800/50 scroll-mt-20"
     >
       {/* Arka Plan Dokusu */}
       <div
@@ -37,16 +37,16 @@ export default function Hero() {
         }}
       />
       <HeroGlow />
-      <div className="max-w-[1400px] mx-auto h-screen flex flex-col md:flex-row items-center px-6 lg:px-0">
-        {/* SOL: İÇERİK - items-start eklendi */}
-        <div className="flex flex-col justify-center items-start z-20 pt-20 md:pt-0 w-full text-left">
+      <div className="max-w-[1400px] mx-auto min-h-[100dvh] flex flex-col md:flex-row items-center px-6 sm:px-8 lg:px-0 py-28 md:py-0">
+        {/* SOL: İÇERİK */}
+        <div className="flex flex-col justify-center items-center md:items-start z-20 w-full text-center md:text-left">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="flex items-center gap-2 border border-white/10 bg-white/5 w-fit px-4 py-1.5 rounded-full mb-8"
+            className="flex items-center gap-2 border border-white/10 bg-white/5 w-fit px-4 py-1.5 rounded-full mb-6 sm:mb-8 mx-auto md:mx-0"
           >
             <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
-            <span className="text-[11px] font-mono tracking-widest text-zinc-300 uppercase">
+            <span className="text-[10px] sm:text-[11px] font-mono tracking-widest text-zinc-300 uppercase">
               Available for new opportunities
             </span>
           </motion.div>
@@ -55,23 +55,23 @@ export default function Hero() {
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className="flex flex-col gap-2"
+            className="relative flex flex-col gap-1 sm:gap-2 items-center md:items-start"
           >
             <motion.h1
               variants={textItemVariants}
-              className="text-5xl md:text-7xl lg:text-8xl font-bold text-white tracking-tight"
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-bold text-white tracking-tight [text-shadow:_0_0_20px_rgba(255,255,255,0.3)]"
             >
               Frontend Developer
             </motion.h1>
             <motion.h2
               variants={textItemVariants}
-              className="text-5xl md:text-7xl lg:text-8xl font-bold bg-gradient-to-r from-cyan-500 via-blue-500 via-indigo-600 to-fuchsia-900 bg-clip-text text-transparent tracking-tight leading-[1.2] pb-2"
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-bold bg-gradient-to-r from-cyan-500 via-blue-500 via-indigo-600 to-fuchsia-900 bg-clip-text text-transparent tracking-tight leading-[1.2] pb-1 sm:pb-2 [text-shadow:_0_0_30px_rgba(168,85,247,0.3)]"
             >
               Building Digital
             </motion.h2>
             <motion.h2
               variants={textItemVariants}
-              className="text-5xl md:text-7xl lg:text-8xl font-bold text-zinc-300 tracking-tight"
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-bold text-zinc-200 tracking-tight [text-shadow:_0_0_15px_rgba(212,212,216,0.3)]"
             >
               Experiences
             </motion.h2>
@@ -81,7 +81,7 @@ export default function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6, duration: 0.8 }}
-            className="mt-8 text-zinc-400 max-w-lg text-lg leading-relaxed font-light"
+            className="mt-6 sm:mt-8 text-zinc-200 max-w-md sm:max-w-lg mx-auto md:mx-0 text-base sm:text-lg leading-relaxed font-light px-2 sm:px-0"
           >
             Crafting performant, accessible, and beautiful web applications with
             modern technologies and a keen eye for detail.
@@ -91,7 +91,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8 }}
-            className="flex flex-wrap gap-4 mt-10 justify-start"
+            className="flex flex-col sm:flex-row flex-wrap gap-4 mt-8 sm:mt-10 justify-center md:justify-start w-full sm:w-auto"
           >
             <motion.button
               whileHover={{ scale: 1.02 }}
@@ -102,9 +102,9 @@ export default function Hero() {
                   block: 'start',
                 })
               }
-              className="group relative inline-flex items-center gap-2.5 rounded-full p-[1.5px] bg-gradient-to-r from-blue-500 to-purple-500 shadow-[0_0_15px_rgba(139,92,246,0.3)] hover:shadow-[0_0_25px_rgba(139,92,246,0.5)]"
+              className="group relative inline-flex items-center justify-center gap-2.5 rounded-full p-[1.5px] bg-gradient-to-r from-blue-500 to-purple-500 shadow-[0_0_15px_rgba(139,92,246,0.3)] hover:shadow-[0_0_25px_rgba(139,92,246,0.5)] w-full sm:w-auto"
             >
-              <span className="flex items-center gap-2.5 rounded-full bg-[#0a0a0f] px-8 py-4 text-[15px] font-semibold text-white ">
+              <span className="flex items-center justify-center gap-2.5 rounded-full bg-[#0a0a0f] px-8 py-3.5 sm:py-4 text-[15px] font-semibold text-white w-full">
                 View Projects
                 <div className="relative flex items-center justify-center transition-colors duration-300 ease-in-out text-white group-hover:text-[#08d565] group-hover:delay-[100ms]">
                   <svg
@@ -139,7 +139,7 @@ export default function Hero() {
                   block: 'start',
                 })
               }
-              className="px-8 py-4 rounded-full font-semibold text-white group relative"
+              className="px-8 py-3.5 sm:py-4 rounded-full font-semibold text-white group relative w-full sm:w-auto"
               style={{
                 backgroundImage:
                   'linear-gradient(#18181b, #18181b), linear-gradient(to top right, #38bdf8, #a855f7, #ec4899)',
@@ -154,9 +154,9 @@ export default function Hero() {
           </motion.div>
         </div>
 
-        {/* SAĞ: PORTRE */}
+        {/* SAĞ: PORTRE — sadece md ve üstünde, tablette küçültülmüş oranla */}
         <div
-          className="absolute right-0 top-16 w-[46%] h-[85%] hidden md:block pointer-events-none z-10 
+          className="absolute right-0 top-16 w-[55%] md:w-[46%] h-[75%] md:h-[85%] hidden md:block pointer-events-none z-10 
               [mask-image:linear-gradient(to_bottom,black_60%,transparent_100%)]"
         >
           <div className="relative w-full h-full">
@@ -164,7 +164,7 @@ export default function Hero() {
               src="/NobackGroundd.png"
               alt="Nurettin Dincer"
               fill
-              className="object-contain object-bottom -translate-x-23 scale-103 origin-bottom grayscale contrast-115 brightness-[45%] opacity-70 blur-[1px]"
+              className="object-contain object-bottom -translate-x-10 md:-translate-x-23 scale-100 md:scale-103 origin-bottom grayscale contrast-115 brightness-[45%] opacity-70 blur-[1px]"
               priority
             />
           </div>
@@ -172,12 +172,12 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* SCROLL INDICATOR */}
+      {/* SCROLL INDICATOR — sadece masaüstünde */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.5, duration: 1 }}
-        className="absolute bottom-2 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-3 z-20 pointer-events-none"
+        className="absolute bottom-2 left-1/2 -translate-x-1/2 hidden lg:flex flex-col items-center gap-3 z-20 pointer-events-none"
       >
         <span className="text-[10px] tracking-[0.4em] font-semibold text-zinc-400 uppercase">
           Scroll to Explore

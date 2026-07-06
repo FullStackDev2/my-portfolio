@@ -385,7 +385,7 @@ export default function About() {
         spots={[
           {
             color: 'teal',
-            top: '50%',
+            top: '56.5%',
             right: '42%',
             size: 400,
             opacity: 0.15,

@@ -8,7 +8,7 @@ export default function Vision() {
       style={{ scrollSnapAlign: 'start', scrollSnapStop: 'always' }}
     >
       {/* Background */}
-      <div className="absolute inset-0 bg-[#070b16]" />
+      <div className="absolute inset-0 bg-[#060918]" />
 
       {/* Sağ üst glow */}
       <div className="absolute right-[-120px] top-[-120px] z-10 h-[650px] w-[650px] rounded-full bg-blue-600/35 blur-[220px]" />

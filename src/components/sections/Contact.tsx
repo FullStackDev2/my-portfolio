@@ -5,6 +5,7 @@ import { useState } from 'react';
 import type { ChangeEvent } from 'react';
 import { contactSchema } from '../schemas/contactSchema';
 import RotatingHeading from '../layout/RotatingHeading';
+import SectionGlow from '../ui/SectionGlow';
 
 export default function Contact() {
   type FormData = {
@@ -165,8 +166,29 @@ export default function Contact() {
   return (
     <section
       id="contact"
-      className="min-h-screen py-24 px-6 text-white flex flex-col"
+      className="relative min-h-screen py-24 px-6 text-white flex flex-col bg-[#080c1d]"
     >
+      <SectionGlow
+        spots={[
+          {
+            color: 'blue',
+            top: '10%',
+            left: '6%',
+            size: 400,
+            opacity: 0.1,
+            animate: 'drift1',
+          },
+          {
+            color: 'blue',
+            bottom: '20%',
+            right: '7%',
+            size: 400,
+            opacity: 0.1,
+            animate: 'drift1',
+          },
+        ]}
+      />
+
       <div className="max-w-5xl mx-auto w-full">
         {/* Başlık bloğu */}
         <div className="mb-24 text-center flex flex-col items-center">
@@ -179,7 +201,6 @@ export default function Contact() {
             Let&#39;s Work Together
           </motion.span>
           <RotatingHeading />
-
           <div className="flex gap-3 mt-8 mb-8">
             <span className="w-14 h-1.5 rounded-full bg-gradient-to-r from-orange-400 to-pink-500" />
             <span className="w-14 h-1.5 rounded-full bg-gradient-to-r from-pink-500 to-fuchsia-500" />
