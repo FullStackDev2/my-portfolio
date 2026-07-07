@@ -117,6 +117,17 @@ body {
   --animate-drift2-reverse: drift2 25s ease-in-out infinite reverse;
 }
 
+@layer utilities {
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 @keyframes drift1 {
   0%,
   100% {

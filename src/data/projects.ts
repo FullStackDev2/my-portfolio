@@ -1,9 +1,9 @@
 export const projects = [
   {
     slug: 'saas-dashboard',
-    title: 'SaaS Dashboard',
+    title: 'Slim Moms Calorie Tracker Web Application',
     description: 'Premium analytics dashboard built with Next.js and Tailwind.',
-    image: '/projects/ChatGPT Image 25 May 2026 00_29_00.png',
+    image: '/projects/slim_moms.png',
 
     // images dizisi doluysa modal bunları kullanır, image alanı yedek olarak kalır.
     images: [
@@ -15,17 +15,15 @@ export const projects = [
     client: 'Nurettin D. Labs',
     category: 'Full-Stack Dev',
     date: '2026.06.23',
-    // TODO: Gerçek canlı proje linkini buraya yapıştır.
-    projectUrl: 'https://example.com/saas-dashboard',
-    // TODO: Gerçek GitHub repo linkini buraya yapıştır.
-    githubUrl: 'https://github.com/username/saas-dashboard',
+    projectUrl: 'https://slim-moms-nine.vercel.app/',
+    githubUrl: 'https://github.com/FullStackDev2/slim-moms',
   },
 
   {
     slug: 'ecommerce-admin',
-    title: 'E-Commerce Admin',
+    title: 'Money Guard Finance Tracking Application',
     description: 'Modern admin panel for online stores.',
-    image: '/projects/futuristic_digital.png',
+    image: '/projects/money_guard.png',
     images: [
       '/projects/ecommerce-admin-1.png',
       '/projects/ecommerce-admin-2.png',
@@ -35,15 +33,15 @@ export const projects = [
     client: 'Nurettin D. Labs',
     category: 'Full-Stack Dev',
     date: '2026.06.23',
-    projectUrl: 'https://example.com/ecommerce-admin',
-    githubUrl: 'https://github.com/username/ecommerce-admin',
+    projectUrl: 'https://goit-react-money-guard.vercel.app/',
+    githubUrl: 'https://github.com/FullStackDev2/money-guard',
   },
 
   {
     slug: 'ai-platform',
-    title: 'AI Platform',
+    title: 'Darkscript-js Cinemania Web Application',
     description: 'AI powered productivity platform.',
-    image: '/projects/ChatGPT Image 25 May 2026 00_29_00.png',
+    image: '/projects/cinemania.png',
     images: [
       '/projects/ai-platform-1.png',
       '/projects/ai-platform-2.png',
@@ -53,7 +51,64 @@ export const projects = [
     client: 'Nurettin D. Labs',
     category: 'Full-Stack Dev',
     date: '2026.06.23',
-    projectUrl: 'https://example.com/ai-platform',
-    githubUrl: 'https://github.com/username/ai-platform',
+    projectUrl: 'https://fullstackdev2.github.io/darkscript-js_cinemania/',
+    githubUrl: 'https://github.com/FullStackDev2/darkscript-js_cinemania',
+  },
+
+  {
+    slug: 'nexus-analytics',
+    title: 'Nexus AI Analytics',
+    description:
+      'Real-time predictive data pipelines and autonomous financial trend analysis dashboards wrapped in a professional UI.',
+    image: '/projects/green_harvest.png',
+    images: [],
+    tech: ['Python', 'FastAPI', 'PostgreSQL'],
+    client: 'Private Client',
+    category: 'AI / Data Platform',
+    date: '2026',
+    projectUrl: 'https://miraybayan.github.io/code_club_green_harvest/',
+    githubUrl: 'https://github.com/MirayBayan/code_club_green_harvest',
+  },
+  {
+    slug: 'aether-saas',
+    title: 'Aether Cloud Engine',
+    description:
+      'Next-generation decentralized serverless orchestration platform with sub-millisecond edge deployments.',
+    image: '/projects/cinemania.png',
+    images: [],
+    tech: ['TypeScript', 'Docker', 'Kubernetes'],
+    client: 'Private Client',
+    category: 'Cloud Infrastructure',
+    date: '2026',
+    projectUrl: '',
+    githubUrl: '',
+  },
+  {
+    slug: 'vortex-crypto',
+    title: 'Vortex Protocol',
+    description:
+      'High-frequency institutional crypto liquidity aggregator and smart-contract yield optimization engine.',
+    image: '/projects/cinemania.png',
+    images: [],
+    tech: ['Solidity', 'Web3.js', 'GraphQL'],
+    client: 'Private Client',
+    category: 'Web3 / DeFi',
+    date: '2026',
+    projectUrl: '',
+    githubUrl: '',
+  },
+  {
+    slug: 'vortex-crypto',
+    title: 'Vortex Protocol',
+    description:
+      'High-frequency institutional crypto liquidity aggregator and smart-contract yield optimization engine.',
+    image: '/projects/cinemania.png',
+    images: [],
+    tech: ['Solidity', 'Web3.js', 'GraphQL'],
+    client: 'Private Client',
+    category: 'Web3 / DeFi',
+    date: '2026',
+    projectUrl: '',
+    githubUrl: '',
   },
 ];

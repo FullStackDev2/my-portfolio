@@ -40,27 +40,37 @@ const FALLBACK_MIN_HEIGHT = 220;
 export default function About() {
   const academicData: TimelineItem[] = [
     {
-      year: '2025 — 2026',
+      year: 'July 2025 — May 2026',
       title: 'Full Stack Developer',
-      subtitle: 'GoIT Türkiye',
-      description:
-        'Focused on Software Engineering and Distributed Systems. Developed a deep understanding of data structures and algorithm optimization.',
+      subtitle: 'GoIT Türkiye Bootcamp',
+      description: `This comprehensive training program provided by GoIT aims to equip participants with professional software development skills by focusing on modern web development technologies.
+The program covers both frontend and backend technologies in an integrated manner and offers real-world application experience through a project-based learning model.
+Details about the training are as follows:
+
+• HTML5, CSS3, Sass, Tailwind, Responsive Web Design
+• JavaScript (ES6+) and TypeScript fundamentals
+• React.js and React Hooks
+• REST API integration and state management (Redux / Context API)
+• Git, GitHub, Vite, Webpack
+• Real-time applications and portfolio projects
+• Frontend and backend web application development
+• Problem-solving, algorithmic thinking, and software architecture
+• Team collaboration, project management, and version control systems`,
       type: 'education',
     },
     {
-      year: '2012 — 2014',
+      year: 'Sep 2012 — Jun 2014',
       title: 'Kırklareli University - Vocational School of Technical Sciences',
       subtitle: 'Associate Degree, Interior Design',
-      description:
-        'Intensive certification program focusing on the MERN stack and modern cloud deployment strategies.',
+      description: `Completed an Associate Degree in Interior Design, developing strong visual thinking, spatial awareness, technical drawing, and problem-solving skills. This creative foundation continues to influence my approach to modern UI design and user experience.`,
       type: 'education',
     },
     {
-      year: '2007 — 2011',
+      year: 'Sep 2007 — Jun 2011',
       title: 'Sultanahmet Vocational and Technical Anatolian High School',
       subtitle: 'Art & Design/Art Studies',
       description:
-        'Focused on Software Engineering and Distributed Systems. Developed a deep understanding of data structures and algorithm optimization.',
+        'Studied Art & Design with a focus on visual communication, technical illustration, and creative problem-solving. Built a solid foundation in design principles, composition, and attention to detail that now supports my frontend development work.',
       type: 'education',
     },
   ];
@@ -68,27 +78,37 @@ export default function About() {
   const journeyData: TimelineItem[] = [
     {
       year: '2026 — PRESENT',
-      title: 'Lead Frontend Developer',
-      subtitle: 'SaaS Enterprise Solutions',
+      title: 'Open to Frontend / Full Stack Opportunities',
+      subtitle: 'Available for Hire',
       description:
-        'Kurumsal düzeyde dashboard ve premium SaaS arayüz mimarilerinin geliştirilmesi. Piksel kusursuz teslimat, performance optimizasyonu ve modern bileşen sistemlerinin kurgulanması.',
+        'Actively seeking Frontend or Full Stack Developer opportunities. I am passionate about building modern, user-focused web applications and excited to contribute to real-world products while continuing to learn and grow with a collaborative team.',
       type: 'experience',
     },
     {
-      year: '2024 — 2026',
-      title: 'Frontend Engineer',
-      subtitle: 'SaaS Tech Studio',
-      description:
-        "Kompleks veri görselleştirme araçları ve interaktif analitik panellerinin React/Next.js ile inşası. Sayfa yüklenme hızlarında %40'a varan optimizasyon.",
+      year: 'Sep 2016 — April 2025',
+      title: 'Elite Tiles Bv',
+      subtitle: 'Co Founder | On-Site',
+      description: `Elite Tiles is a company specializing in the import of ceramic and tile products from Türkiye, while also providing professional ceramic and tile installation services. During my tenure as Co-Founder, I played an active role in sales, operations, customer relations, supply chain management, and project coordination, contributing to the company's growth and operational excellence.
+      
+Key Responsibilities & Achievements :
+
+- Led sales, marketing, and project management activities to support business growth.
+- Developed and maintained strong relationships with clients, suppliers, and business partners.
+- Managed customer acquisition strategies and expanded the company's client portfolio.
+- Oversaw import operations, supply chain planning, procurement, and customs processes.
+- Coordinated inventory management, logistics operations, and product delivery schedules.`,
       type: 'experience',
     },
     {
-      year: '2021 — 2025',
-      title: 'Bachelor of Computer Science',
-      subtitle: 'Software Engineering Focus',
-      description:
-        'Yazılım mühendisliği, veri yapıları ve algoritma optimizasyonu üzerine akademik temel. Dağıtık sistemler ve modern web mimarileri üzerine uzmanlaşma.',
-      type: 'education',
+      year: 'Nov 2014 — May 2016',
+      title: 'Desa Derı San Tic As',
+      subtitle: 'Software Engineering Focus | On-Site',
+      description: `-  Managed retail sales processes with a strong focus on customer satisfaction
+-  Actively participated in product promotion, stock tracking, and sales target achievement
+-  Maintained visual merchandising and store organization according to brand standards
+-  Supported sales teams during new collection launches and promotional campaigns
+-  Developed customer-oriented solutions in after-sales services`,
+      type: 'experience',
     },
   ];
 
@@ -1022,6 +1042,9 @@ C 145 950, 170 962, 140 995
                 );
                 const isExpanded = expandedAcademic === index;
                 const measuredHeight = academicClosedHeights[index];
+                const shortDescription = isExpanded
+                  ? item.description
+                  : item.description.split(' ').slice(0, 35).join(' ') + '...';
                 return (
                   <div
                     key={index}
@@ -1091,14 +1114,21 @@ C 145 950, 170 962, 140 995
                           )}
                         </div>
 
-                        <p
-                          className={`text-zinc-300 text-lg leading-relaxed ${
-                            isExpanded ? '' : 'line-clamp-4'
+                        <div
+                          className={`text-white/85 text-lg leading-relaxed ${
+                            isExpanded
+                              ? 'max-h-[420px] overflow-y-auto hide-scrollbar'
+                              : ''
                           }`}
                         >
-                          {item.description}
-                        </p>
-                        {item.description.length > 185 && (
+                          {(isExpanded ? item.description : shortDescription)
+                            .split('\n')
+                            .map((line, i) => (
+                              <p key={i}>{line || '\u00A0'}</p>
+                            ))}
+                        </div>
+
+                        {item.description.split(' ').length > 35 && (
                           <button
                             className="mt-3 text-cyan-400 hover:text-cyan-300 text-sm self-start"
                             onClick={() =>
@@ -1126,7 +1156,7 @@ C 145 950, 170 962, 140 995
                   MILESTONES
                 </p>
                 <h3 className="text-4xl md:text-5xl font-black tracking-tight text-white">
-                  My{' '}
+                  Career{' '}
                   <span
                     className="text-cyan-400"
                     style={{ textShadow: '0 0 20px rgba(34,211,238,0.5)' }}
@@ -1175,6 +1205,9 @@ C 145 950, 170 962, 140 995
                 );
                 const isExpanded = expandedJourney === index;
                 const measuredHeight = journeyClosedHeights[index];
+                const shortDescription = isExpanded
+                  ? item.description
+                  : item.description.split(' ').slice(0, 35).join(' ') + '...';
                 return (
                   <div
                     key={index}
@@ -1240,25 +1273,31 @@ C 145 950, 170 962, 140 995
                           </span>
                         </div>
 
-                        <div className="flex flex-wrap items-baseline gap-2 mb-3 pr-24">
+                        <div className="flex flex-col items-baseline gap-2 mb-3">
                           <h4 className="text-2xl md:text-3xl font-bold tracking-tight text-white group-hover:text-cyan-400 transition-colors duration-300">
                             {item.title}
                           </h4>
                           {item.subtitle && (
-                            <span className="mt-1 text-sky-400 font-medium tracking-wide">
+                            <span className="text-sky-400 font-medium tracking-wide">
                               @ {item.subtitle}
                             </span>
                           )}
                         </div>
 
-                        <p
-                          className={`text-zinc-300 text-lg leading-relaxed ${
-                            isExpanded ? '' : 'line-clamp-4'
+                        <div
+                          className={`text-white/85 text-lg leading-relaxed ${
+                            isExpanded
+                              ? 'max-h-[420px] overflow-y-auto hide-scrollbar'
+                              : ''
                           }`}
                         >
-                          {item.description}
-                        </p>
-                        {item.description.length > 185 && (
+                          {(isExpanded ? item.description : shortDescription)
+                            .split('\n')
+                            .map((line, i) => (
+                              <p key={i}>{line || '\u00A0'}</p>
+                            ))}
+                        </div>
+                        {item.description.split(' ').length > 35 && (
                           <button
                             className="mt-3 text-cyan-400 hover:text-cyan-300 text-sm self-start"
                             onClick={() =>

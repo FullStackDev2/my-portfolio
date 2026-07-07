@@ -117,65 +117,6 @@ const cardVariants: Variants = {
   exit: { scale: 0.85, opacity: 0, y: 20, transition: { duration: 0.1 } },
 };
 
-const additionalProjects: (typeof importedProjects)[0][] = [
-  {
-    slug: 'nexus-analytics',
-    title: 'Nexus AI Analytics',
-    description:
-      'Real-time predictive data pipelines and autonomous financial trend analysis dashboards wrapped in a professional UI.',
-    image: '',
-    images: [],
-    tech: ['Python', 'FastAPI', 'PostgreSQL'],
-    client: 'Private Client',
-    category: 'AI / Data Platform',
-    date: '2026',
-    projectUrl: '',
-    githubUrl: '',
-  },
-  {
-    slug: 'aether-saas',
-    title: 'Aether Cloud Engine',
-    description:
-      'Next-generation decentralized serverless orchestration platform with sub-millisecond edge deployments.',
-    image: '',
-    images: [],
-    tech: ['TypeScript', 'Docker', 'Kubernetes'],
-    client: 'Private Client',
-    category: 'Cloud Infrastructure',
-    date: '2026',
-    projectUrl: '',
-    githubUrl: '',
-  },
-  {
-    slug: 'vortex-crypto',
-    title: 'Vortex Protocol',
-    description:
-      'High-frequency institutional crypto liquidity aggregator and smart-contract yield optimization engine.',
-    image: '',
-    images: [],
-    tech: ['Solidity', 'Web3.js', 'GraphQL'],
-    client: 'Private Client',
-    category: 'Web3 / DeFi',
-    date: '2026',
-    projectUrl: '',
-    githubUrl: '',
-  },
-  {
-    slug: 'vortex-crypto',
-    title: 'Vortex Protocol',
-    description:
-      'High-frequency institutional crypto liquidity aggregator and smart-contract yield optimization engine.',
-    image: '',
-    images: [],
-    tech: ['Solidity', 'Web3.js', 'GraphQL'],
-    client: 'Private Client',
-    category: 'Web3 / DeFi',
-    date: '2026',
-    projectUrl: '',
-    githubUrl: '',
-  },
-];
-
 const PAGE_SIZE = 6;
 
 export default function Projects() {
@@ -208,12 +149,12 @@ export default function Projects() {
     },
   ];
 
-  const combinedProjects = [...importedProjects, ...additionalProjects];
-  const totalPages = Math.ceil(combinedProjects.length / PAGE_SIZE);
-  const visibleProjects = combinedProjects.slice(
+  const visibleProjects = importedProjects.slice(
     page * PAGE_SIZE,
     page * PAGE_SIZE + PAGE_SIZE,
   );
+
+  const totalPages = Math.ceil(importedProjects.length / PAGE_SIZE);
 
   // Sayfa değiştirme (baştan/sondan sarmalı - wrap around)
   const goToPage = useCallback(
@@ -403,35 +344,41 @@ export default function Projects() {
                     variants={cardVariants}
                     whileHover={{ y: -10, scale: 1.02 }}
                     onClick={() => setSelectedProject(project)}
-                    className={`relative cursor-pointer rounded-2xl backdrop-blur-md border-2 overflow-hidden group shadow-2xl flex flex-col h-[420px] justify-end transition-all duration-500 ${theme.bg} ${theme.cardBorder} ${theme.neonShadow}`}
+                    className={`relative h-[420px] overflow-hidden rounded-2xl border-2 group cursor-pointer backdrop-blur-md transition-all duration-500 ${theme.bg} ${theme.cardBorder} ${theme.neonShadow}`}
                   >
-                    <div className="absolute inset-0 z-0">
+                    <div className="absolute inset-0">
                       {project.image ? (
                         <Image
                           src={project.image}
                           alt={project.title}
                           fill
-                          sizes="(max-width: 768px) 100vw, 33vw"
                           priority={i < 3}
-                          className="object-cover transition-transform duration-1000 ease-out group-hover:scale-105"
+                          sizes="(max-width:768px) 100vw, 33vw"
+                          className="
+        object-fill
+        object-center
+        transition-transform
+        duration-700
+        group-hover:scale-110
+      "
                         />
                       ) : (
-                        <div className="absolute inset-0 bg-zinc-900/80" />
+                        <div className="absolute inset-0 bg-zinc-900" />
                       )}
+
+                      {/* hafif üst karartma */}
+                      <div className="absolute inset-0 bg-black/20" />
+
+                      {/* içerik okunması için */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#020617] via-[#020617]/45 to-transparent" />
+
+                      {/* glow */}
                       <div
-                        className={`absolute -bottom-10 -left-10 w-2/3 h-2/3 bg-gradient-to-tr ${theme.glow} via-transparent to-transparent opacity-50 blur-3xl z-0 pointer-events-none`}
+                        className={`absolute inset-0 bg-gradient-to-tr ${theme.glow} opacity-60`}
                       />
-                      <div
-                        className={`absolute -bottom-24 left-0 right-0 h-64 bg-gradient-to-t ${theme.glow} via-transparent to-transparent opacity-40 blur-3xl z-0 pointer-events-none`}
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#020617] via-[#020617]/50 to-transparent z-10" />
-                      <div
-                        className={`absolute inset-0 bg-gradient-to-tr ${theme.glow} via-transparent to-transparent opacity-80`}
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#020617] via-[#020617]/70 to-transparent" />
                     </div>
 
-                    <div className="relative z-30 p-6 flex flex-col justify-end h-full w-full">
+                    <div className="absolute bottom-0 left-0 right-0 z-20 p-6">
                       <div className="flex items-center gap-3 mb-3">
                         <div
                           className={`w-10 h-10 flex items-center justify-center shrink-0 rounded-xl border shadow-[0_0_15px_rgba(0,0,0,0.1)] ${theme.icon}`}
@@ -443,7 +390,7 @@ export default function Projects() {
                         </h3>
                       </div>
 
-                      <p className="text-zinc-400 group-hover:text-zinc-300 text-xs line-clamp-2 leading-relaxed mb-5 opacity-90 transition-all duration-500">
+                      <p className="text-white/75 text-sm leading-relaxed line-clamp-2 mb-5 group-hover:text-zinc-200 opacity-90 transition-all duration-100">
                         {project.description}
                       </p>
 
