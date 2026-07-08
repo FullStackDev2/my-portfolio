@@ -5,15 +5,16 @@ import { useEffect, useState, useMemo } from 'react';
 import Image from 'next/image';
 
 type Project = {
+  slug?: string;
   title: string;
-  subtitle?: string;
-  description: string;
-  tech: string[];
-  image?: string;
-  images?: string[];
-  client?: string;
-  category?: string;
-  date?: string;
+  shortDescription?: string;
+  about?: string;
+  image: string;
+  images: string[];
+  tech?: string[];
+  client: string;
+  category: string;
+  date: string;
   projectUrl?: string;
   githubUrl?: string;
 };
@@ -26,6 +27,7 @@ type Props = {
 export default function ProjectModal({ project, onClose }: Props) {
   const [activeImgIndex, setActiveImgIndex] = useState(0);
   const [prevProjectTitle, setPrevProjectTitle] = useState<string | null>(null);
+  const [previewOpen, setPreviewOpen] = useState(false);
 
   const galleryImages = useMemo(() => {
     if (!project) return [];
@@ -63,9 +65,29 @@ export default function ProjectModal({ project, onClose }: Props) {
   }, [project, prevProjectTitle]);
 
   useEffect(() => {
-    document.body.style.overflow = project ? 'hidden' : 'auto';
+    const lenis = (
+      window as typeof window & {
+        lenis?: { stop: () => void; start: () => void };
+      }
+    ).lenis;
+
+    if (project) {
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+
+      lenis?.stop();
+    } else {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+
+      lenis?.start();
+    }
+
     return () => {
-      document.body.style.overflow = 'auto';
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+
+      lenis?.start();
     };
   }, [project]);
 
@@ -105,13 +127,14 @@ export default function ProjectModal({ project, onClose }: Props) {
     <div
       className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 md:p-8 select-none"
       onClick={onClose}
+      onWheel={(e) => e.stopPropagation()}
     >
       <motion.div
         initial={{ opacity: 0, scale: 0.9, y: 40 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 40 }}
         transition={{ duration: 0.35, ease: 'easeOut' }}
-        className="w-full max-w-6xl h-[85vh] md:h-[82vh] max-h-[720px] bg-[#0d1220]/95 backdrop-blur-2xl border border-white/10 rounded-[1.5rem] overflow-hidden flex flex-row relative shadow-[0_0_60px_rgba(0,0,0,0.7)]"
+        className="w-full max-w-6xl h-[85vh] md:h-[82vh] max-h-[720px] bg-[#0d1220]/95 backdrop-blur-2xl border border-white/10 rounded-[1.5rem] overflow-hidden overscroll-contain flex flex-row relative shadow-[0_0_60px_rgba(0,0,0,0.7)]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Dekoratif Arka Plan Işıkları */}
@@ -169,29 +192,32 @@ export default function ProjectModal({ project, onClose }: Props) {
             </button>
 
             {/* Thumbnail Listesi */}
-            <div className="flex-1 w-full flex flex-col gap-2.5 overflow-hidden">
-              {visibleThumbnails.map((img, idx) => {
-                const realIndex = galleryImages.findIndex((x) => x === img);
+            <div className="flex-1 w-full flex flex-col gap-1 overflow-hidden">
+              <div className="h-full flex flex-col justify-evenly">
+                {visibleThumbnails.map((img, idx) => {
+                  const realIndex = galleryImages.findIndex((x) => x === img);
 
-                return (
-                  <button
-                    key={`thumb-${realIndex}-${idx}`}
-                    onClick={() => setActiveImgIndex(realIndex)}
-                    className={`relative w-full aspect-square rounded-xl overflow-hidden border transition-all duration-300 ${
-                      realIndex === activeImgIndex
-                        ? 'border-cyan-400/70 opacity-100'
-                        : 'border-white/5 opacity-50 hover:opacity-90'
-                    }`}
-                  >
-                    <Image
-                      src={img}
-                      alt="thumbnail"
-                      fill
-                      className="object-cover"
-                    />
-                  </button>
-                );
-              })}
+                  return (
+                    <button
+                      key={`thumb-${realIndex}-${idx}`}
+                      onClick={() => setActiveImgIndex(realIndex)}
+                      className={`relative w-full aspect-square rounded-xl overflow-hidden border transition-all duration-300 ${
+                        realIndex === activeImgIndex
+                          ? 'border-cyan-400/70 opacity-100'
+                          : 'border-white/5 opacity-50 hover:opacity-90'
+                      }`}
+                    >
+                      <Image
+                        src={img}
+                        alt="thumbnail"
+                        fill
+                        sizes="(max-width:768px) 22vw, 120px"
+                        className="object-cover"
+                      />
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
             {/* Aşağı Ok */}
@@ -233,10 +259,12 @@ export default function ProjectModal({ project, onClose }: Props) {
               {hasImages ? (
                 <Image
                   src={galleryImages[activeImgIndex]}
-                  alt={`${project.title}`}
+                  alt={project.title}
                   fill
                   priority
-                  className="max-h-full max-w-full rounded-lg object-cover"
+                  sizes="(max-width: 768px) 100vw, 80vw"
+                  onClick={() => setPreviewOpen(true)}
+                  className="max-h-full max-w-full rounded-lg object-contain cursor-zoom-in transition-transform duration-300 hover:scale-[1.01]"
                 />
               ) : (
                 <div className="absolute flex items-center justify-center text-white/20">
@@ -248,7 +276,7 @@ export default function ProjectModal({ project, onClose }: Props) {
         </div>
 
         {/* SAĞ: Detaylar Paneli */}
-        <div className="flex-1 h-full p-6 md:p-10 flex flex-col justify-between overflow-y-auto text-white relative z-10 custom-scrollbar order-3">
+        <div className="flex-1 h-full p-6 md:p-10 flex flex-col justify-between overflow-y-auto overscroll-contain text-white relative z-10 custom-scrollbar order-3">
           <div className="space-y-6">
             {/* Üst Bilgi ve Başlık */}
             <div className="space-y-2.5">
@@ -256,11 +284,11 @@ export default function ProjectModal({ project, onClose }: Props) {
                 <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
                 Project Case Study
               </div>
-              <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white leading-tight">
+              <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-white leading-tight">
                 {project.title}
               </h2>
-              <p className="text-slate-400 text-[13px] leading-relaxed font-normal">
-                {project.subtitle || project.description}
+              <p className="text-slate-300 text-[13px] leading-relaxed font-normal">
+                {project.shortDescription}
               </p>
             </div>
 
@@ -287,7 +315,7 @@ export default function ProjectModal({ project, onClose }: Props) {
                   <span className="font-mono text-white/60 text-[10px] uppercase tracking-wider">
                     Client
                   </span>
-                  <span className="text-slate-200 text-xs font-medium">
+                  <span className="text-slate-200 text-sm font-medium">
                     {project.client || 'Nurettin D. Labs'}
                   </span>
                 </div>
@@ -348,10 +376,10 @@ export default function ProjectModal({ project, onClose }: Props) {
 
             {/* Teknolojiler (Tags) */}
             <div className="flex flex-wrap gap-2">
-              {project.tech.map((t, idx) => (
+              {(project.tech ?? []).map((t, idx) => (
                 <span
                   key={`${t}-${idx}`}
-                  className="px-3 py-1 text-[11px] font-mono rounded-lg bg-cyan-500/5 border border-cyan-500/10 text-cyan-400/90"
+                  className="px-3 py-1 text-[12px] font-mono rounded-lg bg-cyan-500/5 border border-cyan-500/50 text-cyan-400/90"
                 >
                   {t}
                 </span>
@@ -359,13 +387,15 @@ export default function ProjectModal({ project, onClose }: Props) {
             </div>
 
             {/* About Project */}
-            <div className="space-y-1.5 pt-5 border-t border-white/5">
-              <span className="block font-mono text-white/30 text-[10px] uppercase tracking-wider">
+            <div className="space-y-1.5 pt-5 border-t border-white/55">
+              <span className="block font-mono text-slate/80 text-[13px] uppercase tracking-wider">
                 About Project
               </span>
-              <p className="text-slate-400 text-[13px] leading-relaxed font-normal">
-                {project.description}
-              </p>
+              <div className="text-slate-200 text-[13px] leading-relaxed font-normal space-y-4">
+                {(project.about ?? '').split('\n').map((line, index) => (
+                  <p key={index}>{line || '\u00A0'}</p>
+                ))}
+              </div>
             </div>
           </div>
 
@@ -416,6 +446,46 @@ export default function ProjectModal({ project, onClose }: Props) {
           </div>
         </div>
       </motion.div>
+      <AnimatePresence>
+        {previewOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            onClick={(e) => {
+              e.stopPropagation();
+              setPreviewOpen(false);
+            }}
+            className="fixed inset-0 z-[9999] bg-[#020617]/30 backdrop-blur-md flex items-center justify-center p-8"
+          >
+            <motion.div
+              initial={{ scale: 0.95 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.95 }}
+              transition={{ duration: 0.25 }}
+              onClick={(e) => e.stopPropagation()}
+              className="fixed inset-0 relative w-[70vw] max-w-[1200px] h-[70vh] flex items-center justify-center"
+            >
+              <Image
+                src={galleryImages[activeImgIndex]}
+                alt={project.title}
+                fill
+                priority
+                sizes="(max-width: 768px) 100vw, 80vw"
+                className="object-contain"
+              />
+
+              <button
+                onClick={() => setPreviewOpen(false)}
+                className="absolute top-6 right-6 w-10 h-10 rounded-full bg-black/50 border border-white/20 text-white hover:bg-black/70 cursor-pointer"
+              >
+                ✕
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

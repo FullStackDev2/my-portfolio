@@ -16,7 +16,7 @@ export default function SmoothScroll() {
       smoothWheel: true,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
     });
-
+    (window as typeof window & { lenis?: Lenis }).lenis = lenis;
     lenisRef.current = lenis;
 
     function raf(time: number) {

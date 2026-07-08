@@ -37,13 +37,13 @@ export default function Hero() {
         }}
       />
       <HeroGlow />
-      <div className="max-w-[1400px] mx-auto min-h-[100dvh] flex flex-col md:flex-row items-center px-6 sm:px-8 lg:px-0 py-28 md:py-0">
+      <div className="max-w-[1400px] mx-auto min-h-[100dvh] flex flex-col lg:flex-row items-center px-6 sm:px-8 lg:px-0 py-28 lg:py-0">
         {/* SOL: İÇERİK */}
-        <div className="flex flex-col justify-center items-center md:items-start z-20 w-full text-center md:text-left">
+        <div className="flex flex-col justify-center items-center lg:items-start z-20 w-full text-center lg:text-left">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="flex items-center gap-2 border border-white/10 bg-white/5 w-fit px-4 py-1.5 rounded-full mb-6 sm:mb-8 mx-auto md:mx-0"
+            className="flex items-center gap-2 border border-white/10 bg-white/5 w-fit px-4 py-1.5 rounded-full mb-6 sm:mb-8 mx-auto lg:mx-0"
           >
             <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
             <span className="text-[10px] sm:text-[11px] font-mono tracking-widest text-zinc-300 uppercase">
@@ -55,23 +55,23 @@ export default function Hero() {
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className="relative flex flex-col gap-1 sm:gap-2 items-center md:items-start"
+            className="relative flex flex-col gap-1 sm:gap-2 items-center lg:items-start"
           >
             <motion.h1
               variants={textItemVariants}
-              className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-bold text-white tracking-tight [text-shadow:_0_0_20px_rgba(255,255,255,0.3)]"
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-white tracking-tight [text-shadow:_0_0_20px_rgba(255,255,255,0.3)]"
             >
               Frontend Developer
             </motion.h1>
             <motion.h2
               variants={textItemVariants}
-              className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-bold bg-gradient-to-r from-cyan-500 via-blue-500 via-indigo-600 to-fuchsia-900 bg-clip-text text-transparent tracking-tight leading-[1.2] pb-1 sm:pb-2 [text-shadow:_0_0_30px_rgba(168,85,247,0.3)]"
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold bg-gradient-to-r from-cyan-500 via-blue-500 via-indigo-600 to-fuchsia-900 bg-clip-text text-transparent tracking-tight leading-[1.2] pb-1 sm:pb-2 [text-shadow:_0_0_30px_rgba(168,85,247,0.3)]"
             >
               Building Digital
             </motion.h2>
             <motion.h2
               variants={textItemVariants}
-              className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-bold text-zinc-200 tracking-tight [text-shadow:_0_0_15px_rgba(212,212,216,0.3)]"
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-zinc-200 tracking-tight [text-shadow:_0_0_15px_rgba(212,212,216,0.3)]"
             >
               Experiences
             </motion.h2>
@@ -81,7 +81,7 @@ export default function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6, duration: 0.8 }}
-            className="mt-6 sm:mt-8 text-zinc-200 max-w-md sm:max-w-lg mx-auto md:mx-0 text-base sm:text-lg leading-relaxed font-light px-2 sm:px-0"
+            className="mt-6 sm:mt-8 text-zinc-200 max-w-md sm:max-w-lg mx-auto lg:mx-0 text-base sm:text-lg leading-relaxed font-light px-2 sm:px-0"
           >
             Crafting performant, accessible, and beautiful web applications with
             modern technologies and a keen eye for detail.
@@ -91,7 +91,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8 }}
-            className="flex flex-col sm:flex-row flex-wrap gap-4 mt-8 sm:mt-10 justify-center md:justify-start w-full sm:w-auto"
+            className="flex flex-col sm:flex-row flex-wrap gap-4 mt-8 sm:mt-10 justify-center lg:justify-start w-full sm:w-auto"
           >
             <motion.button
               whileHover={{ scale: 1.02 }}
@@ -156,15 +156,20 @@ export default function Hero() {
 
         {/* SAĞ: PORTRE — sadece md ve üstünde, tablette küçültülmüş oranla */}
         <div
-          className="absolute right-0 top-16 w-[55%] md:w-[46%] h-[75%] md:h-[85%] hidden md:block pointer-events-none z-10 
-              [mask-image:linear-gradient(to_bottom,black_60%,transparent_100%)]"
+          className="absolute right-0 top-16 lg:w-[40%] lg:h-[75%] xl:w-[46%] xl:h-[85%] hidden lg:block pointer-events-none z-10
+    [mask-image:linear-gradient(to_bottom,black_60%,transparent_100%)]"
         >
           <div className="relative w-full h-full">
             <Image
               src="/NobackGroundd.png"
               alt="Nurettin Dincer"
               fill
-              className="object-contain object-bottom -translate-x-10 md:-translate-x-23 scale-100 md:scale-103 origin-bottom grayscale contrast-115 brightness-[45%] opacity-70 blur-[1px]"
+              quality={75}
+              sizes="50vw"
+              className="object-contain object-bottom 
+        -translate-x-4 md:-translate-x-8 lg:-translate-x-23 
+        scale-100 lg:scale-103 
+        origin-bottom grayscale contrast-115 brightness-[45%] opacity-70 blur-[1px]"
               priority
             />
           </div>

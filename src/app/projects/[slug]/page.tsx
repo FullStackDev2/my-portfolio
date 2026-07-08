@@ -34,7 +34,7 @@ export default function ProjectPage({ params }: { params: { slug: string } }) {
 
               <h1 className="text-5xl font-black mb-6">{project.title}</h1>
 
-              <p className="text-white/60">{project.description}</p>
+              <p className="text-white/60">{project.shortDescription}</p>
             </div>
           </Reveal>
 

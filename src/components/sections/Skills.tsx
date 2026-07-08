@@ -2,6 +2,7 @@
 
 import Reveal from '../ui/Reveal';
 import { motion, type Variants } from 'framer-motion';
+import { useEffect, useRef } from 'react';
 
 // ================= TYPESCRIPT TIP TANIMLAMALARI =================
 interface Skill {
@@ -16,6 +17,79 @@ interface SkillCategory {
   skills: Skill[];
   glowClass: string;
   arrowColor: string;
+}
+
+function MatrixRain({ className }: { className?: string }) {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const parent = canvas?.parentElement;
+    if (!canvas || !parent) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const fontSize = 14;
+    const characters = '01';
+    const charArray = characters.split('');
+
+    let width = 0;
+    let height = 0;
+    let drops: number[] = [];
+    let animationId = 0;
+    let lastFrameTime = Date.now();
+    const frameRate = 20;
+
+    const resize = () => {
+      width = canvas.width = parent.clientWidth;
+      height = canvas.height = parent.clientHeight;
+      const columns = Math.floor(width / (fontSize * 0.6));
+      drops = Array.from(
+        { length: columns },
+        () => Math.random() * (height / fontSize),
+      );
+    };
+
+    const draw = () => {
+      ctx.fillStyle = 'rgba(4, 8, 23, 0.15)';
+      ctx.fillRect(0, 0, width, height);
+      ctx.font = `${fontSize}px monospace`;
+      ctx.fillStyle = 'rgba(0,255,120,0.75)';
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = charArray[Math.floor(Math.random() * charArray.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+        if (drops[i] * fontSize > height && Math.random() > 0.93) {
+          drops[i] = 0;
+        }
+        drops[i]++;
+      }
+    };
+
+    const animate = () => {
+      const now = Date.now();
+      if (now - lastFrameTime > 1000 / frameRate) {
+        draw();
+        lastFrameTime = now;
+      }
+      animationId = requestAnimationFrame(animate);
+    };
+
+    resize();
+    animate();
+
+    const resizeObserver = new ResizeObserver(() => resize());
+    resizeObserver.observe(parent);
+
+    return () => {
+      cancelAnimationFrame(animationId);
+      resizeObserver.disconnect();
+    };
+  }, []);
+
+  return <canvas ref={canvasRef} className={className} />;
 }
 
 const skillCategories: SkillCategory[] = [
@@ -102,6 +176,20 @@ const itemVariants: Variants = {
 };
 
 export default function Skills() {
+  const skills = [
+    ['React', 85],
+    ['Next.js', 75],
+    ['TypeScript', 70],
+    ['Tailwind CSS', 88],
+    ['Node.js', 80],
+    ['Express', 82],
+    ['MongoDB', 80],
+    ['Git & GitHub', 98],
+    ['Docker', 65],
+    ['Vercel', 92],
+    ['Linux', 45],
+  ];
+
   return (
     <section
       id="skills"
@@ -143,13 +231,14 @@ export default function Skills() {
         <div className="mb-12 border-b border-zinc-900 pb-6 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
           <div>
             <Reveal>
-              <p className="text-zinc-500 uppercase tracking-[0.4em] mb-2 text-sm font-mono">
+              <p className="text-zinc-200 uppercase tracking-[0.4em] mb-2 text-sm font-mono">
                 TECHNICAL STACK
               </p>
             </Reveal>
             <Reveal>
-              <h2 className="text-5xl md:text-6xl font-black tracking-tight text-white uppercase">
-                SYSTEM <span className="text-cyan-400">ENGINEERING</span>
+              <h2 className="text-5xl md:text-6xl font-black tracking-tight uppercase">
+                <span className="text-cyan-400">DEVELOPMENT</span>{' '}
+                <span className="text-white">STACK</span>
               </h2>
             </Reveal>
           </div>
@@ -163,7 +252,7 @@ export default function Skills() {
         {/* ================= 1. ÜST BAĞLANTI (CORE - ÇİZGİNİN EN UCU / BAŞLANGICI) ================= */}
         <div className="hidden md:flex flex-col items-center w-full">
           <div className="px-8 py-3 rounded-xl border border-cyan-500/30 bg-[#040817] shadow-[0_0_20px_rgba(34,211,238,0.15)] text-white font-mono tracking-wider z-20">
-            SKILLS
+            ARCHITECTURE
           </div>
 
           {/* Butondan çıkıp aşağıdaki köprüye kadar uzanan tek ve kesintisiz dikey hat */}
@@ -192,7 +281,7 @@ export default function Skills() {
         </div>
 
         {/* 3 SÜTUNLU KART DÜZENİ */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start relative mt-0">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start relative mt-0">
           {skillCategories.map((category: SkillCategory, idx: number) => (
             <div
               key={category.id}
@@ -203,10 +292,10 @@ export default function Skills() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: idx * 0.1 }}
-                className="w-full"
+                className="w-full relative"
               >
                 {/* Kart içeriği */}
-                <div className="w-full h-full rounded-[23px] bg-[#020617] p-6 md:p-6 flex flex-col justify-between min-h-[380px]">
+                <div className="relative z-10 w-full h-full rounded-[23px] bg-[#020617] p-6 md:p-6 flex flex-col justify-between min-h-[430px]">
                   <div className="flex flex-col items-center text-center">
                     {/* Büyütülmüş ve Parlayan İkon Bölümü */}
                     <div className="mb-6 p-5 rounded-3xl bg-white/[0.03] border border-white/30 shadow-[0_0_20px_rgba(255,255,255,0.05)] text-cyan-400">
@@ -259,120 +348,225 @@ export default function Skills() {
                     ))}
                   </motion.div>
                 </div>
+
+                {/* ALT NEON BORDER */}
+                <div
+                  className={`
+absolute
+left-1/2
+-bottom-[2px]
+-translate-x-1/2
+w-[94%]
+h-[6px]
+rounded-full
+${
+  category.id === 'frontend-architecture'
+    ? 'bg-cyan-400'
+    : category.id === 'Backend & Database'
+      ? 'bg-blue-500'
+      : 'bg-fuchsia-500'
+}
+`}
+                />
+
+                {/* Glow 1 */}
+                <div
+                  className={`
+absolute
+left-1/2
+-bottom-[4px]
+-translate-x-1/2
+w-[90%]
+h-8
+blur-2xl
+rounded-full
+${
+  category.id === 'frontend-architecture'
+    ? 'bg-cyan-400/40'
+    : category.id === 'Backend & Database'
+      ? 'bg-blue-500/40'
+      : 'bg-fuchsia-500/40'
+}
+`}
+                />
+
+                {/* Glow 2 */}
+                <div
+                  className={`
+absolute
+left-1/2
+-bottom-[-16px]
+-translate-x-1/2
+w-[70%]
+h-12
+blur-[50px]
+rounded-full
+opacity-90
+${
+  category.id === 'frontend-architecture'
+    ? 'bg-cyan-500/30'
+    : category.id === 'Backend & Database'
+      ? 'bg-blue-500/30'
+      : 'bg-fuchsia-500/30'
+}
+`}
+                />
               </motion.div>
             </div>
           ))}
         </div>
 
-        {/* ================= SADECE DÜZ DİKEY ÇİZGİ (KARTLARDAN AI & TOOLS'A DÜZ İNİŞ) ================= */}
-        <div className="hidden md:flex flex-col items-center w-full">
-          <div className="w-[6px] h-20 bg-gradient-to-b from-slate-500/40 to-purple-500/60" />
+        {/* ================= 3. ORTA DÜĞÜM ÇİZGİSİ (KARTLARDAN SKILLS & TOOLS'A) ================= */}
+        <div className="hidden md:flex justify-center w-full mt-0">
+          <div className="w-[6px] h-12 bg-gradient-to-b from-slate-400/50 via-slate-300/65 to-slate-400/50" />
         </div>
 
-        {/* ================= 3. AI & TOOLS VE GENİŞLETİLMİŞ PROGRESS BARS ================= */}
-        <div className="hidden md:flex flex-col items-center w-full mt-0">
-          {/* AI & Tools Butonu */}
-          <div className="px-10 py-3.5 rounded-xl border border-purple-500/30 bg-[#040817] shadow-[0_0_25px_rgba(168,85,247,0.2)] text-white font-mono tracking-wider text-base z-20">
-            AI & TOOLS
+        {/* ================= 4. AI & TOOLS DÜĞÜMÜ (TERMINAL'E BAĞLANAN ARA DURAK) ================= */}
+        <div className="hidden md:flex flex-col items-center w-full">
+          <div className="px-8 py-3 rounded-xl border border-purple-500/30 bg-[#040817] shadow-[0_0_20px_rgba(139,92,246,0.15)] text-white font-mono tracking-wider z-20">
+            SYSTEM CORE
           </div>
 
-          {/* Butondan aşağıdaki yetenek çubuklarına inen mor dikey bağlantı çizgisi */}
-          <div className="w-[6px] h-16 bg-gradient-to-b from-purple-500/60 to-slate-500/15" />
+          {/* Düğümden terminale kadar uzanan dikey hat */}
+          <div className="w-[6px] h-16 bg-gradient-to-r from-slate-400/50 via-slate-300/65 to-slate-400/50" />
+        </div>
+      </div>
 
-          {/* Progress Bars Konteyneri (Genişlik max-w-5xl) */}
-          <div className="w-full max-w-6xl px-10 py-10 rounded-2xl bg-[#040817]/40 backdrop-blur-md shadow-2xl space-y-7">
-            {/* Başlık Grubu */}
-            <div className="text-left mb-8 font-mono">
-              <span className="text-zinc-400 text-sm block tracking-widest uppercase mb-1">
-                Technical Stack
-              </span>
-              <span className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-white via-slate-200 to-cyan-400 bg-clip-text text-transparent">
-                Core Technologies
+      {/* TERMINAL */}
+      <div className="w-full flex justify-center mt-0">
+        <div
+          className="
+      w-full
+      max-w-[86rem]
+      rounded-3xl
+      overflow-hidden
+      bg-[#040817]/70
+      backdrop-blur-xl
+      border border-cyan-500/20
+      shadow-[0_0_80px_rgba(34,211,238,.08)]
+    "
+        >
+          {/* HEADER */}
+          <div className="h-10 px-5 flex items-center justify-between border-b border-white/5">
+            <div className="flex items-center gap-2">
+              <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
+              <div className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
+              <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
+
+              <span className="ml-4 font-mono text-xs text-emerald-400">
+                developer@nd:~/portfolio/skills $
               </span>
             </div>
 
-            {/* Çubuk 1: Next.js & React */}
-            <div className="flex items-center space-x-6">
-              <span className="w-44 text-base font-mono text-zinc-200 font-semibold text-left flex-shrink-0">
-                Next.js & React
-              </span>
-              <div className="w-full h-12 bg-zinc-900/80 rounded-xl p-1.5 border border-zinc-800/40 relative overflow-hidden">
-                <motion.div
-                  initial={{ width: 0 }}
-                  whileInView={{ width: '95%' }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 1.2, ease: 'easeOut' }}
-                  className="h-full bg-gradient-to-r from-blue-600 via-cyan-500 to-cyan-400 rounded-lg flex items-center justify-end pr-4 shadow-[0_0_20px_rgba(34,211,238,0.25)]"
-                >
-                  <span className="text-sm font-mono font-black text-[#040817]">
-                    95%
-                  </span>
-                </motion.div>
+            <span className="font-mono text-[12px]  tracking-[0.35em] text-purple-400">
+              TERMINAL
+            </span>
+          </div>
+
+          <div className="grid grid-cols-[1.5fr_1px_1fr] min-h-[220px]">
+            {/* ===================== SOL ===================== */}
+
+            <div
+              className="
+          relative
+          p-5
+          font-mono
+          bg-[linear-gradient(transparent_95%,rgba(255,255,255,.02)_100%)]
+          bg-[length:100%_24px]
+        "
+            >
+              <p className="text-cyan-400 text-sm">$ npm run skills</p>
+
+              <p className="text-zinc-500 text-xs mt-1">
+                Starting developer environment...
+              </p>
+
+              <div className="mt-4 space-y-1.5">
+                {skills.map(([name, percent]) => (
+                  <div key={String(name)} className="flex items-center text-sm">
+                    <span className="mr-3 text-green-400">✔</span>
+
+                    <span className="w-[110px] text-zinc-100">{name}</span>
+
+                    <div className="flex-1 border-b border-dotted border-cyan-500/20 mx-3" />
+
+                    <span className="ml-auto text-cyan-300 font-semibold tabular-nums">
+                      {percent}%
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-3 space-y-1">
+                <p className="text-green-400 text-xs">
+                  ✔ Build completed successfully.
+                </p>
+
+                <p className="text-cyan-400 text-xs">
+                  Ready for deployment
+                  <span className="animate-pulse text-white"> █</span>
+                </p>
               </div>
             </div>
 
-            {/* Çubuk 2: TypeScript */}
-            <div className="flex items-center space-x-6">
-              <span className="w-44 text-base font-mono text-zinc-200 font-semibold text-left flex-shrink-0">
-                TypeScript
-              </span>
-              <div className="w-full h-12 bg-zinc-900/80 rounded-xl p-1.5 border border-zinc-800/40 relative overflow-hidden">
-                <motion.div
-                  initial={{ width: 0 }}
-                  whileInView={{ width: '90%' }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 1.2, ease: 'easeOut', delay: 0.1 }}
-                  className="h-full bg-gradient-to-r from-blue-600 via-cyan-500 to-cyan-400 rounded-lg flex items-center justify-end pr-4 shadow-[0_0_20px_rgba(34,211,238,0.25)]"
-                >
-                  <span className="text-sm font-mono font-black text-[#040817]">
-                    90%
-                  </span>
-                </motion.div>
-              </div>
+            {/* ===================== ORTA ===================== */}
+
+            <div className="relative w-px bg-white/5">
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-400/40 to-transparent" />
+
+              <div className="absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2 bg-cyan-400/20" />
+
+              <div
+                className="
+            absolute
+            left-1/2
+            top-1/2
+            -translate-x-1/2
+            -translate-y-1/2
+            w-8
+            h-24
+            rounded-full
+            bg-cyan-400/25
+            blur-2xl
+          "
+              />
             </div>
 
-            {/* Çubuk 3: Tailwind CSS */}
-            <div className="flex items-center space-x-6">
-              <span className="w-44 text-base font-mono text-zinc-200 font-semibold text-left flex-shrink-0">
-                Tailwind CSS
-              </span>
-              <div className="w-full h-12 bg-zinc-900/80 rounded-xl p-1.5 border border-zinc-800/40 relative overflow-hidden">
-                <motion.div
-                  initial={{ width: 0 }}
-                  whileInView={{ width: '98%' }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 1.2, ease: 'easeOut', delay: 0.2 }}
-                  className="h-full bg-gradient-to-r from-blue-600 via-cyan-500 to-cyan-400 rounded-lg flex items-center justify-end pr-4 shadow-[0_0_20px_rgba(34,211,238,0.25)]"
-                >
-                  <span className="text-sm font-mono font-black text-[#040817]">
-                    98%
-                  </span>
-                </motion.div>
-              </div>
-            </div>
+            {/* ===================== SAĞ ===================== */}
 
-            {/* Çubuk 4: Node.js */}
-            <div className="flex items-center space-x-6">
-              <span className="w-44 text-base font-mono text-zinc-200 font-semibold text-left flex-shrink-0">
-                Node.js
-              </span>
-              <div className="w-full h-12 bg-zinc-900/80 rounded-xl p-1.5 border border-zinc-800/40 relative overflow-hidden">
-                <motion.div
-                  initial={{ width: 0 }}
-                  whileInView={{ width: '80%' }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 1.2, ease: 'easeOut', delay: 0.3 }}
-                  className="h-full bg-gradient-to-r from-blue-600 via-cyan-500 to-cyan-400 rounded-lg flex items-center justify-end pr-4 shadow-[0_0_20px_rgba(34,211,238,0.25)]"
-                >
-                  <span className="text-sm font-mono font-black text-[#040817]">
-                    80%
-                  </span>
-                </motion.div>
+            <div className="relative overflow-hidden">
+              {/* Glow */}
+              <div
+                className="
+            absolute
+            right-10
+            top-1/2
+            -translate-y-1/2
+            w-40
+            h-40
+            rounded-full
+            bg-cyan-500/10
+            blur-[100px]
+          "
+              />
+
+              {/* Matrix */}
+              <div
+                className="absolute inset-0"
+                style={{
+                  maskImage:
+                    'radial-gradient(ellipse 90% 70% at center, black 35%, transparent 85%)',
+                  WebkitMaskImage:
+                    'radial-gradient(ellipse 90% 70% at center, black 35%, transparent 85%)',
+                }}
+              >
+                <MatrixRain className="w-full h-full" />
               </div>
             </div>
           </div>
         </div>
       </div>
+      {/* TERMINAL SONU */}
     </section>
   );
 }

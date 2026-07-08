@@ -234,7 +234,7 @@ export default function Projects() {
               className="text-[3.5rem] md:text-[5.8rem] font-black tracking-tight text-transparent bg-clip-text leading-normal"
               style={{
                 backgroundImage:
-                  'linear-gradient(90deg, #71B2FF 20%, #7E8FFF 33.5%, #B46BFF 36%, #F46D9C 65%, #FF9562 69%, #FFD66B 81%)',
+                  'linear-gradient(88deg,  #71B2FF 2%, #22C55E 36%, #7E8FFF 35.5%, #B46BFF 41%, #F46D9C 65%, #FF9562 69%, #FFD66B 81%)',
               }}
             >
               Projects I&#39;ve Built
@@ -301,38 +301,38 @@ export default function Projects() {
                     case 0:
                       return {
                         bg: 'bg-zinc-900/40',
-                        border: 'border-zinc-800/60',
+                        border: 'border-zinc-400/70',
                         glow: 'from-cyan-500/10',
                         icon: 'bg-cyan-500/10 border-cyan-500/20 text-cyan-400',
                         tag: 'bg-cyan-500/5 border-cyan-500/10 text-cyan-400',
                         cardBorder:
                           'border-cyan-500/30 hover:border-cyan-400/60',
                         neonShadow:
-                          'shadow-[0_0_45px_-5px_rgba(34,211,238,0.55)]',
+                          'shadow-[0_0_30px_-8px_rgba(34,211,238,.32)] hover:shadow-[0_0_60px_-4px_rgba(34,211,238,.52)]',
                       };
                     case 1:
                       return {
                         bg: 'bg-purple-950/40',
-                        border: 'border-white/5',
+                        border: 'border-white/25',
                         glow: 'from-purple-500/15',
                         icon: 'bg-purple-500/10 border-purple-500/20 text-purple-400',
                         tag: 'bg-purple-500/5 border-purple-500/10 text-purple-400',
                         cardBorder:
                           'border-purple-500/30 hover:border-purple-400/60',
                         neonShadow:
-                          'shadow-[0_0_45px_-5px_rgba(168,85,247,0.55)]',
+                          'shadow-[0_0_30px_-8px_rgba(168,85,247,.32)] hover:shadow-[0_0_60px_-4px_rgba(168,85,247,.52)]',
                       };
                     case 2:
                       return {
                         bg: 'bg-amber-950/30',
-                        border: 'border-amber-500/15',
+                        border: 'border-amber-500/25',
                         glow: 'from-amber-500/15',
                         icon: 'bg-amber-500/10 border-amber-500/20 text-amber-400',
                         tag: 'bg-amber-500/9 border-amber-500/10 text-amber-400',
                         cardBorder:
                           'border-amber-500/30 hover:border-amber-400/60',
                         neonShadow:
-                          'shadow-[0_0_45px_-5px_rgba(245,158,11,0.55)]',
+                          'shadow-[0_0_30px_-8px_rgba(245,158,11,.32)] hover:shadow-[0_0_60px_-4px_rgba(245,158,11,.52)]',
                       };
                   }
                 };
@@ -344,7 +344,21 @@ export default function Projects() {
                     variants={cardVariants}
                     whileHover={{ y: -10, scale: 1.02 }}
                     onClick={() => setSelectedProject(project)}
-                    className={`relative h-[420px] overflow-hidden rounded-2xl border-2 group cursor-pointer backdrop-blur-md transition-all duration-500 ${theme.bg} ${theme.cardBorder} ${theme.neonShadow}`}
+                    className={`
+relative h-[420px]
+overflow-hidden
+rounded-2xl
+border-2
+group
+cursor-pointer
+backdrop-blur-md
+transition-all
+duration-500
+${theme.bg}
+${theme.cardBorder}
+${theme.neonShadow}
+hover:scale-[1.02]
+`}
                   >
                     <div className="absolute inset-0">
                       {project.image ? (
@@ -378,6 +392,15 @@ export default function Projects() {
                       />
                     </div>
 
+                    {/* IN DEVELOPMENT BADGE */}
+                    {!project.projectUrl && (
+                      <div className="absolute top-4 right-4 z-40">
+                        <span className="px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/80 text-emerald-500 text-[10px] font-semibold uppercase tracking-[0.2em] backdrop-blur-md">
+                          Work In Progress
+                        </span>
+                      </div>
+                    )}
+
                     <div className="absolute bottom-0 left-0 right-0 z-20 p-6">
                       <div className="flex items-center gap-3 mb-3">
                         <div
@@ -391,14 +414,14 @@ export default function Projects() {
                       </div>
 
                       <p className="text-white/75 text-sm leading-relaxed line-clamp-2 mb-5 group-hover:text-zinc-200 opacity-90 transition-all duration-100">
-                        {project.description}
+                        {project.shortDescription}
                       </p>
 
                       <div
                         className={`flex justify-between items-center pt-4 border-t ${theme.border} w-full`}
                       >
                         <div className="flex flex-wrap gap-2">
-                          {project.tech?.slice(0, 3).map((tech) => (
+                          {project.tech?.slice(0, 4).map((tech) => (
                             <span
                               key={tech}
                               className={`px-2.5 py-1 rounded-md border text-[10px] font-medium tracking-wide ${theme.tag}`}
@@ -437,7 +460,7 @@ export default function Projects() {
           <div className="flex justify-center items-center gap-5 pt-2">
             <button
               onClick={() => goToPage(page - 1)}
-              aria-label="Önceki sayfa"
+              aria-label="previous page"
               className="w-9 h-9 flex items-center justify-center rounded-full border border-white/10 text-white/70 hover:text-white hover:border-white/30 hover:bg-white/5 transition-all duration-300"
             >
               <svg
@@ -474,7 +497,7 @@ export default function Projects() {
 
             <button
               onClick={() => goToPage(page + 1)}
-              aria-label="Sonraki sayfa"
+              aria-label="next page"
               className="w-9 h-9 flex items-center justify-center rounded-full border border-white/10 text-white/70 hover:text-white hover:border-white/30 hover:bg-white/5 transition-all duration-300"
             >
               <svg
