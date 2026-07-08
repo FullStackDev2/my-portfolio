@@ -1,6 +1,8 @@
 @import 'tailwindcss';
 
-* {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -146,4 +148,50 @@ body {
   50% {
     transform: translate(-35px, -25px) scale(1.05);
   }
+}
+
+/* Mobilde dokunma highlight'ını kaldır (Android'de gri kutu efekti) */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Focus ring'i sadece klavye navigasyonunda göster (mouse tıklamasında gösterme) */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+:focus-visible {
+  outline: 2px solid rgba(56, 189, 248, 0.6);
+  outline-offset: 2px;
+}
+
+/* Seçili metin rengi (marka renklerine uydurulmuş) */
+::selection {
+  background: rgba(168, 85, 247, 0.35);
+  color: #fff;
+}
+
+/* Scrollbar stilizasyonu (Chrome/Edge/Safari) */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #020617;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #22d3ee, #a855f7);
+  border-radius: 9999px;
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #a855f7 #020617;
+}
+
+/* Font render kalitesi (Safari/Chrome/Firefox arası fark azaltır) */
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
 }

@@ -3,8 +3,13 @@ import { projects } from '@/data/projects';
 import { notFound } from 'next/navigation';
 import Reveal from '@/components/ui/Reveal';
 
-export default function ProjectPage({ params }: { params: { slug: string } }) {
-  const project = projects.find((p) => p.slug === params.slug);
+export default async function ProjectPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const project = projects.find((p) => p.slug === slug);
 
   if (!project) return notFound();
 
@@ -69,10 +74,10 @@ export default function ProjectPage({ params }: { params: { slug: string } }) {
               <h2 className="text-2xl font-bold mb-4">Tech Stack</h2>
 
               <div className="flex flex-wrap gap-2">
-                {project.tech.map((t) => (
+                {project.tech?.map((t) => (
                   <span
                     key={t}
-                    className="px-3 py-1 text-sm rounded-full border border-white/10 text-white/60"
+                    className="px-3 py-1 text-sm rounded-full border border-white/10 text-white/70"
                   >
                     {t}
                   </span>
