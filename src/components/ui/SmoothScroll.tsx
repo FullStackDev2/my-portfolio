@@ -16,17 +16,30 @@ export default function SmoothScroll() {
       smoothWheel: true,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
     });
+
     (window as typeof window & { lenis?: Lenis }).lenis = lenis;
     lenisRef.current = lenis;
+
+    // DevTools, viewport ve içerik yüksekliği değişince Lenis'i güncelle
+    const handleResize = () => {
+      lenis.resize();
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    const resizeObserver = new ResizeObserver(() => {
+      lenis.resize();
+    });
+
+    resizeObserver.observe(document.documentElement);
 
     function raf(time: number) {
       lenis.raf(time);
       requestAnimationFrame(raf);
     }
+
     const rafId = requestAnimationFrame(raf);
 
-    // Scroll listener'ı en başta bağlıyoruz ki restore sırasında oluşan
-    // scroll event'leri de doğru pozisyonla sessionStorage'a yazılsın.
     lenis.on('scroll', ({ scroll }: { scroll: number }) => {
       sessionStorage.setItem(SCROLL_STORAGE_KEY, Math.round(scroll).toString());
     });
@@ -67,6 +80,8 @@ export default function SmoothScroll() {
 
     return () => {
       window.removeEventListener('load', restore);
+      window.removeEventListener('resize', handleResize);
+      resizeObserver.disconnect();
       cancelAnimationFrame(rafId);
       lenis.destroy();
     };

@@ -214,7 +214,7 @@ export default function Contact() {
 
         <div className="grid lg:grid-cols-[1.15fr_.85fr] gap-24 items-center">
           {/* Form - arkasında statik pembe/mor organik blob, form birebir aynı */}
-          <div className="relative z-0 flex items-center justify-center min-h-[750px]">
+          <div className="relative z-0 flex items-center justify-center py-10">
             {/* Statik blob şekli — animasyon yok, sabit organik form */}
             <div
               aria-hidden
