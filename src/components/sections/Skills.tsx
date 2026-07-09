@@ -1,7 +1,7 @@
 'use client';
 
 import Reveal from '../ui/Reveal';
-import { motion, type Variants } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useEffect, useRef } from 'react';
 
 // ================= TYPESCRIPT TIP TANIMLAMALARI =================
@@ -27,6 +27,10 @@ function MatrixRain({ className }: { className?: string }) {
     const parent = canvas?.parentElement;
     if (!canvas || !parent) return;
 
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isMobile = window.innerWidth < 768;
+    if (prefersReducedMotion || isMobile) return;
+
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
@@ -39,16 +43,16 @@ function MatrixRain({ className }: { className?: string }) {
     let drops: number[] = [];
     let animationId = 0;
     let lastFrameTime = Date.now();
+    let isVisible = false; // ← yeni
     const frameRate = 20;
 
     const resize = () => {
-      width = canvas.width = parent.clientWidth;
-      height = canvas.height = parent.clientHeight;
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.5); // YENİ
+      width = canvas.width = parent.clientWidth * dpr;
+      height = canvas.height = parent.clientHeight * dpr;
+      ctx.scale(dpr, dpr); // YENİ
       const columns = Math.floor(width / (fontSize * 0.6));
-      drops = Array.from(
-        { length: columns },
-        () => Math.random() * (height / fontSize),
-      );
+      drops = Array.from({ length: columns }, () => Math.random() * (height / fontSize));
     };
 
     const draw = () => {
@@ -69,6 +73,8 @@ function MatrixRain({ className }: { className?: string }) {
     };
 
     const animate = () => {
+      if (!isVisible) return; // ← görünür değilse rAF döngüsünü tamamen durdur
+
       const now = Date.now();
       if (now - lastFrameTime > 1000 / frameRate) {
         draw();
@@ -78,7 +84,19 @@ function MatrixRain({ className }: { className?: string }) {
     };
 
     resize();
-    animate();
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        isVisible = entry.isIntersecting;
+        if (isVisible) {
+          animate();
+        } else {
+          cancelAnimationFrame(animationId);
+        }
+      },
+      { threshold: 0.1 }
+    );
+    io.observe(parent);
 
     const resizeObserver = new ResizeObserver(() => resize());
     resizeObserver.observe(parent);
@@ -86,6 +104,7 @@ function MatrixRain({ className }: { className?: string }) {
     return () => {
       cancelAnimationFrame(animationId);
       resizeObserver.disconnect();
+      io.disconnect();
     };
   }, []);
 
@@ -96,8 +115,7 @@ const skillCategories: SkillCategory[] = [
   {
     id: 'frontend-architecture',
     title: 'Frontend Architecture',
-    description:
-      'Building pixel-perfect, hyper-performing user interfaces with modern reactive paradigms.',
+    description: 'Building pixel-perfect, hyper-performing user interfaces with modern reactive paradigms.',
     skills: [
       {
         name: 'React',
@@ -120,15 +138,13 @@ const skillCategories: SkillCategory[] = [
         icon: 'fa-solid fa-wand-magic-sparkles text-purple-400 drop-shadow-[0_0_8px_rgba(192,132,252,0.8)]',
       },
     ],
-    glowClass:
-      'hover:bg-gradient-to-b hover:from-cyan-500/[0.02] hover:to-transparent',
+    glowClass: 'hover:bg-gradient-to-b hover:from-cyan-500/[0.02] hover:to-transparent',
     arrowColor: 'group-hover:text-cyan-400',
   },
   {
     id: 'Backend & Database',
     title: 'Backend & Database',
-    description:
-      'Designing scalable, secure and robust system logic alongside optimized data structures.',
+    description: 'Designing scalable, secure and robust system logic alongside optimized data structures.',
     skills: [
       { name: 'Node.js', icon: 'fa-brands fa-node-js text-emerald-400' },
       { name: 'Express', icon: 'fa-solid fa-server text-zinc-400' },
@@ -136,15 +152,13 @@ const skillCategories: SkillCategory[] = [
       { name: 'REST API', icon: 'fa-solid fa-cloud text-sky-400' },
       { name: 'JWT', icon: 'fa-solid fa-key text-amber-400' },
     ],
-    glowClass:
-      'hover:bg-gradient-to-b hover:from-purple-500/[0.02] hover:to-transparent',
+    glowClass: 'hover:bg-gradient-to-b hover:from-purple-500/[0.02] hover:to-transparent',
     arrowColor: 'group-hover:text-purple-400',
   },
   {
     id: 'DevOps & Workflow',
     title: 'DevOps & Workflow',
-    description:
-      'Version control, automated cloud infrastructure and fluid deployment pipelines.',
+    description: 'Version control, automated cloud infrastructure and fluid deployment pipelines.',
     skills: [
       { name: 'Git', icon: 'fa-brands fa-git-alt text-orange-500' },
       { name: 'GitHub', icon: 'fa-brands fa-github text-white' },
@@ -152,28 +166,10 @@ const skillCategories: SkillCategory[] = [
       { name: 'Vercel', icon: 'fa-solid fa-caret-up text-white shadow-lg' },
       { name: 'Linux', icon: 'fa-brands fa-linux text-yellow-500' },
     ],
-    glowClass:
-      'hover:bg-gradient-to-b hover:from-emerald-500/[0.02] hover:to-transparent',
+    glowClass: 'hover:bg-gradient-to-b hover:from-emerald-500/[0.02] hover:to-transparent',
     arrowColor: 'group-hover:text-emerald-400',
   },
 ];
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.04 },
-  },
-};
-
-const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 10 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { type: 'spring', stiffness: 130, damping: 17 },
-  },
-};
 
 export default function Skills() {
   const skills = [
@@ -203,25 +199,22 @@ export default function Skills() {
         <div
           className="absolute inset-0 opacity-[0.12]"
           style={{
-            backgroundImage:
-              'radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px)',
+            backgroundImage: 'radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px)',
             backgroundSize: '32px 32px',
           }}
         />
       </div>
 
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -left-60 top-20 w-[700px] h-[700px] rounded-full bg-cyan-500/10 blur-[180px]" />
-        <div className="absolute -right-60 bottom-0 w-[800px] h-[800px] rounded-full bg-purple-500/10 blur-[220px]" />
-        <div className="absolute left-1/2 top-1/2 w-[600px] h-[600px] rounded-full bg-blue-500/5 blur-[160px] -translate-x-1/2 -translate-y-1/2" />
+        <div className="absolute -left-60 top-20 w-[700px] h-[700px] rounded-full bg-cyan-500/8 blur-[100px] [transform:translateZ(0)] will-change-transform" />
+        <div className="absolute -right-60 bottom-0 w-[800px] h-[800px] rounded-full bg-purple-500/7 blur-[120px] [transform:translateZ(0)] will-change-transform" />
       </div>
 
       {/* Arka Plan Matris Izgarası */}
       <div
         className="absolute inset-0 pointer-events-none z-0 opacity-[0.03]"
         style={{
-          backgroundImage:
-            'radial-gradient(rgba(255,255,255,0.15) 1px, transparent 1px)',
+          backgroundImage: 'radial-gradient(rgba(255,255,255,0.15) 1px, transparent 1px)',
           backgroundSize: '32px 32px',
         }}
       />
@@ -231,14 +224,11 @@ export default function Skills() {
         <div className="mb-12 border-b border-zinc-900 pb-6 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
           <div>
             <Reveal>
-              <p className="text-zinc-200 uppercase tracking-[0.4em] mb-2 text-sm font-mono">
-                TECHNICAL STACK
-              </p>
+              <p className="text-zinc-200 uppercase tracking-[0.4em] mb-2 text-sm font-mono">TECHNICAL STACK</p>
             </Reveal>
             <Reveal>
               <h2 className="text-5xl md:text-6xl font-black tracking-tight uppercase">
-                <span className="text-cyan-400">DEVELOPMENT</span>{' '}
-                <span className="text-white">STACK</span>
+                <span className="text-cyan-400">DEVELOPMENT</span> <span className="text-white">STACK</span>
               </h2>
             </Reveal>
           </div>
@@ -279,14 +269,11 @@ export default function Skills() {
             <div className="absolute left-1/2 top-0 bottom-0 w-[6px] -translate-x-1/2 bg-gradient-to-r from-slate-400/50 via-slate-300/65 to-slate-400/50" />
           </div>
         </div>
-
+        <div className="absolute inset-0 backdrop-blur-sm pointer-events-none -z-10" />
         {/* 3 SÜTUNLU KART DÜZENİ */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start relative mt-0">
           {skillCategories.map((category: SkillCategory, idx: number) => (
-            <div
-              key={category.id}
-              className="flex flex-col items-center group w-full"
-            >
+            <div key={category.id} className="flex flex-col items-center group w-full">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -299,74 +286,66 @@ export default function Skills() {
                   <div className="flex flex-col items-center text-center">
                     {/* Büyütülmüş ve Parlayan İkon Bölümü */}
                     <div className="mb-6 p-5 rounded-3xl bg-white/[0.03] border border-white/30 shadow-[0_0_20px_rgba(255,255,255,0.05)] text-cyan-400">
-                      {category.id === 'frontend-architecture' && (
-                        <i className="fa-solid fa-code text-4xl" />
-                      )}
-                      {category.id === 'Backend & Database' && (
-                        <i className="fa-solid fa-database text-4xl" />
-                      )}
-                      {category.id === 'DevOps & Workflow' && (
-                        <i className="fa-solid fa-infinity text-4xl" />
-                      )}
+                      {category.id === 'frontend-architecture' && <i className="fa-solid fa-code text-4xl" />}
+                      {category.id === 'Backend & Database' && <i className="fa-solid fa-database text-4xl" />}
+                      {category.id === 'DevOps & Workflow' && <i className="fa-solid fa-infinity text-4xl" />}
                     </div>
                   </div>
 
-                  {/* Başlık Bölümü (Ortalanmış ve Çizgili) */}
+                  {/* Başlık Bölümü */}
                   <div className="flex flex-col items-center text-center">
-                    <h3 className="text-xl md:text-2xl font-black tracking-tight text-white mb-3">
-                      {category.title}
-                    </h3>
-                    <div className="w-66 h-[3px] bg-gradient-to-r from-transparent via-zinc-400 to-transparent mb-6" />
+                    <h3 className="text-xl md:text-2xl font-black tracking-tight text-white mb-3">{category.title}</h3>
 
-                    <p className="text-sm font-medium text-zinc-300 leading-relaxed mb-6 bg-gradient-to-r from-zinc-300 via-white to-zinc-400 bg-clip-text text-transparent drop-shadow-[0_0_2px_rgba(255,255,255,0.2)]">
-                      {category.description}
-                    </p>
+                    <div className="w-64 h-px bg-zinc-300 mb-6" />
+
+                    <p className="text-sm font-medium text-zinc-300 leading-relaxed mb-6">{category.description}</p>
                   </div>
 
                   {/* Beceri Grid'i */}
-                  <motion.div
-                    variants={containerVariants}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                    className="grid grid-cols-2 gap-3 pt-4 border-t border-zinc-900"
-                  >
+                  <div className="grid grid-cols-2 gap-3 pt-4 border-t border-zinc-900">
                     {category.skills.map((skill: Skill) => (
-                      <motion.div
-                        key={skill.name}
-                        variants={itemVariants}
-                        whileHover={{ scale: 1.03, y: -1 }}
-                        className="relative w-full p-[1px] rounded-xl transition-all duration-500 cursor-default group/skill shadow-[0_0_8px_rgba(34,211,238,0.04)] hover:shadow-[0_0_12px_rgba(34,211,238,0.08)]"
-                      >
-                        <div className="w-full h-full py-2.5 px-3 rounded-[11px] bg-zinc-900/20 backdrop-blur-sm border border-zinc-800/70 flex items-center text-sm font-mono text-zinc-400 transition-all duration-300 group-hover/skill:bg-white/[0.03] group-hover/skill:border-blue-500/50 group-hover/skill:backdrop-blur-xl group-hover/skill:shadow-[0_0_25px_rgba(59,130,246,0.18)] group-hover/skill:text-white">
-                          <i
-                            className={`${skill.icon} text-base mr-2.5 w-5 text-center flex-shrink-0`}
-                          />
+                      <div key={skill.name} className="group/skill rounded-xl">
+                        <div
+                          className="
+          py-2.5
+          px-3
+          rounded-xl
+          bg-zinc-900/40
+          border
+          border-zinc-800/70
+          flex
+          items-center
+          text-sm
+          font-mono
+          text-zinc-400
+          transition-colors
+          duration-200
+          group-hover/skill:border-blue-500/50
+          group-hover/skill:text-white
+        "
+                        >
+                          <i className={`${skill.icon} text-base mr-2.5 w-5 text-center flex-shrink-0`} />
                           <span className="truncate">{skill.name}</span>
                         </div>
-                      </motion.div>
+                      </div>
                     ))}
-                  </motion.div>
+                  </div>
                 </div>
 
                 {/* ALT NEON BORDER */}
                 <div
                   className={`
-absolute
-left-1/2
--bottom-[2px]
--translate-x-1/2
-w-[94%]
-h-[6px]
-rounded-full
-${
-  category.id === 'frontend-architecture'
-    ? 'bg-cyan-400'
-    : category.id === 'Backend & Database'
-      ? 'bg-blue-500'
-      : 'bg-fuchsia-500'
-}
-`}
+    absolute left-1/2 -bottom-[2px] -translate-x-1/2
+    w-[90%] h-6 rounded-full
+    [transform:translateZ(0)]
+    ${
+      category.id === 'frontend-architecture'
+        ? 'bg-cyan-400/70'
+        : category.id === 'Backend & Database'
+          ? 'bg-blue-500/70'
+          : 'bg-fuchsia-500/70'
+    }
+  `}
                 />
 
                 {/* Glow 1 */}
@@ -378,7 +357,7 @@ left-1/2
 -translate-x-1/2
 w-[90%]
 h-8
-blur-2xl
+blur-[20px]
 rounded-full
 ${
   category.id === 'frontend-architecture'
@@ -399,7 +378,7 @@ left-1/2
 -translate-x-1/2
 w-[70%]
 h-12
-blur-[50px]
+blur-[20px]
 rounded-full
 opacity-90
 ${
@@ -453,14 +432,10 @@ ${
               <div className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
               <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
 
-              <span className="ml-4 font-mono text-xs text-emerald-400">
-                developer@nd:~/portfolio/skills $
-              </span>
+              <span className="ml-4 font-mono text-xs text-emerald-400">developer@nd:~/portfolio/skills $</span>
             </div>
 
-            <span className="font-mono text-[12px]  tracking-[0.35em] text-purple-400">
-              TERMINAL
-            </span>
+            <span className="font-mono text-[12px]  tracking-[0.35em] text-purple-400">TERMINAL</span>
           </div>
 
           <div className="grid grid-cols-[1.5fr_1px_1fr] min-h-[220px]">
@@ -477,9 +452,7 @@ ${
             >
               <p className="text-cyan-400 text-sm">$ npm run skills</p>
 
-              <p className="text-zinc-500 text-xs mt-1">
-                Starting developer environment...
-              </p>
+              <p className="text-zinc-500 text-xs mt-1">Starting developer environment...</p>
 
               <div className="mt-4 space-y-1.5">
                 {skills.map(([name, percent]) => (
@@ -490,17 +463,13 @@ ${
 
                     <div className="flex-1 border-b border-dotted border-cyan-500/20 mx-3" />
 
-                    <span className="ml-auto text-cyan-300 font-semibold tabular-nums">
-                      {percent}%
-                    </span>
+                    <span className="ml-auto text-cyan-300 font-semibold tabular-nums">{percent}%</span>
                   </div>
                 ))}
               </div>
 
               <div className="mt-3 space-y-1">
-                <p className="text-green-400 text-xs">
-                  ✔ Build completed successfully.
-                </p>
+                <p className="text-green-400 text-xs">✔ Build completed successfully.</p>
 
                 <p className="text-cyan-400 text-xs">
                   Ready for deployment
@@ -546,7 +515,7 @@ ${
             h-40
             rounded-full
             bg-cyan-500/10
-            blur-[100px]
+            blur-[60px]
           "
               />
 
@@ -554,10 +523,8 @@ ${
               <div
                 className="absolute inset-0"
                 style={{
-                  maskImage:
-                    'radial-gradient(ellipse 90% 70% at center, black 35%, transparent 85%)',
-                  WebkitMaskImage:
-                    'radial-gradient(ellipse 90% 70% at center, black 35%, transparent 85%)',
+                  maskImage: 'radial-gradient(ellipse 90% 70% at center, black 35%, transparent 85%)',
+                  WebkitMaskImage: 'radial-gradient(ellipse 90% 70% at center, black 35%, transparent 85%)',
                 }}
               >
                 <MatrixRain className="w-full h-full" />

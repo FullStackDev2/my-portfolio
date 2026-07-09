@@ -82,18 +82,14 @@ export default function Vision() {
 
         <div className="text-center">
           <h2
-            style={{
-              fontFamily: 'ClashDisplay-Variable',
-              fontVariationSettings: '"wght" 500',
-              letterSpacing: '0.04em',
-            }}
             className="
-              text-white
-              font-semibold
-              leading-[1.35]
-              text-4xl
-              md:text-6xl
-              lg:text-[72px]
+            font-clash
+            text-white
+            leading-[1.35]
+            text-4xl
+            md:text-6xl
+            lg:text-[72px]
+            tracking-[0.04em]
             "
           >
             Full-stack development is not just about building software;
@@ -105,12 +101,7 @@ export default function Vision() {
 
           <div className="mt-30 flex items-center justify-center gap-4">
             <div className="h-px w-12 bg-cyan-400" />
-            <span
-              style={{
-                fontFamily: 'GeneralSans_normal',
-              }}
-              className="uppercase tracking-[0.18em] text-cyan-400 text-xl lg:text-3xl -translate-x-2"
-            >
+            <span className="font-bespoke-serif uppercase tracking-[0.18em] text-cyan-400 text-xl lg:text-3xl -translate-x-2">
               NURETTIN DINCER
             </span>
           </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 import Image from 'next/image';
 import ProjectModal from '@/components/ui/ProjectModal';
@@ -120,9 +120,7 @@ const cardVariants: Variants = {
 const PAGE_SIZE = 6;
 
 export default function Projects() {
-  const [selectedProject, setSelectedProject] = useState<
-    (typeof importedProjects)[0] | null
-  >(null);
+  const [selectedProject, setSelectedProject] = useState<(typeof importedProjects)[0] | null>(null);
   const [page, setPage] = useState(0);
 
   // STATS DIZISI - Inline SVG entegrasyonu tamamlandı
@@ -149,10 +147,7 @@ export default function Projects() {
     },
   ];
 
-  const visibleProjects = importedProjects.slice(
-    page * PAGE_SIZE,
-    page * PAGE_SIZE + PAGE_SIZE,
-  );
+  const visibleProjects = useMemo(() => importedProjects.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE), [page]);
 
   const totalPages = Math.ceil(importedProjects.length / PAGE_SIZE);
 
@@ -165,7 +160,7 @@ export default function Projects() {
         return index;
       });
     },
-    [totalPages],
+    [totalPages]
   );
 
   // Klavye ok tuşları ile sayfa geçişi
@@ -199,17 +194,19 @@ export default function Projects() {
         <div
           className="absolute inset-0 opacity-[0.12]"
           style={{
-            backgroundImage:
-              'radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px)',
+            backgroundImage: 'radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px)',
             backgroundSize: '32px 32px',
           }}
         />
       </div>
 
+      {/* GPU FIX: translateZ(0) + will-change-transform eklendi, bu 3 blur katmanı
+          kendi compositor layer'ında sabitlenip her scroll/animasyonda yeniden
+          raster edilmesinin önüne geçiliyor */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -left-60 top-20 w-[700px] h-[700px] rounded-full bg-cyan-500/10 blur-[180px]" />
-        <div className="absolute -right-60 bottom-0 w-[800px] h-[800px] rounded-full bg-purple-500/10 blur-[220px]" />
-        <div className="absolute left-1/2 top-1/2 w-[600px] h-[600px] rounded-full bg-blue-500/5 blur-[160px] -translate-x-1/2 -translate-y-1/2" />
+        <div className="absolute -left-60 top-20 w-[700px] h-[700px] rounded-full bg-cyan-500/10 blur-[180px] [transform:translateZ(0)] will-change-transform" />
+        <div className="absolute -right-60 bottom-0 w-[800px] h-[800px] rounded-full bg-purple-500/10 blur-[220px] [transform:translateZ(0)] will-change-transform" />
+        <div className="absolute left-1/2 top-1/2 w-[600px] h-[600px] rounded-full bg-blue-500/5 blur-[160px] -translate-x-1/2 -translate-y-1/2 [transform:translateZ(0)] will-change-transform" />
       </div>
 
       <div className="max-w-6xl mx-auto w-full space-y-16 relative z-10">
@@ -257,13 +254,15 @@ export default function Projects() {
           <div className="hidden xl:flex flex-col gap-4 absolute -left-80 top-1/2 -translate-y-1/2">
             {stats.map((item, index) => (
               <motion.div
+                layout
                 key={index}
                 initial={{ opacity: 0, x: -30 }}
                 whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
                 className="w-64 rounded-2xl border border-zinc-800/80 bg-zinc-900/40 backdrop-blur-xl p-4 flex items-center gap-4 group hover:border-blue-500/30 transition-colors duration-300"
               >
-                <div className="w-16 h-16 flex items-center justify-center rounded-xl bg-blue-500/10 border border-blue-500/20 group-hover:bg-blue-500/20 group-hover:border-blue-500/40 transition-all duration-300 shadow-[0_0_20px_rgba(59,130,246,0.18)] shrink-0">
+                <div className="w-16 h-16 flex items-center justify-center rounded-xl bg-blue-500/10 border border-blue-500/20 group-hover:bg-blue-500/20 group-hover:border-blue-500/40 transition-colors duration-300 shadow-[0_0_20px_rgba(59,130,246,0.18)] shrink-0">
                   <Image
                     src={item.iconPath}
                     alt={item.label}
@@ -274,9 +273,7 @@ export default function Projects() {
                 </div>
 
                 <div className="flex flex-col justify-center">
-                  <div className="text-white text-2xl font-bold tracking-tight leading-none">
-                    {item.value}
-                  </div>
+                  <div className="text-white text-2xl font-bold tracking-tight leading-none">{item.value}</div>
                   <div className="text-zinc-400 text-xs mt-1.5 font-medium leading-tight group-hover:text-zinc-300 transition-colors duration-300">
                     {item.label}
                   </div>
@@ -288,6 +285,7 @@ export default function Projects() {
           {/* PROJE KARTLARININ BULUNDUGU GRID - sayfa değişince yeniden animasyonlanır */}
           <AnimatePresence mode="wait">
             <motion.div
+              layout
               key={page}
               variants={containerVariants}
               initial="hidden"
@@ -305,8 +303,7 @@ export default function Projects() {
                         glow: 'from-cyan-500/10',
                         icon: 'bg-cyan-500/10 border-cyan-500/20 text-cyan-400',
                         tag: 'bg-cyan-500/5 border-cyan-500/10 text-cyan-400',
-                        cardBorder:
-                          'border-cyan-500/30 hover:border-cyan-400/60',
+                        cardBorder: 'border-cyan-500/30 hover:border-cyan-400/60',
                         neonShadow:
                           'shadow-[0_0_30px_-8px_rgba(34,211,238,.32)] hover:shadow-[0_0_60px_-4px_rgba(34,211,238,.52)]',
                       };
@@ -317,8 +314,7 @@ export default function Projects() {
                         glow: 'from-purple-500/15',
                         icon: 'bg-purple-500/10 border-purple-500/20 text-purple-400',
                         tag: 'bg-purple-500/5 border-purple-500/10 text-purple-400',
-                        cardBorder:
-                          'border-purple-500/30 hover:border-purple-400/60',
+                        cardBorder: 'border-purple-500/30 hover:border-purple-400/60',
                         neonShadow:
                           'shadow-[0_0_30px_-8px_rgba(168,85,247,.32)] hover:shadow-[0_0_60px_-4px_rgba(168,85,247,.52)]',
                       };
@@ -329,8 +325,7 @@ export default function Projects() {
                         glow: 'from-amber-500/15',
                         icon: 'bg-amber-500/10 border-amber-500/20 text-amber-400',
                         tag: 'bg-amber-500/9 border-amber-500/10 text-amber-400',
-                        cardBorder:
-                          'border-amber-500/30 hover:border-amber-400/60',
+                        cardBorder: 'border-amber-500/30 hover:border-amber-400/60',
                         neonShadow:
                           'shadow-[0_0_30px_-8px_rgba(245,158,11,.32)] hover:shadow-[0_0_60px_-4px_rgba(245,158,11,.52)]',
                       };
@@ -339,10 +334,26 @@ export default function Projects() {
                 const theme = getTheme(i)!;
 
                 return (
+                  // GPU FIX 1: `hover:scale-[1.02]` (CSS) kaldırıldı çünkü whileHover
+                  //            zaten aynı transform'u (scale) JS/spring ile yönetiyor —
+                  //            ikisi aynı property'de çakışıp gereksiz style recalculation
+                  //            yaratıyordu.
+                  // GPU FIX 2: `transition-all` yerine sadece `transition-shadow` —
+                  //            böylece sadece box-shadow geçişi izleniyor, transform/
+                  //            border/background gibi başka her şeyi izlemiyor.
+                  // GPU FIX 3: `backdrop-blur-md` kaldırıldı — kart zaten opak bir arka
+                  //            plan rengine (theme.bg) sahip, backdrop-blur'un görsel
+                  //            katkısı çok az ama whileHover ile birlikte GPU'da en
+                  //            pahalı kombinasyonlardan biriydi.
                   <motion.div
+                    layout
                     key={project.slug}
                     variants={cardVariants}
-                    whileHover={{ y: -10, scale: 1.02 }}
+                    whileHover={{
+                      y: -10,
+                      scale: 1.02,
+                      transition: { type: 'spring', stiffness: 300, damping: 20 },
+                    }}
                     onClick={() => setSelectedProject(project)}
                     className={`
 relative h-[420px]
@@ -351,13 +362,11 @@ rounded-2xl
 border-2
 group
 cursor-pointer
-backdrop-blur-md
-transition-all
+transition-shadow
 duration-500
 ${theme.bg}
 ${theme.cardBorder}
 ${theme.neonShadow}
-hover:scale-[1.02]
 `}
                   >
                     <div className="absolute inset-0">
@@ -368,13 +377,9 @@ hover:scale-[1.02]
                           fill
                           priority={i < 3}
                           sizes="(max-width:768px) 100vw, 33vw"
-                          className="
-        object-fill
-        object-center
-        transition-transform
-        duration-700
-        group-hover:scale-110
-      "
+                          placeholder="blur"
+                          blurDataURL="data:image/png;base64,iVBORw0KGgo..." // küçük bir blur base64
+                          className="object-cover object-center transition-transform duration-700 group-hover:scale-110"
                         />
                       ) : (
                         <div className="absolute inset-0 bg-zinc-900" />
@@ -387,9 +392,7 @@ hover:scale-[1.02]
                       <div className="absolute inset-0 bg-gradient-to-t from-[#020617] via-[#020617]/45 to-transparent" />
 
                       {/* glow */}
-                      <div
-                        className={`absolute inset-0 bg-gradient-to-tr ${theme.glow} opacity-60`}
-                      />
+                      <div className={`absolute inset-0 bg-gradient-to-tr ${theme.glow} opacity-60`} />
                     </div>
 
                     {/* IN DEVELOPMENT BADGE */}
@@ -413,13 +416,11 @@ hover:scale-[1.02]
                         </h3>
                       </div>
 
-                      <p className="text-white/75 text-sm leading-relaxed line-clamp-2 mb-5 group-hover:text-zinc-200 opacity-90 transition-all duration-100">
+                      <p className="text-white/75 text-sm leading-relaxed line-clamp-2 mb-5 group-hover:text-zinc-200 opacity-90 transition-colors duration-100">
                         {project.shortDescription}
                       </p>
 
-                      <div
-                        className={`flex justify-between items-center pt-4 border-t ${theme.border} w-full`}
-                      >
+                      <div className={`flex justify-between items-center pt-4 border-t ${theme.border} w-full`}>
                         <div className="flex flex-wrap gap-2">
                           {project.tech?.slice(0, 4).map((tech) => (
                             <span
@@ -431,7 +432,7 @@ hover:scale-[1.02]
                           ))}
                         </div>
 
-                        <div className="text-zinc-500 group-hover:text-white transition-all duration-300 shrink-0">
+                        <div className="text-zinc-500 group-hover:text-white transition-colors duration-300 shrink-0">
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
@@ -461,7 +462,7 @@ hover:scale-[1.02]
             <button
               onClick={() => goToPage(page - 1)}
               aria-label="previous page"
-              className="w-9 h-9 flex items-center justify-center rounded-full border border-white/10 text-white/70 hover:text-white hover:border-white/30 hover:bg-white/5 transition-all duration-300"
+              className="w-9 h-9 flex items-center justify-center rounded-full border border-white/10 text-white/70 hover:text-white hover:border-white/30 hover:bg-white/5 transition-colors duration-300"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -471,11 +472,7 @@ hover:scale-[1.02]
                 stroke="currentColor"
                 className="w-4 h-4"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M15.75 19.5 8.25 12l7.5-7.5"
-                />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
               </svg>
             </button>
 
@@ -486,10 +483,8 @@ hover:scale-[1.02]
                   onClick={() => goToPage(index)}
                   aria-label={`${index + 1}. sayfaya git`}
                   aria-current={page === index}
-                  className={`rounded-full transition-all duration-300 ${
-                    page === index
-                      ? 'w-8 h-2.5 bg-white'
-                      : 'w-2.5 h-2.5 bg-white/25 hover:bg-white/50'
+                  className={`rounded-full transition-[width,background-color] duration-300 ${
+                    page === index ? 'w-8 h-2.5 bg-white' : 'w-2.5 h-2.5 bg-white/25 hover:bg-white/50'
                   }`}
                 />
               ))}
@@ -498,7 +493,7 @@ hover:scale-[1.02]
             <button
               onClick={() => goToPage(page + 1)}
               aria-label="next page"
-              className="w-9 h-9 flex items-center justify-center rounded-full border border-white/10 text-white/70 hover:text-white hover:border-white/30 hover:bg-white/5 transition-all duration-300"
+              className="w-9 h-9 flex items-center justify-center rounded-full border border-white/10 text-white/70 hover:text-white hover:border-white/30 hover:bg-white/5 transition-colors duration-300"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -508,11 +503,7 @@ hover:scale-[1.02]
                 stroke="currentColor"
                 className="w-4 h-4"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="m8.25 4.5 7.5 7.5-7.5 7.5"
-                />
+                <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
               </svg>
             </button>
           </div>

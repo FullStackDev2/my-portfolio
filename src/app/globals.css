@@ -30,93 +30,28 @@ body {
 /* Animasyonlu Progress Bar için parıltı efekti */
 @keyframes pulseBar {
   0%,
-  100% {
+  to {
     opacity: 0.7;
-    filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.4));
   }
   50% {
     opacity: 1;
-    filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.8));
   }
+}
+.premium-progress-glow {
+  animation: 3s cubic-bezier(0.4, 0, 0.6, 1) infinite pulseBar;
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.7)); /* sabit, animasyonsuz */
 }
 
 .premium-progress-glow {
   animation: pulseBar 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-@font-face {
-  font-family: 'GeneralSans_bold';
-  src: url('/fonts/GeneralSans-Bold.ttf') format('truetype');
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'GeneralSans_normal';
-  src: url('/fonts/BespokeSerif-Medium.ttf') format('truetype');
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'GeneralSans_medium';
-  src: url('/fonts/GeneralSans-Medium.ttf') format('truetype');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'GeneralSans_paragh';
-  src: url('/fonts/Manrope-Regular.ttf') format('truetype');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'BespokeSerif_number';
-  src: url('/fonts/BespokeSerif-Variable.ttf') format('truetype');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Manrope-Semibold';
-  src: url('/fonts/Manrope-SemiBold.ttf') format('truetype');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'ClashDisplay-Variable';
-  src: url('/fonts/ClashDisplay-Medium.ttf') format('truetype');
-  font-weight: 100;
-  font-style: normal;
-  font-display: swap;
-}
-
 @layer components {
   .border-gradient-br-blue-green-gray-900 {
-    background:
-      linear-gradient(to right, #18181b, #18181b),
-      linear-gradient(to bottom right, #60a5fa, #4ade80);
+    background: linear-gradient(to right, #18181b, #18181b), linear-gradient(to bottom right, #60a5fa, #4ade80);
     background-clip: padding-box, border-box;
     background-origin: padding-box, border-box;
   }
-}
-
-@theme {
-  --animate-drift1: drift1 24s ease-in-out infinite;
-  --animate-drift1-slow: drift1 30s ease-in-out infinite;
-  --animate-drift1-reverse: drift1 26s ease-in-out infinite reverse;
-  --animate-drift2: drift2 28s ease-in-out infinite;
-  --animate-drift2-slow: drift2 22s ease-in-out infinite;
-  --animate-drift2-reverse: drift2 25s ease-in-out infinite reverse;
 }
 
 @layer utilities {
@@ -127,26 +62,6 @@ body {
 
   .hide-scrollbar::-webkit-scrollbar {
     display: none;
-  }
-}
-
-@keyframes drift1 {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-  50% {
-    transform: translate(40px, 30px) scale(1.08);
-  }
-}
-
-@keyframes drift2 {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-  50% {
-    transform: translate(-35px, -25px) scale(1.05);
   }
 }
 
@@ -193,5 +108,15 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
+}
+
+@theme {
+  --font-general-bold: var(--font-general-bold);
+  --font-general-medium: var(--font-general-medium);
+  --font-bespoke-serif: var(--font-bespoke-serif);
+  --font-bespoke-number: var(--font-bespoke-number);
+  --font-manrope-regular: var(--font-manrope-regular);
+  --font-manrope-semibold: var(--font-manrope-semibold);
+  --font-clash: var(--font-clash);
 }

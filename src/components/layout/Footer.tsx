@@ -51,21 +51,17 @@ export default function Footer() {
       <div className="relative max-w-[1700px] mx-auto px-8 xl:px-20 py-28">
         {/* TITLE */}
         <div className="relative z-0 text-center mb-52">
-          <h2 className="text-[4rem] xl:text-[6.5rem] font-bold tracking-tight text-white">
-            Thanks for visiting
-          </h2>
+          <h2 className="text-[4rem] xl:text-[6.5rem] font-bold tracking-tight text-white">Thanks for visiting</h2>
 
           <div className="absolute inset-0 -z-10 pointer-events-none">
             {/* Sol mavi glow */}
-            <div className="absolute left-1/2 -translate-x-[82%] top-[-10px] w-[460px] h-[170px] bg-cyan-400/55 blur-[100px] rounded-full" />
+            <div className="absolute left-1/2 -translate-x-[82%] top-[-10px] w-[460px] h-[170px] bg-cyan-400/55 blur-[60px] rounded-full" />
 
             {/* Sağ mor glow */}
-            <div className="absolute left-1/2 -translate-x-[7%] top-[-10px] w-[470px] h-[170px] bg-fuchsia-500/42 blur-[110px] rounded-full" />
+            <div className="absolute left-1/2 -translate-x-[7%] top-[-10px] w-[470px] h-[170px] bg-fuchsia-500/42 blur-[60px] rounded-full" />
           </div>
 
-          <p className="mt-0 text-3xl text-zinc-400">
-            Performance Meets Design
-          </p>
+          <p className="mt-0 text-3xl text-zinc-400">Performance Meets Design</p>
 
           <div className="mt-8 flex justify-center">
             <div className="w-32 h-[3px] rounded-full bg-gradient-to-r from-cyan-400 to-fuchsia-500" />
@@ -97,9 +93,7 @@ drop-shadow-[0_0_25px_rgba(59,130,246,.25)]
               <div className="w-3 h-3 rounded-full bg-white mb-5 ml-1" />
             </div>
 
-            <p className="mt-3 uppercase tracking-[0.35em] text-base text-zinc-200">
-              Building Digital Experiences.
-            </p>
+            <p className="mt-3 uppercase tracking-[0.35em] text-base text-zinc-200">Building Digital Experiences.</p>
 
             <div className="mt-4 w-30 h-[3px] -translate-x-4 rounded-full bg-gradient-to-r from-cyan-400 to-fuchsia-500" />
           </div>
@@ -108,18 +102,15 @@ drop-shadow-[0_0_25px_rgba(59,130,246,.25)]
           <div className="flex flex-col items-center justify-center text-center">
             <div className="space-y-5">
               <h3 className="text-3xl font-normal text-zinc-200">
-                Always{' '}
-                <span className="font-medium text-cyan-400">learning.</span>
+                Always <span className="font-medium text-cyan-400">learning.</span>
               </h3>
 
               <h3 className="text-3xl font-normal text-zinc-200">
-                Always{' '}
-                <span className="font-medium text-blue-400">building.</span>
+                Always <span className="font-medium text-blue-400">building.</span>
               </h3>
 
               <h3 className="text-3xl font-normal text-zinc-200">
-                Always{' '}
-                <span className="font-medium text-fuchsia-400">improving.</span>
+                Always <span className="font-medium text-fuchsia-400">improving.</span>
               </h3>
             </div>
 
@@ -135,17 +126,10 @@ drop-shadow-[0_0_25px_rgba(59,130,246,.25)]
           {/* RIGHT - TECH STACK */}
           <div className="grid grid-cols-4 gap-x-0 gap-y-9">
             {techs.map((tech) => (
-              <div
-                key={tech.title}
-                className="group flex flex-col items-center gap-2"
-              >
-                <div className="transition-transform duration-300 group-hover:scale-110">
-                  {tech.icon}
-                </div>
+              <div key={tech.title} className="group flex flex-col items-center gap-2">
+                <div className="transition-transform duration-300 group-hover:scale-110">{tech.icon}</div>
 
-                <span className="text-xs text-zinc-500 whitespace-nowrap">
-                  {tech.title}
-                </span>
+                <span className="text-xs text-zinc-500 whitespace-nowrap">{tech.title}</span>
               </div>
             ))}
           </div>

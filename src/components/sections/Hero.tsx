@@ -2,6 +2,7 @@
 
 import { motion, Variants } from 'framer-motion';
 import Image from 'next/image';
+import { scrollToSection } from '@/lib/smoothScrollTo';
 import HeroGlow from '@/components/ui/HeroGlow';
 
 const containerVariants: Variants = {
@@ -31,8 +32,7 @@ export default function Hero() {
       <div
         className="absolute inset-0 pointer-events-none opacity-[0.03]"
         style={{
-          backgroundImage:
-            'radial-gradient(circle, white 1px, transparent 1px)',
+          backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)',
           backgroundSize: '30px 30px',
         }}
       />
@@ -83,8 +83,8 @@ export default function Hero() {
             transition={{ delay: 0.6, duration: 0.8 }}
             className="mt-6 sm:mt-8 text-zinc-200 max-w-md sm:max-w-lg mx-auto lg:mx-0 text-base sm:text-lg leading-relaxed font-light px-2 sm:px-0"
           >
-            Crafting performant, accessible, and beautiful web applications with
-            modern technologies and a keen eye for detail.
+            Crafting performant, accessible, and beautiful web applications with modern technologies and a keen eye for
+            detail.
           </motion.p>
 
           <motion.div
@@ -96,12 +96,7 @@ export default function Hero() {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 1.08 }}
-              onClick={() =>
-                document.getElementById('projects')?.scrollIntoView({
-                  behavior: 'smooth',
-                  block: 'start',
-                })
-              }
+              onClick={() => scrollToSection('projects')}
               className="group relative inline-flex items-center justify-center gap-2.5 rounded-full p-[1.5px] bg-gradient-to-r from-blue-500 to-purple-500 shadow-[0_0_15px_rgba(139,92,246,0.3)] hover:shadow-[0_0_25px_rgba(139,92,246,0.5)] w-full sm:w-auto"
             >
               <span className="flex items-center justify-center gap-2.5 rounded-full bg-[#0a0a0f] px-8 py-3.5 sm:py-4 text-[15px] font-semibold text-white w-full">
@@ -133,12 +128,7 @@ export default function Hero() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() =>
-                document.getElementById('contact')?.scrollIntoView({
-                  behavior: 'smooth',
-                  block: 'start',
-                })
-              }
+              onClick={() => scrollToSection('contact')}
               className="px-8 py-3.5 sm:py-4 rounded-full font-semibold text-white group relative w-full sm:w-auto"
               style={{
                 backgroundImage:
@@ -171,6 +161,9 @@ export default function Hero() {
         scale-100 lg:scale-103 
         origin-bottom grayscale contrast-115 brightness-[45%] opacity-70 blur-[1px]"
               priority
+              onLoad={() => {
+                window.dispatchEvent(new Event('resize'));
+              }}
             />
           </div>
           <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#020617] via-[#020617]/80 to-transparent" />
@@ -184,9 +177,7 @@ export default function Hero() {
         transition={{ delay: 1.5, duration: 1 }}
         className="absolute bottom-2 left-1/2 -translate-x-1/2 hidden lg:flex flex-col items-center gap-3 z-20 pointer-events-none"
       >
-        <span className="text-[10px] tracking-[0.4em] font-semibold text-zinc-400 uppercase">
-          Scroll to Explore
-        </span>
+        <span className="text-[11px] tracking-[0.5em] font-semibold text-zinc-100 uppercase">Scroll to Explore</span>
 
         <motion.div
           animate={{ y: [0, 6, 0] }}
@@ -205,12 +196,7 @@ export default function Hero() {
             xmlns="http://www.w3.org/2000/svg"
             className="drop-shadow-[0_0_10px_rgba(34,211,238,0.9)]"
           >
-            <path
-              d="M12 5V18"
-              stroke="#22d3ee"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-            />
+            <path d="M12 5V18" stroke="#22d3ee" strokeWidth="2.5" strokeLinecap="round" />
             <path
               d="M8 14L12 18L16 14"
               stroke="#22d3ee"

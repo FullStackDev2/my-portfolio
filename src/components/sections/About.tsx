@@ -1,17 +1,9 @@
 'use client';
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { flushSync } from 'react-dom';
 import SectionGlow from '../ui/SectionGlow';
 import Image from 'next/image';
-import {
-  motion,
-  useScroll,
-  useTransform,
-  useMotionValueEvent,
-  useMotionValue,
-  type Transition,
-} from 'framer-motion';
+import { motion, useScroll, useTransform, useMotionValueEvent, useMotionValue } from 'framer-motion';
 import Reveal from '../ui/Reveal';
 
 interface TimelineItem {
@@ -28,11 +20,6 @@ const ACTIVE_COLORS = [
   { hex: '#f472b6', shadow: 'rgba(244,114,182,0.9)', text: 'text-pink-400' },
   { hex: '#34d399', shadow: 'rgba(52,211,153,0.9)', text: 'text-emerald-400' },
 ];
-
-// Kart açılma/kapanma animasyonu için ortak layout transition ayarı
-const CARD_LAYOUT_TRANSITION: Transition = {
-  layout: { duration: 0.45, ease: [0.22, 1, 0.36, 1] },
-};
 
 // Slot için ölçüm gelmeden önceki geçici minimum değer (ilk frame flash'ını azaltmak için)
 const FALLBACK_MIN_HEIGHT = 220;
@@ -117,14 +104,28 @@ Key Responsibilities & Achievements :
 
   const [hoveredSide, setHoveredSide] = useState<'left' | 'right' | null>(null);
   const hoveredSideRef = useRef<'left' | 'right' | null>(null);
-
   const [barsVisible, setBarsVisible] = useState(false);
   const barsVisibleRef = useRef(false);
 
+  const measureTimeline = () => {
+    setAcademicClosedHeights(academicCardInnerRefs.current.map((el) => el?.offsetHeight ?? 0));
+
+    setJourneyClosedHeights(journeyCardInnerRefs.current.map((el) => el?.offsetHeight ?? 0));
+
+    if (academicListRef.current) {
+      setAcademicHeight(academicListRef.current.offsetHeight);
+      setAcademicBreakpoints(academicCardRefs.current.map((el) => el?.offsetTop ?? 0));
+    }
+
+    if (journeyListRef.current) {
+      setJourneyHeight(journeyListRef.current.offsetHeight);
+      setJourneyBreakpoints(journeyCardRefs.current.map((el) => el?.offsetTop ?? 0));
+    }
+  };
+
   useEffect(() => {
     const handleWindowMouseMove = (e: MouseEvent) => {
-      const side: 'left' | 'right' =
-        e.clientX < window.innerWidth / 2 ? 'left' : 'right';
+      const side: 'left' | 'right' = e.clientX < window.innerWidth / 2 ? 'left' : 'right';
       if (hoveredSideRef.current !== side) {
         hoveredSideRef.current = side;
         setHoveredSide(side);
@@ -142,21 +143,17 @@ Key Responsibilities & Achievements :
         barsVisibleRef.current = entry.isIntersecting;
         setBarsVisible(entry.isIntersecting);
       },
-      { threshold: 0.15 },
+      { threshold: 0.15 }
     );
     io.observe(el);
     return () => io.disconnect();
   }, []);
 
   const isSideOpen = (side: 'left' | 'right') =>
-    !barsVisibleRef.current ||
-    hoveredSideRef.current === null ||
-    hoveredSideRef.current === side;
+    !barsVisibleRef.current || hoveredSideRef.current === null || hoveredSideRef.current === side;
 
-  const academicBarOpacity =
-    !barsVisible || hoveredSide === null || hoveredSide === 'left' ? 1 : 0.3;
-  const journeyBarOpacity =
-    !barsVisible || hoveredSide === null || hoveredSide === 'right' ? 1 : 0.3;
+  const academicBarOpacity = !barsVisible || hoveredSide === null || hoveredSide === 'left' ? 1 : 0.3;
+  const journeyBarOpacity = !barsVisible || hoveredSide === null || hoveredSide === 'right' ? 1 : 0.3;
 
   const [expandedAcademic, setExpandedAcademic] = useState<number | null>(null);
   const [expandedJourney, setExpandedJourney] = useState<number | null>(null);
@@ -173,114 +170,27 @@ Key Responsibilities & Achievements :
 
   const academicCardInnerRefs = useRef<(HTMLDivElement | null)[]>([]);
   const journeyCardInnerRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const [academicClosedHeights, setAcademicClosedHeights] = useState<number[]>(
-    [],
-  );
-  const [journeyClosedHeights, setJourneyClosedHeights] = useState<number[]>(
-    [],
-  );
-
-  useLayoutEffect(() => {
-    academicCardInnerRefs.current.forEach((el, index) => {
-      if (!el) return;
-      const h = el.offsetHeight;
-      setAcademicClosedHeights((prev) => {
-        if (prev[index] === h) return prev;
-        const next = [...prev];
-        next[index] = h;
-        return next;
-      });
-    });
-  }, []);
-
-  useLayoutEffect(() => {
-    journeyCardInnerRefs.current.forEach((el, index) => {
-      if (!el) return;
-      const h = el.offsetHeight;
-      setJourneyClosedHeights((prev) => {
-        if (prev[index] === h) return prev;
-        const next = [...prev];
-        next[index] = h;
-        return next;
-      });
-    });
-  }, []);
+  const [academicClosedHeights, setAcademicClosedHeights] = useState<number[]>([]);
+  const [journeyClosedHeights, setJourneyClosedHeights] = useState<number[]>([]);
 
   useEffect(() => {
-    const observers: ResizeObserver[] = [];
-    academicCardInnerRefs.current.forEach((el, index) => {
-      if (!el) return;
-      const ro = new ResizeObserver(() => {
-        if (expandedAcademic === index) return;
-        const h = el.offsetHeight;
-        setAcademicClosedHeights((prev) => {
-          if (prev[index] === h) return prev;
-          const next = [...prev];
-          next[index] = h;
-          return next;
-        });
-      });
-      ro.observe(el);
-      observers.push(ro);
-    });
-    return () => observers.forEach((ro) => ro.disconnect());
-  }, [expandedAcademic]);
+    measureTimeline();
 
-  useEffect(() => {
-    const observers: ResizeObserver[] = [];
-    journeyCardInnerRefs.current.forEach((el, index) => {
-      if (!el) return;
-      const ro = new ResizeObserver(() => {
-        if (expandedJourney === index) return;
-        const h = el.offsetHeight;
-        setJourneyClosedHeights((prev) => {
-          if (prev[index] === h) return prev;
-          const next = [...prev];
-          next[index] = h;
-          return next;
-        });
-      });
-      ro.observe(el);
-      observers.push(ro);
-    });
-    return () => observers.forEach((ro) => ro.disconnect());
-  }, [expandedJourney]);
-
-  useEffect(() => {
-    const measure = () => {
-      if (academicListRef.current) {
-        setAcademicHeight(academicListRef.current.offsetHeight);
-        setAcademicBreakpoints(
-          academicCardRefs.current.map((el) => el?.offsetTop ?? 0),
-        );
-      }
-      if (journeyListRef.current) {
-        setJourneyHeight(journeyListRef.current.offsetHeight);
-        setJourneyBreakpoints(
-          journeyCardRefs.current.map((el) => el?.offsetTop ?? 0),
-        );
-      }
-    };
-
-    measure();
-
-    const ro = new ResizeObserver(measure);
-    if (academicListRef.current) ro.observe(academicListRef.current);
-    if (journeyListRef.current) ro.observe(journeyListRef.current);
-    window.addEventListener('resize', measure);
+    window.addEventListener('resize', measureTimeline);
 
     return () => {
-      ro.disconnect();
-      window.removeEventListener('resize', measure);
+      window.removeEventListener('resize', measureTimeline);
     };
   }, []);
+
+  useLayoutEffect(() => {
+    measureTimeline();
+  }, [expandedAcademic, expandedJourney]);
 
   const maxHeight = Math.max(academicHeight, journeyHeight, 1);
 
-  const academicRatio =
-    maxHeight > 0 ? Math.min(academicHeight / maxHeight, 1) : 1;
-  const journeyRatio =
-    maxHeight > 0 ? Math.min(journeyHeight / maxHeight, 1) : 1;
+  const academicRatio = maxHeight > 0 ? Math.min(academicHeight / maxHeight, 1) : 1;
+  const journeyRatio = maxHeight > 0 ? Math.min(journeyHeight / maxHeight, 1) : 1;
 
   const { scrollYProgress: sharedProgress } = useScroll({
     target: timelinesRef,
@@ -290,14 +200,12 @@ Key Responsibilities & Achievements :
   const academicLineHeight = useTransform(
     sharedProgress,
     academicRatio >= 1 ? [0, 1] : [0, academicRatio, 1],
-    academicRatio >= 1
-      ? [0, academicHeight]
-      : [0, academicHeight, academicHeight],
+    academicRatio >= 1 ? [0, academicHeight] : [0, academicHeight, academicHeight]
   );
   const journeyLineHeight = useTransform(
     sharedProgress,
     journeyRatio >= 1 ? [0, 1] : [0, journeyRatio, 1],
-    journeyRatio >= 1 ? [0, journeyHeight] : [0, journeyHeight, journeyHeight],
+    journeyRatio >= 1 ? [0, journeyHeight] : [0, journeyHeight, journeyHeight]
   );
 
   const gatedAcademicHeight = useMotionValue(0);
@@ -328,7 +236,7 @@ Key Responsibilities & Achievements :
     }
     if (academicActiveIndexRef.current !== idx) {
       academicActiveIndexRef.current = idx;
-      queueMicrotask(() => flushSync(() => setAcademicActiveIndex(idx)));
+      setAcademicActiveIndex(idx);
     }
   });
 
@@ -339,7 +247,7 @@ Key Responsibilities & Achievements :
     }
     if (journeyActiveIndexRef.current !== idx) {
       journeyActiveIndexRef.current = idx;
-      queueMicrotask(() => flushSync(() => setJourneyActiveIndex(idx)));
+      setJourneyActiveIndex(idx);
     }
   });
 
@@ -371,8 +279,7 @@ Key Responsibilities & Achievements :
         <div
           className="absolute inset-0 opacity-[0.12]"
           style={{
-            backgroundImage:
-              'radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px)',
+            backgroundImage: 'radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px)',
             backgroundSize: '32px 32px',
           }}
         />
@@ -442,18 +349,13 @@ Key Responsibilities & Achievements :
         {/* ================= 1. KISIM: CORE IDENTITY ================= */}
         <div className="text-center flex flex-col items-center justify-center pt-4 pb-4">
           <Reveal>
-            <p className="text-white-500/90 uppercase tracking-[0.4em] text-lg font-mono mb-2">
-              CORE IDENTITY
-            </p>
+            <p className="text-white-500/90 uppercase tracking-[0.4em] text-lg font-mono mb-2">CORE IDENTITY</p>
           </Reveal>
 
           <Reveal>
             <h2 className="text-7xl md:text-9xl font-black tracking-tight text-white uppercase select-none">
               WHO AM{' '}
-              <span
-                className="text-cyan-400"
-                style={{ textShadow: '0 0 35px rgba(34, 211, 238, 0.65)' }}
-              >
+              <span className="text-cyan-400" style={{ textShadow: '0 0 35px rgba(34, 211, 238, 0.65)' }}>
                 I?
               </span>
             </h2>
@@ -468,8 +370,7 @@ Key Responsibilities & Achievements :
 
           <Reveal>
             <p className="text-zinc-300 text-lg md:text-xl font-normal leading-relaxed max-w-2xl mx-auto mb-8">
-              A look into the vision, personality, and technical drive behind
-              the code.
+              A look into the vision, personality, and technical drive behind the code.
             </p>
           </Reveal>
         </div>
@@ -480,11 +381,9 @@ Key Responsibilities & Achievements :
             <div
               className="relative w-full max-w-[430px] lg:w-[430px] rounded-[30px] px-6 py-6 md:px-8 md:py-7 overflow-hidden"
               style={{
-                background:
-                  'linear-gradient(180deg, rgba(8,12,24,.96), rgba(6,10,20,.88))',
+                background: 'linear-gradient(180deg, rgba(8,12,24,.96), rgba(6,10,20,.88))',
                 border: '1px solid rgba(30,140,255,.28)',
-                boxShadow:
-                  '0 0 35px rgba(20,120,255,.12), inset 0 0 25px rgba(20,120,255,.04)',
+                boxShadow: '0 0 35px rgba(20,120,255,.12), inset 0 0 25px rgba(20,120,255,.04)',
               }}
             >
               {/* Corner Accents */}
@@ -495,9 +394,7 @@ Key Responsibilities & Achievements :
               <div className="flex items-center gap-4">
                 <div className="flex-1 h-px bg-gradient-to-r from-transparent to-cyan-400/50" />
 
-                <span className="uppercase tracking-[5px] text-[11px] text-cyan-400 font-semibold">
-                  MY APPROACH
-                </span>
+                <span className="uppercase tracking-[5px] text-[11px] text-cyan-400 font-semibold">MY APPROACH</span>
 
                 <div className="flex-1 h-px bg-gradient-to-l from-transparent to-cyan-400/50" />
               </div>
@@ -574,13 +471,9 @@ Key Responsibilities & Achievements :
                     {/* Text */}
 
                     <div>
-                      <h4 className="text-white text-lg font-bold">
-                        {item.title}
-                      </h4>
+                      <h4 className="text-white text-lg font-bold">{item.title}</h4>
 
-                      <p className="text-zinc-400 text-sm leading-6 mt-1">
-                        {item.desc}
-                      </p>
+                      <p className="text-zinc-400 text-sm leading-6 mt-1">{item.desc}</p>
                     </div>
                   </div>
                 ))}
@@ -594,28 +487,26 @@ Key Responsibilities & Achievements :
           {/* ORTA: FOTOĞRAF */}
           <div className="relative w-full max-w-[860px] aspect-[860/640] shrink-0 scale-100 lg:scale-[1.05]">
             {/* Alt Glow — mobilde küçültüldü */}
-            <div className="absolute left-1/2 bottom-3 -translate-x-1/2 w-[280px] sm:w-[420px] md:w-[700px] h-[100px] sm:h-[150px] md:h-[220px] rounded-full bg-blue-500/40 blur-[60px] md:blur-[100px]" />
+            <div className="absolute left-1/2 bottom-3 -translate-x-1/2 w-[280px] sm:w-[420px] md:w-[700px] h-[100px] sm:h-[150px] md:h-[220px] rounded-full bg-blue-500/40 blur-[60px] md:blur-[60px]" />
 
             {/* Dış Glow */}
-            <div className="absolute inset-0 scale-100 blur-[60px] md:blur-[110px] bg-blue-600/25" />
+            <div className="absolute inset-0 scale-100 blur-[60px] md:blur-[60px] bg-blue-600/25" />
 
             {/* Sol yan mavilik — mobilde gizli, taşma riski */}
-            <div className="hidden md:block absolute -left-24 top-1/4 w-[280px] h-[380px] rounded-full bg-blue-500/25 blur-[90px]" />
+            <div className="hidden md:block absolute -left-24 top-1/4 w-[280px] h-[380px] rounded-full bg-blue-500/25 blur-[45px]" />
 
             {/* Sağ yan mavilik — mobilde gizli */}
-            <div className="hidden md:block absolute -right-24 top-1/3 w-[280px] h-[380px] rounded-full bg-blue-600/25 blur-[90px]" />
+            <div className="hidden md:block absolute -right-24 top-1/3 w-[280px] h-[380px] rounded-full bg-blue-600/25 blur-[45px]" />
 
             {/* Üst mavilik — mobilde küçültüldü */}
-            <div className="absolute left-1/2 -top-10 md:-top-20 -translate-x-1/2 w-[260px] sm:w-[380px] md:w-[500px] h-[110px] sm:h-[160px] md:h-[220px] rounded-full bg-blue-500/20 blur-[50px] md:blur-[100px]" />
+            <div className="absolute left-1/2 -top-10 md:-top-20 -translate-x-1/2 w-[260px] sm:w-[380px] md:w-[500px] h-[110px] sm:h-[160px] md:h-[220px] rounded-full bg-blue-500/20 blur-[50px] md:blur-[60px]" />
 
             {/* FRAME */}
             <div
               className="absolute inset-0 overflow-hidden"
               style={{
-                clipPath:
-                  'polygon(8% 18%,82% 6%,100% 14%,96% 72%,72% 100%,10% 100%,0 72%,2% 32%)',
-                background:
-                  'linear-gradient(180deg,rgba(10,20,40,.15),rgba(10,20,40,.05))',
+                clipPath: 'polygon(8% 18%,82% 6%,100% 14%,96% 72%,72% 100%,10% 100%,0 72%,2% 32%)',
+                background: 'linear-gradient(180deg,rgba(10,20,40,.15),rgba(10,20,40,.05))',
                 border: '1.5px solid rgba(30,140,255,0.8)',
                 backdropFilter: 'blur(20px) saturate(180%)',
                 boxShadow: `
@@ -633,16 +524,17 @@ Key Responsibilities & Achievements :
               <div
                 className="absolute inset-0 overflow-hidden"
                 style={{
-                  clipPath:
-                    'polygon(8% 18%,82% 6%,100% 14%,96% 72%,72% 100%,10% 100%,0 72%,2% 32%)',
+                  clipPath: 'polygon(8% 18%,82% 6%,100% 14%,96% 72%,72% 100%,10% 100%,0 72%,2% 32%)',
                 }}
               >
                 <Image
                   src="/images/computer_coding.png"
                   alt="Coding"
-                  width={1920}
-                  height={1080}
+                  width={1280}
+                  height={720}
                   priority
+                  sizes="(max-width: 768px) 100vw, 860px"
+                  quality={75}
                   className="
     absolute
     inset-0
@@ -664,8 +556,7 @@ Key Responsibilities & Achievements :
                 <div
                   className="absolute inset-0"
                   style={{
-                    background:
-                      'radial-gradient(circle at 50% 35%,rgba(20,120,255,.14),transparent 70%)',
+                    background: 'radial-gradient(circle at 50% 35%,rgba(20,120,255,.14),transparent 70%)',
                   }}
                 />
 
@@ -673,8 +564,7 @@ Key Responsibilities & Achievements :
                 <div
                   className="absolute inset-0"
                   style={{
-                    background:
-                      'radial-gradient(ellipse 90% 80% at 50% 50%, transparent 55%, #020817 100%)',
+                    background: 'radial-gradient(ellipse 90% 80% at 50% 50%, transparent 55%, #020817 100%)',
                     opacity: 0.8,
                   }}
                 />
@@ -695,8 +585,7 @@ Key Responsibilities & Achievements :
               <div
                 className="absolute inset-x-4 md:inset-x-8 top-[1px] h-px"
                 style={{
-                  background:
-                    'linear-gradient(90deg,transparent,rgba(150,210,255,.7),transparent)',
+                  background: 'linear-gradient(90deg,transparent,rgba(150,210,255,.7),transparent)',
                   boxShadow: '0 0 10px rgba(30,140,255,0.6)',
                 }}
               />
@@ -714,8 +603,7 @@ Key Responsibilities & Achievements :
               <div
                 className="absolute inset-[2px] pointer-events-none"
                 style={{
-                  clipPath:
-                    'polygon(8% 18%,82% 6%,100% 14%,96% 72%,72% 100%,10% 100%,0 72%,2% 32%)',
+                  clipPath: 'polygon(8% 18%,82% 6%,100% 14%,96% 72%,72% 100%,10% 100%,0 72%,2% 32%)',
                   border: '1px solid rgba(30,140,255,0.45)',
                   boxShadow: `
       inset 0 1px rgba(150,210,255,.2),
@@ -749,10 +637,9 @@ Key Responsibilities & Achievements :
 
             {/* Character Halo — mobilde küçültüldü */}
             <div
-              className="absolute left-1/2 bottom-4 md:bottom-8 -translate-x-1/2 w-[260px] sm:w-[360px] md:w-[480px] h-[300px] sm:h-[450px] md:h-[620px] rounded-full pointer-events-none blur-[60px] md:blur-[100px]"
+              className="absolute left-1/2 bottom-4 md:bottom-8 -translate-x-1/2 w-[260px] sm:w-[360px] md:w-[480px] h-[300px] sm:h-[450px] md:h-[620px] rounded-full pointer-events-none blur-[60px] md:blur-[60px]"
               style={{
-                background:
-                  'radial-gradient(circle, rgba(15,90,255,.22) 0%, rgba(10,60,180,.14) 45%, transparent 80%)',
+                background: 'radial-gradient(circle, rgba(15,90,255,.22) 0%, rgba(10,60,180,.14) 45%, transparent 80%)',
               }}
             />
 
@@ -760,8 +647,7 @@ Key Responsibilities & Achievements :
             <div
               className="absolute left-1/2 bottom-0 -translate-x-1/2 w-[280px] sm:w-[380px] md:w-[520px] h-[340px] sm:h-[500px] md:h-[720px] pointer-events-none blur-[45px] md:blur-[70px]"
               style={{
-                background:
-                  'radial-gradient(circle at 50% 45%, rgba(20,120,255,.12), transparent 72%)',
+                background: 'radial-gradient(circle at 50% 45%, rgba(20,120,255,.12), transparent 72%)',
                 mixBlendMode: 'screen',
               }}
             />
@@ -773,18 +659,20 @@ Key Responsibilities & Achievements :
               width={900}
               height={1100}
               priority
+              sizes="(max-width: 1024px) 74vw, 590px"
+              quality={75}
               className="
-absolute
-left-1/2
-bottom-0
-z-30
-w-[74%]
-sm:w-[73%]
-md:w-[73%]
-lg:w-auto
-lg:h-[720px]
-object-contain
-"
+    absolute
+    left-1/2
+    bottom-0
+    z-30
+    w-[74%]
+    sm:w-[73%]
+    md:w-[73%]
+    lg:w-auto
+    lg:h-[720px]
+    object-contain
+  "
               style={{
                 transform: 'translateX(calc(-50% + 10px))',
                 filter: `
@@ -894,12 +782,8 @@ C 145 950, 170 962, 140 995
                     <i className={`fa-solid ${f.icon}`} />
                   </div>
                   <div>
-                    <h5 className="text-xl font-bold text-white mb-1.5">
-                      {f.title}
-                    </h5>
-                    <p className="text-zinc-400 text-lg leading-relaxed">
-                      {f.desc}
-                    </p>
+                    <h5 className="text-xl font-bold text-white mb-1.5">{f.title}</h5>
+                    <p className="text-zinc-400 text-lg leading-relaxed">{f.desc}</p>
                   </div>
                 </div>
               ))}
@@ -910,17 +794,14 @@ C 145 950, 170 962, 140 995
         {/* ================= 2. KISIM: ABOUT ME BİLGİLERİ ================= */}
         <div className="flex flex-col items-center text-center max-w-4xl mx-auto border-t border-zinc-700/60 pt-24 w-full">
           <Reveal>
-            <p className="text-white-500/90 uppercase tracking-[0.4em] text-lg font-mono mb-1">
-              ABOUT ME
-            </p>
+            <p className="text-white-500/90 uppercase tracking-[0.4em] text-lg font-mono mb-1">ABOUT ME</p>
           </Reveal>
 
           <Reveal>
             <h3
-              className="font-black text-white mb-2 tracking-normal"
+              className="font-bespoke-serif text-white mb-2 tracking-normal"
               style={{
                 fontSize: 'clamp(2.5rem, 6vw + 1rem, 6rem)',
-                fontFamily: 'BespokeSerif_number',
               }}
             >
               Nurettin <span className="text-cyan-400">Dincer</span>
@@ -933,12 +814,8 @@ C 145 950, 170 962, 140 995
           >
             <Reveal>
               <p>
-                I am a{' '}
-                <strong className="text-cyan-400 font-bold">
-                  Frontend Developer
-                </strong>{' '}
-                focused on building premium SaaS interfaces and cinematic web
-                experiences. My approach combines technical rigor with a deep
+                I am a <strong className="text-cyan-400 font-bold">Frontend Developer</strong> focused on building
+                premium SaaS interfaces and cinematic web experiences. My approach combines technical rigor with a deep
                 understanding of user psychology.
               </p>
             </Reveal>
@@ -946,35 +823,26 @@ C 145 950, 170 962, 140 995
               <p>
                 Based in Istanbul, I thrive in environments where{' '}
                 <strong className="text-white font-medium">performance</strong>,{' '}
-                <strong className="text-white font-medium">scalability</strong>,
-                and{' '}
-                <strong className="text-white font-medium">clean design</strong>{' '}
-                are the primary objectives. I architect digital systems that
-                bridge the gap between human emotion and machine logic.
+                <strong className="text-white font-medium">scalability</strong>, and{' '}
+                <strong className="text-white font-medium">clean design</strong> are the primary objectives. I architect
+                digital systems that bridge the gap between human emotion and machine logic.
               </p>
             </Reveal>
           </div>
 
           <Reveal>
-            <div
-              className="flex flex-wrap justify-center gap-x-12  gap-y-6 pt-16 mt-4 text-base md:text-lg tracking-widest text-cyan-400/90 max-w-6xl mx-auto w-full"
-              style={{ fontFamily: 'Manrope-Semibold' }}
-            >
+            <div className="font-manrope-semibold flex flex-wrap justify-center gap-x-12  gap-y-6 pt-16 mt-4 text-base md:text-lg tracking-widest text-cyan-400/90 max-w-6xl mx-auto w-full">
               <span className="flex items-center gap-3 whitespace-nowrap">
-                <i className="fa-solid fa-cube text-[20px] text-cyan-400"></i>{' '}
-                MODERN ARCHITECTURE
+                <i className="fa-solid fa-cube text-[20px] text-cyan-400"></i> MODERN ARCHITECTURE
               </span>
               <span className="flex items-center gap-3 whitespace-nowrap">
-                <i className="fa-solid fa-bolt text-[20px] text-cyan-400"></i>{' '}
-                HIGH PERFORMANCE
+                <i className="fa-solid fa-bolt text-[20px] text-cyan-400"></i> HIGH PERFORMANCE
               </span>
               <span className="flex items-center gap-3 whitespace-nowrap">
-                <i className="fa-solid fa-wand-magic-sparkles text-[20px] text-cyan-400"></i>{' '}
-                USER-CENTRIC DESIGN
+                <i className="fa-solid fa-wand-magic-sparkles text-[20px] text-cyan-400"></i> USER-CENTRIC DESIGN
               </span>
               <span className="flex items-center gap-3 whitespace-nowrap">
-                <i className="fa-solid fa-leaf text-[20px] text-cyan-400"></i>{' '}
-                SUSTAINABLE
+                <i className="fa-solid fa-leaf text-[20px] text-cyan-400"></i> SUSTAINABLE
               </span>
             </div>
           </Reveal>
@@ -989,25 +857,17 @@ C 145 950, 170 962, 140 995
           <div className="space-y-12 h-full flex flex-col">
             <Reveal>
               <div className="space-y-2">
-                <p className="text-zinc-100 uppercase tracking-[0.3em] text-[1rem] font-mono">
-                  EDUCATION
-                </p>
+                <p className="text-zinc-100 uppercase tracking-[0.3em] text-[1rem] font-mono">EDUCATION</p>
                 <h3 className="text-4xl md:text-5xl font-black tracking-tight text-white">
                   Academic{' '}
-                  <span
-                    className="text-cyan-400"
-                    style={{ textShadow: '0 0 20px rgba(34,211,238,0.5)' }}
-                  >
+                  <span className="text-cyan-400" style={{ textShadow: '0 0 20px rgba(34,211,238,0.5)' }}>
                     Foundation
                   </span>
                 </h3>
               </div>
             </Reveal>
 
-            <div
-              ref={academicListRef}
-              className="relative ml-2 pl-6 md:pl-10 space-y-10"
-            >
+            <div ref={academicListRef} className="relative ml-2 pl-6 md:pl-10 space-y-10">
               <div className="absolute left-0 top-0 bottom-0 w-px bg-zinc-800" />
 
               <motion.div
@@ -1036,10 +896,7 @@ C 145 950, 170 962, 140 995
               />
 
               {academicData.map((item, index) => {
-                const { isActive, color } = getPointState(
-                  index,
-                  academicActiveIndex,
-                );
+                const { isActive, color } = getPointState(index, academicActiveIndex);
                 const isExpanded = expandedAcademic === index;
                 const measuredHeight = academicClosedHeights[index];
                 const shortDescription = isExpanded
@@ -1053,12 +910,8 @@ C 145 950, 170 962, 140 995
                     }}
                     className="relative group"
                     style={{
-                      height: measuredHeight
-                        ? `${measuredHeight}px`
-                        : undefined,
-                      minHeight: measuredHeight
-                        ? undefined
-                        : FALLBACK_MIN_HEIGHT,
+                      height: measuredHeight ? `${measuredHeight}px` : undefined,
+                      minHeight: measuredHeight ? undefined : FALLBACK_MIN_HEIGHT,
                     }}
                   >
                     <div
@@ -1067,24 +920,18 @@ C 145 950, 170 962, 140 995
                         backgroundColor: isActive ? color.hex : '#09090b',
                         borderWidth: 2,
                         borderColor: isActive ? color.hex : '#3f3f46',
-                        boxShadow: isActive
-                          ? `0 0 14px 4px ${color.shadow}`
-                          : 'none',
+                        boxShadow: isActive ? `0 0 14px 4px ${color.shadow}` : 'none',
                       }}
                     />
 
                     <Reveal>
                       <motion.div
-                        layout
-                        transition={CARD_LAYOUT_TRANSITION}
                         ref={(el) => {
                           academicCardInnerRefs.current[index] = el;
                         }}
                         className="absolute left-0 right-0 top-0 bg-zinc-900/20 backdrop-blur-sm border rounded-2xl p-8 md:p-10 flex flex-col transition-colors duration-300"
                         style={{
-                          borderColor: isActive
-                            ? `${color.hex}55`
-                            : 'rgba(63,63,70,0.4)',
+                          borderColor: isActive ? `${color.hex}55` : 'rgba(63,63,70,0.4)',
                           zIndex: isExpanded ? 30 : 10,
                           boxShadow: isExpanded
                             ? '0 25px 60px -15px rgba(0,0,0,0.65), 0 0 0 1px rgba(34,211,238,0.15)'
@@ -1108,32 +955,24 @@ C 145 950, 170 962, 140 995
                             {item.title}
                           </h4>
                           {item.subtitle && (
-                            <span className="mt-1 text-sky-400 font-medium tracking-wide">
-                              @ {item.subtitle}
-                            </span>
+                            <span className="mt-1 text-sky-400 font-medium tracking-wide">@ {item.subtitle}</span>
                           )}
                         </div>
 
                         <div
                           className={`text-white/85 text-lg leading-relaxed ${
-                            isExpanded
-                              ? 'max-h-[420px] overflow-y-auto hide-scrollbar'
-                              : ''
+                            isExpanded ? 'max-h-[420px] overflow-y-auto hide-scrollbar' : ''
                           }`}
                         >
-                          {(isExpanded ? item.description : shortDescription)
-                            .split('\n')
-                            .map((line, i) => (
-                              <p key={i}>{line || '\u00A0'}</p>
-                            ))}
+                          {(isExpanded ? item.description : shortDescription).split('\n').map((line, i) => (
+                            <p key={i}>{line || '\u00A0'}</p>
+                          ))}
                         </div>
 
                         {item.description.split(' ').length > 35 && (
                           <button
                             className="mt-3 text-cyan-400 hover:text-cyan-300 text-sm self-start"
-                            onClick={() =>
-                              setExpandedAcademic(isExpanded ? null : index)
-                            }
+                            onClick={() => setExpandedAcademic(isExpanded ? null : index)}
                           >
                             {isExpanded ? 'Show less' : 'Read more'}
                           </button>
@@ -1152,25 +991,17 @@ C 145 950, 170 962, 140 995
           <div className="space-y-12 h-full flex flex-col">
             <Reveal>
               <div className="space-y-2">
-                <p className="text-zinc-100 uppercase tracking-[0.3em] text-[1rem] font-mono">
-                  MILESTONES
-                </p>
+                <p className="text-zinc-100 uppercase tracking-[0.3em] text-[1rem] font-mono">MILESTONES</p>
                 <h3 className="text-4xl md:text-5xl font-black tracking-tight text-white">
                   Career{' '}
-                  <span
-                    className="text-cyan-400"
-                    style={{ textShadow: '0 0 20px rgba(34,211,238,0.5)' }}
-                  >
+                  <span className="text-cyan-400" style={{ textShadow: '0 0 20px rgba(34,211,238,0.5)' }}>
                     Journey
                   </span>
                 </h3>
               </div>
             </Reveal>
 
-            <div
-              ref={journeyListRef}
-              className="relative ml-2 pl-6 md:pl-10 space-y-10"
-            >
+            <div ref={journeyListRef} className="relative ml-2 pl-6 md:pl-10 space-y-10">
               <div className="absolute left-0 top-0 bottom-0 w-px bg-zinc-800" />
 
               <motion.div
@@ -1199,10 +1030,7 @@ C 145 950, 170 962, 140 995
               />
 
               {journeyData.map((item, index) => {
-                const { isActive, color } = getPointState(
-                  index,
-                  journeyActiveIndex,
-                );
+                const { isActive, color } = getPointState(index, journeyActiveIndex);
                 const isExpanded = expandedJourney === index;
                 const measuredHeight = journeyClosedHeights[index];
                 const shortDescription = isExpanded
@@ -1216,12 +1044,8 @@ C 145 950, 170 962, 140 995
                     }}
                     className="relative group"
                     style={{
-                      height: measuredHeight
-                        ? `${measuredHeight}px`
-                        : undefined,
-                      minHeight: measuredHeight
-                        ? undefined
-                        : FALLBACK_MIN_HEIGHT,
+                      height: measuredHeight ? `${measuredHeight}px` : undefined,
+                      minHeight: measuredHeight ? undefined : FALLBACK_MIN_HEIGHT,
                     }}
                   >
                     <div
@@ -1230,24 +1054,18 @@ C 145 950, 170 962, 140 995
                         backgroundColor: isActive ? color.hex : '#09090b',
                         borderWidth: 2,
                         borderColor: isActive ? color.hex : '#3f3f46',
-                        boxShadow: isActive
-                          ? `0 0 14px 4px ${color.shadow}`
-                          : 'none',
+                        boxShadow: isActive ? `0 0 14px 4px ${color.shadow}` : 'none',
                       }}
                     />
 
                     <Reveal>
                       <motion.div
-                        layout
-                        transition={CARD_LAYOUT_TRANSITION}
                         ref={(el) => {
                           journeyCardInnerRefs.current[index] = el;
                         }}
                         className="absolute left-0 right-0 top-0 bg-zinc-900/20 backdrop-blur-sm border rounded-2xl p-8 md:p-10 flex flex-col transition-colors duration-300"
                         style={{
-                          borderColor: isActive
-                            ? `${color.hex}55`
-                            : 'rgba(63,63,70,0.4)',
+                          borderColor: isActive ? `${color.hex}55` : 'rgba(63,63,70,0.4)',
                           zIndex: isExpanded ? 30 : 10,
                           boxShadow: isExpanded
                             ? '0 25px 60px -15px rgba(0,0,0,0.65), 0 0 0 1px rgba(34,211,238,0.15)'
@@ -1278,31 +1096,23 @@ C 145 950, 170 962, 140 995
                             {item.title}
                           </h4>
                           {item.subtitle && (
-                            <span className="text-sky-400 font-medium tracking-wide">
-                              @ {item.subtitle}
-                            </span>
+                            <span className="text-sky-400 font-medium tracking-wide">@ {item.subtitle}</span>
                           )}
                         </div>
 
                         <div
                           className={`text-white/85 text-lg leading-relaxed ${
-                            isExpanded
-                              ? 'max-h-[420px] overflow-y-auto hide-scrollbar'
-                              : ''
+                            isExpanded ? 'max-h-[420px] overflow-y-auto hide-scrollbar' : ''
                           }`}
                         >
-                          {(isExpanded ? item.description : shortDescription)
-                            .split('\n')
-                            .map((line, i) => (
-                              <p key={i}>{line || '\u00A0'}</p>
-                            ))}
+                          {(isExpanded ? item.description : shortDescription).split('\n').map((line, i) => (
+                            <p key={i}>{line || '\u00A0'}</p>
+                          ))}
                         </div>
                         {item.description.split(' ').length > 35 && (
                           <button
                             className="mt-3 text-cyan-400 hover:text-cyan-300 text-sm self-start"
-                            onClick={() =>
-                              setExpandedJourney(isExpanded ? null : index)
-                            }
+                            onClick={() => setExpandedJourney(isExpanded ? null : index)}
                           >
                             {isExpanded ? 'Show less' : 'Read more'}
                           </button>

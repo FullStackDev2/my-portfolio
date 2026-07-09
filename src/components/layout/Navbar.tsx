@@ -1,13 +1,9 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import {
-  AnimatePresence,
-  motion,
-  useScroll,
-  useTransform,
-} from 'framer-motion';
+import { AnimatePresence, motion, useScroll, useTransform } from 'framer-motion';
 import NavIndicator from '@/components/ui/NavIndicator';
+import { scrollToSection } from '@/lib/smoothScrollTo';
 import Image from 'next/image';
 
 const navItems = [
@@ -20,8 +16,7 @@ const navItems = [
   { id: 'contact', label: 'Contact' },
 ];
 
-const CV_LINK =
-  'https://drive.google.com/file/d/1SqiJXKksRqB6GdshcjXZiaWCJWvAyNHa/view?usp=drive_link';
+const CV_LINK = 'https://drive.google.com/file/d/1SqiJXKksRqB6GdshcjXZiaWCJWvAyNHa/view?usp=drive_link';
 
 export default function Navbar() {
   const navRef = useRef<HTMLDivElement | null>(null);
@@ -33,49 +28,40 @@ export default function Navbar() {
 
   const { scrollY } = useScroll();
 
-  const blurValue = useTransform(
-    scrollY,
-    [0, 100],
-    ['blur(0px)', 'blur(12px)'],
-  );
-  const backgroundColor = useTransform(
-    scrollY,
-    [0, 100],
-    ['rgba(15, 23, 42, 0)', 'rgba(15, 23, 42, 0.9)'],
-  );
-  const borderColor = useTransform(
-    scrollY,
-    [0, 100],
-    ['rgba(161, 161, 170, 0)', 'rgba(161, 161, 170, 0.3)'],
-  );
+  const blurValue = useTransform(scrollY, [0, 100], ['blur(0px)', 'blur(12px)']);
+  const backgroundColor = useTransform(scrollY, [0, 100], ['rgba(15, 23, 42, 0)', 'rgba(15, 23, 42, 0.9)']);
+  const borderColor = useTransform(scrollY, [0, 100], ['rgba(161, 161, 170, 0)', 'rgba(161, 161, 170, 0.3)']);
 
   // Butonun scroll ile kaybolması için (sadece desktop'ta anlamlı)
   const buttonOpacity = useTransform(scrollY, [0, 50], [1, 0]);
   const buttonPointerEvents = useTransform(scrollY, [0, 50], ['auto', 'none']);
 
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollPos = window.scrollY + window.innerHeight / 3;
+    const sectionEls = navItems.map((item) => document.getElementById(item.id)).filter((el): el is HTMLElement => !!el);
 
-      let current = navItems[0].id;
+    if (sectionEls.length === 0) return;
 
-      for (const item of navItems) {
-        const el = document.getElementById(item.id);
-        if (!el) continue;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        // Görünür olan section'lardan en üstteki (viewport'a en yakın) olanı seç
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
 
-        if (el.offsetTop <= scrollPos) {
-          current = item.id;
+        if (visible.length > 0) {
+          setActive(visible[0].target.id);
         }
+      },
+      {
+        // Ekranın üst 1/3'ü civarında "aktif" say (senin scrollPos mantığına yakın)
+        rootMargin: '-33% 0px -60% 0px',
+        threshold: 0,
       }
+    );
 
-      setActive(current);
-    };
+    sectionEls.forEach((el) => observer.observe(el));
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-
-    handleScroll(); // init
-
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => observer.disconnect();
   }, []);
 
   useEffect(() => {
@@ -132,7 +118,6 @@ export default function Navbar() {
 
       window.scrollTo({
         top: y,
-        behavior: 'smooth',
       });
     }, 300);
   };
@@ -149,27 +134,18 @@ export default function Navbar() {
       >
         <div className="max-w-[100rem] mx-auto h-full flex items-center justify-between px-4 md:px-8">
           {/* Logo / Profil */}
-          <div
-            onClick={() => handleNavClick('hero')}
-            className="flex items-center gap-3 cursor-pointer group shrink-0"
-          >
+          <div onClick={() => handleNavClick('hero')} className="flex items-center gap-3 cursor-pointer group shrink-0">
             <div className="relative w-12 h-12 flex items-center justify-center overflow-visible">
               <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ repeat: Infinity, duration: 4, ease: 'linear' }}
+                initial={{ rotate: 0 }}
+                animate={{ rotate: 0 }}
                 className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#08d565] via-[#ff3d6e] to-[#ff5b8a] opacity-70 blur-[2px]"
               />
               <div className="relative w-10 h-10 rounded-full border-2 border-white overflow-hidden shadow-md bg-zinc-100 z-10">
-                <Image
-                  src="/FOR-CV.JPG"
-                  alt="Profile"
-                  width={40}
-                  height={40}
-                  className="object-cover object-top"
-                />
+                <Image src="/FOR-CV.JPG" alt="Profile" width={40} height={40} className="object-cover object-top" />
               </div>
             </div>
-            <span className="font-black tracking-wider text-lg text-zinc-100">
+            <span onClick={() => scrollToSection('hero')} className="font-black tracking-wider text-lg text-zinc-100">
               ND.
             </span>
           </div>
@@ -183,7 +159,7 @@ export default function Navbar() {
                   ref={(el) => {
                     itemRefs.current[item.id] = el;
                   }}
-                  onClick={() => handleNavClick(item.id)}
+                  onClick={() => scrollToSection(item.id)}
                   className={`cursor-pointer text-base font-medium transition-all whitespace-nowrap ${
                     active === item.id
                       ? 'bg-gradient-to-r from-[#ff3d6e] to-[#ff5b8a] bg-clip-text text-transparent'
@@ -227,14 +203,10 @@ export default function Navbar() {
             aria-controls="mobile-nav-menu"
             className="relative flex lg:hidden items-center justify-center w-11 h-11 rounded-lg text-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#ff3d6e] shrink-0"
           >
-            <span className="sr-only">
-              {isMobileMenuOpen ? 'Menüyü kapat' : 'Menüyü aç'}
-            </span>
+            <span className="sr-only">{isMobileMenuOpen ? 'Menüyü kapat' : 'Menüyü aç'}</span>
             <div className="relative w-6 h-5 flex flex-col justify-between">
               <motion.span
-                animate={
-                  isMobileMenuOpen ? { rotate: 45, y: 9 } : { rotate: 0, y: 0 }
-                }
+                animate={isMobileMenuOpen ? { rotate: 45, y: 9 } : { rotate: 0, y: 0 }}
                 transition={{ duration: 0.25, ease: 'easeInOut' }}
                 className="block h-0.5 w-full bg-current rounded-full origin-center"
               />
@@ -244,11 +216,7 @@ export default function Navbar() {
                 className="block h-0.5 w-full bg-current rounded-full"
               />
               <motion.span
-                animate={
-                  isMobileMenuOpen
-                    ? { rotate: -45, y: -9 }
-                    : { rotate: 0, y: 0 }
-                }
+                animate={isMobileMenuOpen ? { rotate: -45, y: -9 } : { rotate: 0, y: 0 }}
                 transition={{ duration: 0.25, ease: 'easeInOut' }}
                 className="block h-0.5 w-full bg-current rounded-full origin-center"
               />

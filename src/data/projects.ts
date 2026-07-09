@@ -4,7 +4,7 @@ export const projects = [
     title: 'Slim Moms Calorie Tracker Web Application',
     shortDescription: `Slim Moms - Calorie Tracker Web Application | React & Redux & Node.js & MongoDB powered frontend and backend for tracking daily calories and nutrition | GoIT Final Project`,
     about: ` Slim Moms is a full-stack nutrition tracking application developed as a final project. It enables users to monitor their daily calorie intake and manage their nutrition through a React-based frontend and a Node.js + Express backend.`,
-    image: '/projects/slim_moms.png',
+    image: '/projects/slim_moms.jpg',
     images: [
       '/projects/slim_moms-1_.jpg',
       '/projects/slim_moms-2_.jpg',
@@ -36,7 +36,7 @@ I developed a finance management application where users can easily create, edit
 -  Worked on automatic balance calculation and real-time balance updates.
 -  Integrated the frontend with the backend through REST API communication to ensure accurate processing of financial data.
 -  Ensured that financial data was displayed consistently and clearly within the UI.`,
-    image: '/projects/money_guard.png',
+    image: '/projects/money_guard.jpg',
     images: [
       '/projects/money_guard-1.jpg',
       '/projects/money_guard-2.jpg',
@@ -75,7 +75,7 @@ Role: Team Lead (3-Person Team):
 - Managed team workflow and version control processes using Git and GitHub
 - Contributed to creating a user-friendly and intuitive UI/UX design
 `,
-    image: '/projects/cinemania.png',
+    image: '/projects/cinemania.jpg',
     images: [
       '/projects/cinemania_1.jpg',
       '/projects/cinemania_2.jpg',
@@ -105,7 +105,7 @@ The project focuses on promoting sustainable eating habits by providing an intui
 During development, we implemented a mobile-first responsive interface, reusable UI components, interactive forms, and modern accessibility practices.
 Working in an agile team environment strengthened our collaboration, communication, version control, and problem-solving skills while delivering a polished user experience.
 `,
-    image: '/projects/green_harvest.png',
+    image: '/projects/green_harvest.jpg',
     images: [
       '/projects/grreen_harvest-1.jpg',
       '/projects/grreen_harvest-2.jpg',
@@ -126,7 +126,7 @@ Working in an agile team environment strengthened our collaboration, communicati
     title: 'In_Development',
     shortDescription: ``,
     about: `Feature Project : User Panel Design`,
-    image: '/projects/in_development.png',
+    image: '/projects/in_development.jpg',
     images: [],
     client: 'Nurettin Dincer',
     category: 'Cloud Infrastructure',
@@ -139,7 +139,7 @@ Working in an agile team environment strengthened our collaboration, communicati
     title: 'In_Development',
     shortDescription: ``,
     about: ``,
-    image: '/projects/in_development.png',
+    image: '/projects/in_development.jpg',
     images: [],
     client: 'Private Client',
     category: 'Web3 / DeFi',
