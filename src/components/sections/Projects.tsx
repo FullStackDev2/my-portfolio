@@ -200,9 +200,6 @@ export default function Projects() {
         />
       </div>
 
-      {/* GPU FIX: translateZ(0) + will-change-transform eklendi, bu 3 blur katmanı
-          kendi compositor layer'ında sabitlenip her scroll/animasyonda yeniden
-          raster edilmesinin önüne geçiliyor */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -left-60 top-20 w-[700px] h-[700px] rounded-full bg-cyan-500/10 blur-[180px] [transform:translateZ(0)] will-change-transform" />
         <div className="absolute -right-60 bottom-0 w-[800px] h-[800px] rounded-full bg-purple-500/10 blur-[220px] [transform:translateZ(0)] will-change-transform" />
