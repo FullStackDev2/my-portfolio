@@ -386,7 +386,7 @@ ${theme.neonShadow}
                           src={project.image}
                           alt={project.title}
                           fill
-                          priority={i < 3}
+                          loading="lazy"
                           sizes="(max-width:768px) 100vw, 33vw"
                           placeholder="blur"
                           blurDataURL="data:image/png;base64,iVBORw0KGgo..." // küçük bir blur base64
