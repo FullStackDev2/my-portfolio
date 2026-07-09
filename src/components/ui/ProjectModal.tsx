@@ -111,9 +111,7 @@ export default function ProjectModal({ project, onClose }: Props) {
 
       if (e.key === 'ArrowUp') {
         e.preventDefault();
-        setActiveImgIndex(
-          (p) => (p - 1 + galleryImages.length) % galleryImages.length,
-        );
+        setActiveImgIndex((p) => (p - 1 + galleryImages.length) % galleryImages.length);
       }
     };
 
@@ -154,11 +152,7 @@ export default function ProjectModal({ project, onClose }: Props) {
             stroke="currentColor"
             className="w-4 h-4"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M6 18L18 6M6 6l12 12"
-            />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
 
@@ -167,12 +161,7 @@ export default function ProjectModal({ project, onClose }: Props) {
           <div className="flex w-[100px] md:w-[116px] h-full flex-col items-center gap-2 px-4 md:px-5 py-4 bg-black/30 z-10 order-1">
             {/* UP */}
             <button
-              onClick={() =>
-                setActiveImgIndex(
-                  (prev) =>
-                    (prev - 1 + galleryImages.length) % galleryImages.length,
-                )
-              }
+              onClick={() => setActiveImgIndex((prev) => (prev - 1 + galleryImages.length) % galleryImages.length)}
               className="w-full flex items-center justify-center py-1.5 rounded-lg bg-white/5 border border-white/10 text-white/50 hover:text-white"
             >
               <svg
@@ -183,11 +172,7 @@ export default function ProjectModal({ project, onClose }: Props) {
                 stroke="currentColor"
                 className="w-3.5 h-3.5"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M4.5 15.75l7.5-7.5 7.5 7.5"
-                />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
               </svg>
             </button>
 
@@ -222,9 +207,7 @@ export default function ProjectModal({ project, onClose }: Props) {
 
             {/* Aşağı Ok */}
             <button
-              onClick={() =>
-                setActiveImgIndex((prev) => (prev + 1) % galleryImages.length)
-              }
+              onClick={() => setActiveImgIndex((prev) => (prev + 1) % galleryImages.length)}
               className="w-full flex items-center justify-center py-1.5 rounded-lg bg-white/5 border border-white/10 text-white/50 hover:text-white"
             >
               <svg
@@ -235,19 +218,19 @@ export default function ProjectModal({ project, onClose }: Props) {
                 stroke="currentColor"
                 className="w-3.5 h-3.5"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-                />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
               </svg>
             </button>
           </div>
         )}
-
+        <div className="hidden">
+          {galleryImages.map((img) => (
+            <Image key={img} src={img} alt="" width={1} height={1} priority />
+          ))}
+        </div>
         {/* ORTA: Büyük Görsel */}
         <div className="w-[47%] md:w-[51%] relative bg-black/20 relative shrink-0 border-r border-white/5 z-10 order-2">
-          <AnimatePresence mode="wait">
+          <AnimatePresence>
             <motion.div
               key={activeImgIndex}
               initial={{ opacity: 0 }}
@@ -267,9 +250,7 @@ export default function ProjectModal({ project, onClose }: Props) {
                   className="max-h-full max-w-full rounded-lg object-contain cursor-zoom-in transition-transform duration-300 hover:scale-[1.01]"
                 />
               ) : (
-                <div className="absolute flex items-center justify-center text-white/20">
-                  No Preview
-                </div>
+                <div className="absolute flex items-center justify-center text-white/20">No Preview</div>
               )}
             </motion.div>
           </AnimatePresence>
@@ -287,9 +268,7 @@ export default function ProjectModal({ project, onClose }: Props) {
               <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-white leading-tight">
                 {project.title}
               </h2>
-              <p className="text-slate-300 text-[13px] leading-relaxed font-normal">
-                {project.shortDescription}
-              </p>
+              <p className="text-slate-300 text-[13px] leading-relaxed font-normal">{project.shortDescription}</p>
             </div>
 
             {/* Künyeler Paneli (İkonlu liste) */}
@@ -312,12 +291,8 @@ export default function ProjectModal({ project, onClose }: Props) {
                   </svg>
                 </div>
                 <div className="flex items-center justify-between flex-1">
-                  <span className="font-mono text-white/60 text-[10px] uppercase tracking-wider">
-                    Client
-                  </span>
-                  <span className="text-slate-200 text-sm font-medium">
-                    {project.client || 'Nurettin D. Labs'}
-                  </span>
+                  <span className="font-mono text-white/60 text-[10px] uppercase tracking-wider">Client</span>
+                  <span className="text-slate-200 text-sm font-medium">{project.client || 'Nurettin D. Labs'}</span>
                 </div>
               </div>
               <div className="flex items-center gap-3 pt-3 border-t border-white/5">
@@ -338,12 +313,8 @@ export default function ProjectModal({ project, onClose }: Props) {
                   </svg>
                 </div>
                 <div className="flex items-center justify-between flex-1">
-                  <span className="font-mono text-white/60 text-[10px] uppercase tracking-wider">
-                    Category
-                  </span>
-                  <span className="text-slate-200 text-xs font-medium">
-                    {project.category || 'Full-Stack Dev'}
-                  </span>
+                  <span className="font-mono text-white/60 text-[10px] uppercase tracking-wider">Category</span>
+                  <span className="text-slate-200 text-xs font-medium">{project.category || 'Full-Stack Dev'}</span>
                 </div>
               </div>
               <div className="flex items-center gap-3 pt-3 border-t border-white/5">
@@ -364,12 +335,8 @@ export default function ProjectModal({ project, onClose }: Props) {
                   </svg>
                 </div>
                 <div className="flex items-center justify-between flex-1">
-                  <span className="font-mono text-white/60 text-[10px] uppercase tracking-wider">
-                    Date
-                  </span>
-                  <span className="text-slate-200 text-xs font-medium">
-                    {project.date || '2026.06.23'}
-                  </span>
+                  <span className="font-mono text-white/60 text-[10px] uppercase tracking-wider">Date</span>
+                  <span className="text-slate-200 text-xs font-medium">{project.date || '2026.06.23'}</span>
                 </div>
               </div>
             </div>
@@ -388,9 +355,7 @@ export default function ProjectModal({ project, onClose }: Props) {
 
             {/* About Project */}
             <div className="space-y-1.5 pt-5 border-t border-white/55">
-              <span className="block font-mono text-slate/80 text-[13px] uppercase tracking-wider">
-                About Project
-              </span>
+              <span className="block font-mono text-slate/80 text-[13px] uppercase tracking-wider">About Project</span>
               <div className="text-slate-200 text-[13px] leading-relaxed font-normal space-y-4">
                 {(project.about ?? '').split('\n').map((line, index) => (
                   <p key={index}>{line || '\u00A0'}</p>
@@ -417,11 +382,7 @@ export default function ProjectModal({ project, onClose }: Props) {
                   stroke="currentColor"
                   className="w-3.5 h-3.5"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"
-                  />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
                 </svg>
               </a>
             )}
@@ -433,12 +394,7 @@ export default function ProjectModal({ project, onClose }: Props) {
                 className="flex-1 inline-flex items-center justify-center gap-1.5 px-5 py-3 rounded-xl bg-white/5 border border-white/10 text-slate-200 text-xs font-semibold hover:bg-white/10 transition-colors duration-200"
               >
                 View Code
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  className="w-3.5 h-3.5"
-                >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5">
                   <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.757-1.333-1.757-1.09-.745.083-.73.083-.73 1.205.085 1.84 1.237 1.84 1.237 1.07 1.834 2.807 1.304 3.492.997.108-.775.418-1.305.762-1.605-2.665-.303-5.467-1.333-5.467-5.93 0-1.31.467-2.38 1.235-3.22-.124-.303-.535-1.523.117-3.176 0 0 1.008-.322 3.3 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.29-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.873.118 3.176.77.84 1.233 1.91 1.233 3.22 0 4.61-2.807 5.625-5.48 5.92.43.372.823 1.103.823 2.222 0 1.606-.015 2.896-.015 3.29 0 .322.218.694.825.576C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
                 </svg>
               </a>

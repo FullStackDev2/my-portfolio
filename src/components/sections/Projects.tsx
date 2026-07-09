@@ -98,23 +98,35 @@ const getProjectIcon = (slug: string) => {
   }
 };
 
-const containerVariants: Variants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.045, delayChildren: 0 },
-  },
-};
-
 const cardVariants: Variants = {
-  hidden: { scale: 0.5, opacity: 0, y: 40 },
-  visible: {
-    scale: 1,
-    opacity: 1,
-    y: 0,
-    transition: { type: 'spring', stiffness: 550, damping: 28, mass: 0.5 },
+  hidden: {
+    opacity: 0,
+    scale: 0.85,
+    y: 80,
+    filter: 'blur(8px)',
   },
-  exit: { scale: 0.85, opacity: 0, y: 20, transition: { duration: 0.1 } },
+
+  visible: {
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    filter: 'blur(0px)',
+    transition: {
+      type: 'spring',
+      stiffness: 180,
+      damping: 18,
+      mass: 0.7,
+    },
+  },
+
+  exit: {
+    opacity: 0,
+    scale: 0.9,
+    y: 30,
+    transition: {
+      duration: 0.2,
+    },
+  },
 };
 
 const PAGE_SIZE = 6;
@@ -251,7 +263,6 @@ export default function Projects() {
           <div className="hidden xl:flex flex-col gap-4 absolute -left-80 top-1/2 -translate-y-1/2">
             {stats.map((item, index) => (
               <motion.div
-                layout
                 key={index}
                 initial={{ opacity: 0, x: -30 }}
                 whileInView={{ opacity: 1, x: 0 }}
@@ -282,11 +293,7 @@ export default function Projects() {
           {/* PROJE KARTLARININ BULUNDUGU GRID - sayfa değişince yeniden animasyonlanır */}
           <AnimatePresence mode="wait">
             <motion.div
-              layout
               key={page}
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
               exit="hidden"
               className="grid lg:grid-cols-3 md:grid-cols-2 gap-10 min-h-[800px] items-start"
             >
@@ -331,21 +338,15 @@ export default function Projects() {
                 const theme = getTheme(i)!;
 
                 return (
-                  // GPU FIX 1: `hover:scale-[1.02]` (CSS) kaldırıldı çünkü whileHover
-                  //            zaten aynı transform'u (scale) JS/spring ile yönetiyor —
-                  //            ikisi aynı property'de çakışıp gereksiz style recalculation
-                  //            yaratıyordu.
-                  // GPU FIX 2: `transition-all` yerine sadece `transition-shadow` —
-                  //            böylece sadece box-shadow geçişi izleniyor, transform/
-                  //            border/background gibi başka her şeyi izlemiyor.
-                  // GPU FIX 3: `backdrop-blur-md` kaldırıldı — kart zaten opak bir arka
-                  //            plan rengine (theme.bg) sahip, backdrop-blur'un görsel
-                  //            katkısı çok az ama whileHover ile birlikte GPU'da en
-                  //            pahalı kombinasyonlardan biriydi.
                   <motion.div
-                    layout
                     key={project.slug}
                     variants={cardVariants}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{
+                      once: true,
+                      amount: 0.25,
+                    }}
                     whileHover={{
                       y: -10,
                       scale: 1.02,
