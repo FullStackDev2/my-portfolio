@@ -116,6 +116,7 @@ const cardVariants: Variants = {
       stiffness: 180,
       damping: 18,
       mass: 0.7,
+      delay: 0.08,
     },
   },
 
@@ -158,6 +159,11 @@ export default function Projects() {
       label: 'Responsive Design',
     },
   ];
+
+  const preloadImage = (src: string) => {
+    const img = new window.Image();
+    img.src = src;
+  };
 
   const visibleProjects = useMemo(() => importedProjects.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE), [page]);
 
@@ -351,6 +357,13 @@ export default function Projects() {
                       y: -10,
                       scale: 1.02,
                       transition: { type: 'spring', stiffness: 300, damping: 20 },
+                    }}
+                    onMouseEnter={() => {
+                      preloadImage(project.image);
+
+                      project.images?.forEach((img) => {
+                        preloadImage(img);
+                      });
                     }}
                     onClick={() => setSelectedProject(project)}
                     className={`

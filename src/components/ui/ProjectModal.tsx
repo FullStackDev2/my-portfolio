@@ -73,12 +73,10 @@ export default function ProjectModal({ project, onClose }: Props) {
 
     if (project) {
       document.body.style.overflow = 'hidden';
-      document.documentElement.style.overflow = 'hidden';
 
       lenis?.stop();
     } else {
       document.body.style.overflow = '';
-      document.documentElement.style.overflow = '';
 
       lenis?.start();
     }
@@ -427,7 +425,6 @@ export default function ProjectModal({ project, onClose }: Props) {
                 src={galleryImages[activeImgIndex]}
                 alt={project.title}
                 fill
-                priority
                 sizes="(max-width: 768px) 100vw, 80vw"
                 className="object-contain"
               />
