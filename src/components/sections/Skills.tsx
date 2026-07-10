@@ -412,7 +412,7 @@ ${
       </div>
 
       {/* TERMINAL */}
-      <div className="w-full flex justify-center mt-0">
+      <div className="w-full flex justify-center mt-16 md:mt-0">
         <div
           className="
       w-full

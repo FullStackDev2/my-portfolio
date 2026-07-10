@@ -26,7 +26,10 @@ export default function Hero() {
   return (
     <section
       id="hero"
-      className="relative w-full min-h-[100dvh] overflow-hidden border-t border-zinc-800/50 scroll-mt-20"
+      className="relative w-full min-h-[100dvh] overflow-hidden  border-t border-zinc-800/50 scroll-mt-20"
+      style={{
+        background: 'radial-gradient(circle at 50% 38%, rgba(56,189,248,0.08), transparent 60%)',
+      }}
     >
       {/* Arka Plan Dokusu */}
       <div
@@ -59,19 +62,34 @@ export default function Hero() {
           >
             <motion.h1
               variants={textItemVariants}
-              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-white tracking-tight [text-shadow:_0_0_20px_rgba(255,255,255,0.3)]"
+              className="text-4xl
+sm:text-5xl
+md:text-6xl
+lg:text-7xl
+xl:text-[5.8rem]
+2xl:text-8xl font-bold text-white tracking-tight [text-shadow:_0_0_20px_rgba(255,255,255,0.3)]"
             >
               Frontend Developer
             </motion.h1>
             <motion.h2
               variants={textItemVariants}
-              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold bg-gradient-to-r from-cyan-500 via-blue-500 via-indigo-600 to-fuchsia-900 bg-clip-text text-transparent tracking-tight leading-[1.2] pb-1 sm:pb-2 [text-shadow:_0_0_30px_rgba(168,85,247,0.3)]"
+              className="text-4xl
+sm:text-5xl
+md:text-6xl
+lg:text-7xl
+xl:text-[5.8rem]
+2xl:text-8xl font-bold bg-gradient-to-r from-cyan-500 via-blue-500 via-indigo-600 to-fuchsia-900 bg-clip-text text-transparent tracking-tight leading-[1.2] pb-1 sm:pb-2 [text-shadow:_0_0_30px_rgba(168,85,247,0.3)]"
             >
               Building Digital
             </motion.h2>
             <motion.h2
               variants={textItemVariants}
-              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-zinc-200 tracking-tight [text-shadow:_0_0_15px_rgba(212,212,216,0.3)]"
+              className="text-4xl
+sm:text-5xl
+md:text-6xl
+lg:text-7xl
+xl:text-[5.8rem]
+2xl:text-8xl font-bold text-zinc-200 tracking-tight [text-shadow:_0_0_15px_rgba(212,212,216,0.3)]"
             >
               Experiences
             </motion.h2>
@@ -146,7 +164,12 @@ export default function Hero() {
 
         {/* SAĞ: PORTRE — sadece md ve üstünde, tablette küçültülmüş oranla */}
         <div
-          className="absolute right-0 top-16 lg:w-[40%] lg:h-[75%] xl:w-[46%] xl:h-[85%] hidden lg:block pointer-events-none z-10
+          className="absolute
+right-[-80px]
+2xl:right-0 top-16 lg:w-[48%]
+lg:h-[74%] xl:w-[50%]
+xl:h-[82%] 2xl:w-[46%]
+2xl:h-[85%] hidden lg:block pointer-events-none z-10
     [mask-image:linear-gradient(to_bottom,black_60%,transparent_100%)]"
         >
           <div className="relative w-full h-full">
@@ -157,9 +180,8 @@ export default function Hero() {
               quality={75}
               sizes="50vw"
               className="object-contain object-bottom 
-        -translate-x-4 md:-translate-x-8 lg:-translate-x-23 
-        scale-100 lg:scale-103 
-        origin-bottom grayscale contrast-115 brightness-[45%] opacity-70 blur-[1px]"
+        -translate-x-4 md:-translate-x-8 scale-100 lg:scale-105 
+        origin-bottom grayscale contrast-115  brightness-[40%] opacity-100 blur-[1px]"
               priority
               onLoad={() => {
                 window.dispatchEvent(new Event('resize'));

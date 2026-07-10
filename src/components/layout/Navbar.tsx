@@ -107,18 +107,9 @@ export default function Navbar() {
 
   const handleNavClick = (id: string) => {
     setIsMobileMenuOpen(false);
-    document.body.style.overflow = '';
 
     setTimeout(() => {
-      const el = document.getElementById(id);
-
-      if (!el) return;
-
-      const y = el.getBoundingClientRect().top + window.scrollY - 80;
-
-      window.scrollTo({
-        top: y,
-      });
+      scrollToSection(id);
     }, 300);
   };
 
@@ -141,13 +132,21 @@ export default function Navbar() {
                 animate={{ rotate: 0 }}
                 className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#08d565] via-[#ff3d6e] to-[#ff5b8a] opacity-70 blur-[2px]"
               />
-              <div className="relative w-10 h-10 rounded-full border-2 border-white overflow-hidden shadow-md bg-zinc-100 z-10">
-                <Image src="/FOR-CV.JPG" alt="Profile" width={40} height={40} className="object-cover object-top" />
+              <div
+                onClick={() => scrollToSection('hero')}
+                className="relative w-10 h-10 rounded-full border-2 border-white overflow-hidden shadow-md bg-zinc-100 z-10"
+              >
+                <Image
+                  src="/FOR-CV.JPG"
+                  alt="Profile"
+                  width={40}
+                  height={40}
+                  priority
+                  className="object-cover object-top"
+                />
               </div>
             </div>
-            <span onClick={() => scrollToSection('hero')} className="font-black tracking-wider text-lg text-zinc-100">
-              ND.
-            </span>
+            <span className="font-black tracking-wider text-lg text-zinc-100">ND.</span>
           </div>
 
           {/* Desktop / geniş tablet navigasyonu (lg ve üzeri) */}

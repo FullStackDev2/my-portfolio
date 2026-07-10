@@ -15,6 +15,13 @@
   transform-style: preserve-3d;
 }
 
+@media (min-width: 1280px) and (max-width: 1400px) {
+  .hero-glow-mask {
+    border-top-left-radius: 100% 100%;
+    border-top-right-radius: 100% 100%;
+  }
+}
+
 html,
 body {
   margin: 0;

@@ -20,7 +20,7 @@ export default function Vision() {
       <div
         className="absolute inset-0 z-20 pointer-events-none opacity-[0.04]"
         style={{
-          backgroundImage: "url('/textures/noise_texture.png')",
+          backgroundImage: "url('/textures/noise_texture.jpg')",
           backgroundRepeat: 'repeat',
           backgroundSize: '280px',
           mixBlendMode: 'soft-light',
