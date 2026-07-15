@@ -16,7 +16,7 @@ const navItems = [
   { id: 'contact', label: 'Contact' },
 ];
 
-const CV_LINK = 'https://drive.google.com/file/d/1SqiJXKksRqB6GdshcjXZiaWCJWvAyNHa/view?usp=drive_link';
+const CV_LINK = 'https://drive.google.com/file/d/18gaz0gfoP20c9Tu84LutlZjRPlq-Ltba/view?usp=sharing';
 
 export default function Navbar() {
   const navRef = useRef<HTMLDivElement | null>(null);

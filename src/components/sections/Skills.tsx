@@ -28,8 +28,10 @@ function MatrixRain({ className }: { className?: string }) {
     if (!canvas || !parent) return;
 
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+    // Not: mobilde artık devre dışı bırakmıyoruz; performans için
+    // aşağıda dpr ve frameRate mobilde daha düşük tutuluyor.
     const isMobile = window.innerWidth < 768;
-    if (prefersReducedMotion || isMobile) return;
 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
@@ -44,10 +46,10 @@ function MatrixRain({ className }: { className?: string }) {
     let animationId = 0;
     let lastFrameTime = Date.now();
     let isVisible = false; // ← yeni
-    const frameRate = 20;
+    const frameRate = isMobile ? 14 : 20; // mobilde biraz daha düşük fps, pil/performans için
 
     const resize = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.5); // YENİ
+      const dpr = Math.min(window.devicePixelRatio || 1, isMobile ? 1 : 1.5); // mobilde dpr 1'e sabitlenir
       width = canvas.width = parent.clientWidth * dpr;
       height = canvas.height = parent.clientHeight * dpr;
       ctx.scale(dpr, dpr); // YENİ
@@ -438,7 +440,7 @@ ${
             <span className="font-mono text-[12px]  tracking-[0.35em] text-purple-400">TERMINAL</span>
           </div>
 
-          <div className="grid grid-cols-[1.5fr_1px_1fr] min-h-[220px]">
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_1px_0.85fr] lg:grid-cols-[1.5fr_1px_1fr] min-h-[220px]">
             {/* ===================== SOL ===================== */}
 
             <div
@@ -478,15 +480,16 @@ ${
               </div>
             </div>
 
-            {/* ===================== ORTA ===================== */}
+            {/* ===================== ORTA (mobilde yatay, md+ üzerinde dikey glow ayraç) ===================== */}
 
-            <div className="relative w-px bg-white/5">
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-400/40 to-transparent" />
-
-              <div className="absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2 bg-cyan-400/20" />
-
+            <div className="relative w-full h-14 md:h-auto md:w-px">
+              {/* Masaüstü: dikey parlayan çizgi */}
+              <div className="hidden md:block absolute inset-0 bg-white/5" />
+              <div className="hidden md:block absolute inset-0 bg-gradient-to-b from-transparent via-cyan-400/40 to-transparent" />
+              <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2 bg-cyan-400/20" />
               <div
                 className="
+            hidden md:block
             absolute
             left-1/2
             top-1/2
@@ -499,11 +502,15 @@ ${
             blur-2xl
           "
               />
+
+              {/* Mobil: yatay parlayan çizgi */}
+              <div className="md:hidden absolute left-0 right-0 top-1/2 h-px -translate-y-1/2 bg-gradient-to-r from-transparent via-cyan-400/100 to-transparent" />
+              <div className="md:hidden absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-28 h-10 rounded-full bg-cyan-400/5 blur-xl" />
             </div>
 
-            {/* ===================== SAĞ ===================== */}
+            {/* ===================== SAĞ (mobilde solun altına düşer, sabit yükseklik alır) ===================== */}
 
-            <div className="relative overflow-hidden">
+            <div className="relative overflow-hidden h-[260px] md:h-auto bg-gradient-to-b from-white/[0.015] to-transparent md:bg-none">
               {/* Glow */}
               <div
                 className="

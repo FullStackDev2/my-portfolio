@@ -88,7 +88,7 @@ Key Responsibilities & Achievements :
     },
     {
       year: 'Nov 2014 — May 2016',
-      title: 'Desa Derı San Tic As',
+      title: 'Desa Deri San Tic As',
       subtitle: 'Software Engineering Focus | On-Site',
       description: `-  Managed retail sales processes with a strong focus on customer satisfaction
 -  Actively participated in product promotion, stock tracking, and sales target achievement
@@ -99,11 +99,21 @@ Key Responsibilities & Achievements :
     },
   ];
 
-  // --- TEK ORTAK SCROLL PROGRESS: iki sütun da AYNI ANDA başlar, AYNI ANDA biter ---
+  // --- SCROLL PROGRESS: masaüstünde (lg+) iki sütun paylaşımlı progress kullanır,
+  // mobil/tablette (lg altı, sütunlar alt alta) her sütun KENDİ scroll ilerlemesini kullanır ---
   const timelinesRef = useRef<HTMLDivElement>(null);
+  const academicColumnRef = useRef<HTMLDivElement>(null);
+  const journeyColumnRef = useRef<HTMLDivElement>(null);
 
   const [hoveredSide, setHoveredSide] = useState<'left' | 'right' | null>(null);
   const hoveredSideRef = useRef<'left' | 'right' | null>(null);
+
+  // Grid `lg:grid-cols-2` içinde 2 sütuna geçiyor (1024px). Kontrolü buna eşitliyoruz,
+  // önceden 768px kullanılıyordu ve bu, tabletlerde (768–1024px arası) layout hâlâ
+  // alt alta iken hover-gating mantığının yanlış devreye girmesine sebep oluyordu.
+  const [isSideBySide, setIsSideBySide] = useState(true);
+  const isSideBySideRef = useRef(true);
+
   const [barsVisible, setBarsVisible] = useState(false);
   const barsVisibleRef = useRef(false);
 
@@ -124,7 +134,27 @@ Key Responsibilities & Achievements :
   };
 
   useEffect(() => {
+    // lg breakpoint (1024px): grid burada 2 sütuna (yan yana) geçiyor.
+    // Bu eşiğin altında (mobil + tablet dahil) sütunlar alt alta dizilir,
+    // dolayısıyla tek-taraf hover gating mantığı orada devre dışı kalmalı.
+    const breakpointMql = window.matchMedia('(min-width: 1024px)');
+
+    const applyBreakpoint = (matches: boolean) => {
+      isSideBySideRef.current = matches;
+      setIsSideBySide(matches);
+      if (!matches) {
+        hoveredSideRef.current = null;
+        setHoveredSide(null);
+      }
+    };
+
+    applyBreakpoint(breakpointMql.matches);
+
+    const handleBreakpointChange = (e: MediaQueryListEvent) => applyBreakpoint(e.matches);
+    breakpointMql.addEventListener('change', handleBreakpointChange);
+
     const handleWindowMouseMove = (e: MouseEvent) => {
+      if (!isSideBySideRef.current) return; // alt alta düzende mouse pozisyonunu yok say
       const side: 'left' | 'right' = e.clientX < window.innerWidth / 2 ? 'left' : 'right';
       if (hoveredSideRef.current !== side) {
         hoveredSideRef.current = side;
@@ -132,7 +162,11 @@ Key Responsibilities & Achievements :
       }
     };
     window.addEventListener('mousemove', handleWindowMouseMove);
-    return () => window.removeEventListener('mousemove', handleWindowMouseMove);
+
+    return () => {
+      breakpointMql.removeEventListener('change', handleBreakpointChange);
+      window.removeEventListener('mousemove', handleWindowMouseMove);
+    };
   }, []);
 
   useEffect(() => {
@@ -143,17 +177,19 @@ Key Responsibilities & Achievements :
         barsVisibleRef.current = entry.isIntersecting;
         setBarsVisible(entry.isIntersecting);
       },
-      { threshold: 0.15 }
+      { threshold: 0.1, rootMargin: '0px 0px -5% 0px' }
     );
     io.observe(el);
     return () => io.disconnect();
   }, []);
 
-  const isSideOpen = (side: 'left' | 'right') =>
-    !barsVisibleRef.current || hoveredSideRef.current === null || hoveredSideRef.current === side;
+  const isSideOpen = (side: 'left' | 'right') => {
+    if (!isSideBySide) return true; // alt alta düzende her zaman açık, kilitlenmesin
+    return !barsVisibleRef.current || hoveredSideRef.current === null || hoveredSideRef.current === side;
+  };
 
-  const academicBarOpacity = !barsVisible || hoveredSide === null || hoveredSide === 'left' ? 1 : 0.3;
-  const journeyBarOpacity = !barsVisible || hoveredSide === null || hoveredSide === 'right' ? 1 : 0.3;
+  const academicBarOpacity = !isSideBySide || !barsVisible || hoveredSide === null || hoveredSide === 'left' ? 1 : 0.3;
+  const journeyBarOpacity = !isSideBySide || !barsVisible || hoveredSide === null || hoveredSide === 'right' ? 1 : 0.3;
 
   const [expandedAcademic, setExpandedAcademic] = useState<number | null>(null);
   const [expandedJourney, setExpandedJourney] = useState<number | null>(null);
@@ -192,21 +228,42 @@ Key Responsibilities & Achievements :
   const academicRatio = maxHeight > 0 ? Math.min(academicHeight / maxHeight, 1) : 1;
   const journeyRatio = maxHeight > 0 ? Math.min(journeyHeight / maxHeight, 1) : 1;
 
+  // Masaüstü (lg+, yan yana): tüm grid container'ına göre PAYLAŞIMLI progress.
+  // Bu, iki sütunun aynı anda başlayıp aynı anda bitmesini sağlar.
   const { scrollYProgress: sharedProgress } = useScroll({
     target: timelinesRef,
     offset: ['start 0.85', 'end 0.4'],
   });
 
-  const academicLineHeight = useTransform(
+  // Mobil/Tablet (lg altı, alt alta): her sütun KENDİ elemanına göre progress alır.
+  // Aksi halde container'ın toplam yüksekliği (iki sütun üst üste) kullanıldığından
+  // Education çubuğu neredeyse hiç ilerlemeden "yarıda takılmış" gibi görünüyordu.
+  const { scrollYProgress: academicOwnProgress } = useScroll({
+    target: academicColumnRef,
+    offset: ['start 0.85', 'end 0.4'],
+  });
+  const { scrollYProgress: journeyOwnProgress } = useScroll({
+    target: journeyColumnRef,
+    offset: ['start 0.85', 'end 0.4'],
+  });
+
+  const academicLineHeightShared = useTransform(
     sharedProgress,
     academicRatio >= 1 ? [0, 1] : [0, academicRatio, 1],
     academicRatio >= 1 ? [0, academicHeight] : [0, academicHeight, academicHeight]
   );
-  const journeyLineHeight = useTransform(
+  const journeyLineHeightShared = useTransform(
     sharedProgress,
     journeyRatio >= 1 ? [0, 1] : [0, journeyRatio, 1],
     journeyRatio >= 1 ? [0, journeyHeight] : [0, journeyHeight, journeyHeight]
   );
+
+  const academicLineHeightOwn = useTransform(academicOwnProgress, [0, 1], [0, academicHeight]);
+  const journeyLineHeightOwn = useTransform(journeyOwnProgress, [0, 1], [0, journeyHeight]);
+
+  // Layout'a göre doğru transformu seç
+  const academicLineHeight = isSideBySide ? academicLineHeightShared : academicLineHeightOwn;
+  const journeyLineHeight = isSideBySide ? journeyLineHeightShared : journeyLineHeightOwn;
 
   const gatedAcademicHeight = useMotionValue(0);
   const gatedJourneyHeight = useMotionValue(0);
@@ -854,7 +911,7 @@ C 145 950, 170 962, 140 995
           className="grid lg:grid-cols-2 gap-16 lg:gap-12 items-stretch  border-t border-zinc-800/60 pt-24"
         >
           {/* SOL SÜTUN - ACADEMIC FOUNDATION TIMELINE */}
-          <div className="space-y-12 h-full flex flex-col">
+          <div ref={academicColumnRef} className="space-y-12 h-full flex flex-col">
             <Reveal>
               <div className="space-y-2">
                 <p className="text-zinc-100 uppercase tracking-[0.3em] text-[1rem] font-mono">EDUCATION</p>
@@ -988,7 +1045,7 @@ C 145 950, 170 962, 140 995
           </div>
 
           {/* SAĞ SÜTUN - MY JOURNEY TIMELINE */}
-          <div className="space-y-12 h-full flex flex-col">
+          <div ref={journeyColumnRef} className="space-y-12 h-full flex flex-col">
             <Reveal>
               <div className="space-y-2">
                 <p className="text-zinc-100 uppercase tracking-[0.3em] text-[1rem] font-mono">MILESTONES</p>

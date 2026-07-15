@@ -1,6 +1,5 @@
 'use client';
 
-import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useState, useMemo } from 'react';
 import Image from 'next/image';
 
@@ -125,11 +124,7 @@ export default function ProjectModal({ project, onClose }: Props) {
       onClick={onClose}
       onWheel={(e) => e.stopPropagation()}
     >
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9, y: 40 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 40 }}
-        transition={{ duration: 0.35, ease: 'easeOut' }}
+      <div
         className="
 w-full
 max-w-6xl
@@ -154,7 +149,7 @@ shadow-[0_0_60px_rgba(0,0,0,0.7)]
         {/* Kapatma Butonu — scroll'lanmayan katmanda, her zaman sabit */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-40 p-2 rounded-full bg-white/5 border border-white/10 text-white/60 hover:text-white hover:bg-white/10 hover:scale-105 active:scale-95 transition-all duration-200 backdrop-blur-sm"
+          className="absolute top-4 right-4 z-40 w-9 h-9 flex items-center justify-center rounded-full bg-black border border-white/30 text-white hover:bg-white/10 hover:scale-105 active:scale-95 transition-all duration-200 shadow-lg"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -260,30 +255,21 @@ shadow-[0_0_60px_rgba(0,0,0,0.7)]
     order-1
     md:order-2"
           >
-            <AnimatePresence>
-              <motion.div
-                key={activeImgIndex}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                className="absolute inset-0 flex items-center justify-center overflow-hidden"
-              >
-                {hasImages ? (
-                  <Image
-                    src={galleryImages[activeImgIndex]}
-                    alt={project.title}
-                    fill
-                    priority
-                    sizes="(max-width: 768px) 100vw, 80vw"
-                    onClick={() => setPreviewOpen(true)}
-                    className="object-cover scale-[1.05] rounded-lg cursor-zoom-in transition-transform duration-300 hover:scale-[1.02]"
-                  />
-                ) : (
-                  <div className="absolute flex items-center justify-center text-white/20">No Preview</div>
-                )}
-              </motion.div>
-            </AnimatePresence>
+            <div key={activeImgIndex} className="absolute inset-0 flex items-center justify-center overflow-hidden">
+              {hasImages ? (
+                <Image
+                  src={galleryImages[activeImgIndex]}
+                  alt={project.title}
+                  fill
+                  priority
+                  sizes="(max-width: 768px) 100vw, 80vw"
+                  onClick={() => setPreviewOpen(true)}
+                  className="object-cover scale-[1.05] rounded-lg cursor-zoom-in transition-transform duration-300 hover:scale-[1.02]"
+                />
+              ) : (
+                <div className="absolute flex items-center justify-center text-white/20">No Preview</div>
+              )}
+            </div>
 
             {/* Mobil/Tablet: Sol-Sağ Ok Butonları — görsele göre sabit, absolute */}
             {galleryImages.length > 1 && (
@@ -363,15 +349,17 @@ md:order-3
           >
             <div className="space-y-6">
               {/* Üst Bilgi ve Başlık */}
-              <div className="space-y-2.5">
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-[10px] font-mono uppercase tracking-wider">
+              <div className="space-y-2.5 font-manrope-semibold">
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-[10px] font-mono tracking-wider">
                   <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-                  Project Case Study
+                  PROJECT DETAILS
                 </div>
                 <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-white leading-tight">
                   {project.title}
                 </h2>
-                <p className="text-slate-300 text-[13px] leading-relaxed font-normal">{project.shortDescription}</p>
+                <p className="text-slate-300 text-[13px] leading-relaxed font-bespoke-number">
+                  {project.shortDescription}
+                </p>
               </div>
 
               {/* Künyeler Paneli (İkonlu liste) */}
@@ -458,10 +446,10 @@ md:order-3
 
               {/* About Project */}
               <div className="space-y-1.5 pt-5 border-t border-white/55">
-                <span className="block font-mono text-slate/80 text-[13px] uppercase tracking-wider">
+                <span className="block font-general-bold text-slate/90 text-[12px] uppercase tracking-wider">
                   About Project
                 </span>
-                <div className="text-slate-200 text-[13px] leading-relaxed font-normal space-y-4">
+                <div className="text-slate-300 font-manrope-semibold text-[13px] leading-relaxed font-normal space-y-4">
                   {(project.about ?? '').split('\n').map((line, index) => (
                     <p key={index}>{line || '\u00A0'}</p>
                   ))}
@@ -512,37 +500,34 @@ md:order-3
             </div>
           </div>
         </div>
-      </motion.div>
-      <AnimatePresence>
-        {previewOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            onClick={() => setPreviewOpen(false)}
-            className="fixed inset-0 z-[9999] bg-[#020617]/80 backdrop-blur-md flex items-center justify-center p-8"
-          >
-            <motion.img
-              initial={{ scale: 0.95 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.95 }}
-              transition={{ duration: 0.25 }}
-              onClick={(e) => e.stopPropagation()}
-              src={galleryImages[activeImgIndex]}
-              alt={project.title}
-              className="max-w-[92vw] max-h-[85vh] md:max-w-[85vw] md:max-h-[90vh] w-auto h-auto object-contain rounded-lg cursor-zoom-out shadow-[0_0_60px_rgba(0,0,0,0.7)]"
-            />
+      </div>
+      {previewOpen && (
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+            setPreviewOpen(false);
+          }}
+          className="fixed inset-0 z-[9999] bg-[#020617]/80 backdrop-blur-md flex items-center justify-center p-8"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            onClick={(e) => e.stopPropagation()}
+            src={galleryImages[activeImgIndex]}
+            alt={project.title}
+            className="max-w-[92vw] max-h-[85vh] md:max-w-[85vw] md:max-h-[90vh] w-auto h-auto object-contain rounded-lg cursor-zoom-out shadow-[0_0_60px_rgba(0,0,0,0.7)]"
+          />
 
-            <button
-              onClick={() => setPreviewOpen(false)}
-              className="absolute top-6 right-6 w-10 h-10 rounded-full bg-black/50 border border-white/20 text-white hover:bg-black/70 cursor-pointer"
-            >
-              ✕
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setPreviewOpen(false);
+            }}
+            className="absolute top-6 right-6 w-10 h-10 flex items-center justify-center rounded-full bg-black border border-white/30 text-white text-lg font-bold hover:bg-white/10 hover:scale-105 active:scale-95 transition-all cursor-pointer shadow-lg"
+          >
+            ✕
+          </button>
+        </div>
+      )}
     </div>
   );
 }

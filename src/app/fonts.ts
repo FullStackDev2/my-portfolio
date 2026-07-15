@@ -26,7 +26,7 @@ export const bespokeSerifNumber = localFont({
   display: 'swap',
   weight: '400 700',
   variable: '--font-bespoke-number',
-  preload: false, // ✅
+  preload: false, //
 });
 
 export const manropeRegular = localFont({
@@ -34,7 +34,7 @@ export const manropeRegular = localFont({
   display: 'swap',
   weight: '400',
   variable: '--font-manrope-regular',
-  preload: false, // ✅ eklendi
+  preload: false, //
 });
 
 export const manropeSemibold = localFont({
@@ -42,7 +42,7 @@ export const manropeSemibold = localFont({
   display: 'swap',
   weight: '600',
   variable: '--font-manrope-semibold',
-  preload: false, // ✅
+  preload: false, //
 });
 
 export const clashDisplay = localFont({
