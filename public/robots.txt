@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://nurettin-dincer.vercel.app/
+
+# Sitemaps
+Sitemap: https://nurettin-dincer.vercel.app/sitemap.xml
