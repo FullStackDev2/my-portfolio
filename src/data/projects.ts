@@ -123,16 +123,45 @@ Working in an agile team environment strengthened our collaboration, communicati
   },
   {
     slug: 'aether-saas',
-    title: 'In_Development',
-    shortDescription: ``,
-    about: `Feature Project : User Panel Design`,
-    image: '/projects/in_development.jpg',
-    images: [],
+    title: 'Enterprise Resource Planning (ERP) REST API',
+    shortDescription: `A scalable ERP web service built on PostgreSQL, featuring REST API for product and order management alongside SOAP integration. Currently in active development to include comprehensive financial modules.`,
+    about: `This project is a comprehensive Enterprise Resource Planning (ERP) system designed to centralize and streamline modern business operational processes. Built on a scalable, secure, and modular architecture, the system digitizes and automates core business workflows, including inventory, product management, order processing, and supply chain operations.
+Developed with cutting-edge web technologies and enterprise-grade requirements in mind, the platform is continuously evolving toward a full-scale ERP solution with upcoming financial module integrations.
+🛠️ Architecture & Technologies
+Database Management: PostgreSQL (Ensuring relational data integrity, complex querying capabilities, and high-performance data storage).
+API Architecture:
+REST API: Facilitates fast, stateless, and JSON-based communication with modern web and mobile clients (handling core product and order management operations).
+SOAP Integration: Implemented for secure, XML-based, and standardized data exchange with corporate legacy systems, financial institutions, or external third-party services.
+Security & Authorization: JWT (JSON Web Token) based authentication paired with Role-Based Access Control (RBAC).
+Deployment Environment: Render (Cloud Hosting Platform).
+🚀 Current Modules & Capabilities
+Authentication & Authorization Management: Secure user registration, login workflows, token management, and role-based access control (e.g., ROLE_USER).
+Product Management: Full CRUD operations for product cataloging, categorization, inventory tracking, and real-time updates.
+Order Management: End-to-end customer order processing, status tracking, product association, and lifecycle management.
+🔮 Roadmap & Future Enhancements
+Development is actively underway to elevate the platform to a fully-fledged enterprise-grade ERP standard. The upcoming milestones include:
+Finance & Accounting Module: Income/expense tracking, current account management, invoicing, and financial reporting integration.
+Human Resources (HR) Module: Personnel administration and payroll management.
+Advanced Reporting & Analytics: Data export and integration services optimized for Business Intelligence (BI) tools.`,
+    image: '/projects/rest_api.webp',
+    images: [
+      '/projects/Erp_test1.webp',
+      '/projects/Erp_test2.webp',
+      '/projects/Erp_test3.webp',
+      '/projects/Erp_test4.webp',
+      '/projects/Erp_test5.webp',
+      '/projects/Erp_test6.webp',
+      '/projects/Erp_test7.webp',
+      '/projects/Erp_test8.webp',
+      '/projects/Erp_test9.webp',
+      '/projects/Erp_test10.webp',
+    ],
+    tech: ['REST API', 'JWT', 'PostgreSQL', 'Java', 'RBAC'],
     client: 'Nurettin Dincer',
-    category: 'Cloud Infrastructure',
-    date: '2026',
-    projectUrl: '',
-    githubUrl: '',
+    category: 'Full-Stack Dev',
+    date: 'July-2026',
+    projectUrl: 'https://erp-project-7q64.onrender.com',
+    githubUrl: 'https://github.com/FullStackDev2/Erp-db',
   },
   {
     slug: 'vortex-crypto',
